@@ -3,92 +3,11 @@
 /* Created on:     23/01/2024 14:02:25                          */
 /*==============================================================*/
 
+DROP DATABASE IF EXISTS example;
 
-if exists(select 1 from sys.sysforeignkey where role='FK_ACTIVIDA_RELATIONS_REGISTRO') then
-    alter table ACTIVIDADES
-       delete foreign key FK_ACTIVIDA_RELATIONS_REGISTRO
-end if;
+CREATE DATABASE example;
 
-if exists(select 1 from sys.sysforeignkey where role='FK_OP_RELATIONS_PERSONAS') then
-    alter table OP
-       delete foreign key FK_OP_RELATIONS_PERSONAS
-end if;
-
-if exists(select 1 from sys.sysforeignkey where role='FK_OP_RELATIONS_LUGARPRO') then
-    alter table OP
-       delete foreign key FK_OP_RELATIONS_LUGARPRO
-end if;
-
-if exists(select 1 from sys.sysforeignkey where role='FK_PLANOS_RELATIONS_OP') then
-    alter table PLANOS
-       delete foreign key FK_PLANOS_RELATIONS_OP
-end if;
-
-if exists(select 1 from sys.sysforeignkey where role='FK_PRODUCCI_RELATIONS_PLANOS') then
-    alter table PRODUCCION
-       delete foreign key FK_PRODUCCI_RELATIONS_PLANOS
-end if;
-
-if exists(select 1 from sys.sysforeignkey where role='FK_REGISTRO_RELATIONS_PRODUCCI') then
-    alter table REGISTROS
-       delete foreign key FK_REGISTRO_RELATIONS_PRODUCCI
-end if;
-
-if exists(select 1 from sys.sysforeignkey where role='FK_USUARIOS_RELATIONS_PERSONAS') then
-    alter table USUARIOS
-       delete foreign key FK_USUARIOS_RELATIONS_PERSONAS
-end if;
-
-drop index if exists ACTIVIDADES.RELATIONSHIP_6_FK;
-
-drop index if exists ACTIVIDADES.ACTIVIDADES_PK;
-
-drop table if exists ACTIVIDADES;
-
-drop index if exists KARDEX.KARDEX_PK;
-
-drop table if exists KARDEX;
-
-drop index if exists LUGARPRODUCCION.LUGARPRODUCCION_PK;
-
-drop table if exists LUGARPRODUCCION;
-
-drop index if exists OP.RELATIONSHIP_7_FK;
-
-drop index if exists OP.RELATIONSHIP_2_FK;
-
-drop index if exists OP.OP_PK;
-
-drop table if exists OP;
-
-drop index if exists PERSONAS.PERSONAS_PK;
-
-drop table if exists PERSONAS;
-
-drop index if exists PLANOS.RELATIONSHIP_3_FK;
-
-drop index if exists PLANOS.PLANOS_PK;
-
-drop table if exists PLANOS;
-
-drop index if exists PRODUCCION.RELATIONSHIP_4_FK;
-
-drop index if exists PRODUCCION.PRODUCCION_PK;
-
-drop table if exists PRODUCCION;
-
-drop index if exists REGISTROS.RELATIONSHIP_5_FK;
-
-drop index if exists REGISTROS.REGISTROS_PK;
-
-drop table if exists REGISTROS;
-
-drop index if exists USUARIOS.RELATIONSHIP_1_FK;
-
-drop index if exists USUARIOS.USUARIOS_PK;
-
-drop table if exists USUARIOS;
-
+USE example;
 /*==============================================================*/
 /* Table: ACTIVIDADES                                           */
 /*==============================================================*/
@@ -162,8 +81,8 @@ create table OP
    OPCLIENTE            char(50)                       not null,
    OPCIUDAD             varchar(255)                   not null,
    OPDETALLE            varchar(255)                   not null,
-   OPREGISTRO           timestamp                      not null,
-   OPNOTIFICACIONCORREO timestamp                      not null,
+   OPREGISTRO           DATETIME                      not null,
+   OPNOTIFICACIONCORREO DATETIME                      not null,
    OPVENDEDOR           char(10)                       not null,
    OPDISEADOR           char(10)                       not null,
    OPDIRECCIONLOCAL     varchar(255)                   not null,
@@ -208,6 +127,10 @@ create table PERSONAS
    PERAREATRABAJO       char(25)                       not null,
    constraint PK_PERSONAS primary key (CEDULA)
 );
+
+INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO)
+VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics');
+
 
 /*==============================================================*/
 /* Index: PERSONAS_PK                                           */
@@ -275,8 +198,8 @@ create table REGISTROS
 (
    IDREGISTRO           integer                        not null,
    IDPRODUCCION         integer                        null,
-   REGHORAINICIA        timestamp                      not null,
-   REGHORAFINAL         timestamp                      null,
+   REGHORAINICIA        DATETIME                      not null,
+   REGHORAFINAL         DATETIME                      null,
    REGAVANCE            integer                        null,
    REGOBSERVACION       varchar(255)                   null,
    constraint PK_REGISTROS primary key (IDREGISTRO)
@@ -303,12 +226,16 @@ create table USUARIOS
 (
    ID_USER              integer                        not null,
    CEDULA               char(10)                       null,
-   "USER"               char(10)                       not null,
+   USER               char(10)                       not null,
    PASSWORD             varchar(255)                   not null,
    ROL                  integer                        not null,
-   REGISTRO             timestamp                      not null,
+   REGISTRO             DATETIME                      not null,
    constraint PK_USUARIOS primary key (ID_USER)
 );
+
+INSERT INTO USUARIOS (ID_USER, CEDULA, USER, PASSWORD, ROL, REGISTRO)
+VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP);
+
 
 /*==============================================================*/
 /* Index: USUARIOS_PK                                           */
