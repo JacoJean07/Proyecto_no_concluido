@@ -8,14 +8,73 @@ DROP DATABASE IF EXISTS example;
 CREATE DATABASE example;
 
 USE example;
+
+/*==============================================================*/
+/* Table: PERSONAS                                              */
+/*==============================================================*/
+create table PERSONAS 
+(
+   CEDULA               char(10)                       not null,
+   PERNOMBRES           varchar(100)                   not null,
+   PERAPELLIDOS         varchar(100)                   not null,
+   PERFECHANACIMIENTO   date                           not null,
+   PERESTADO            smallint                       not null,
+   PERAREATRABAJO       char(25)                       not null,
+   constraint PK_PERSONAS primary key (CEDULA)
+);
+
+INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO)
+VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics');
+
+
+/*==============================================================*/
+/* Index: PERSONAS_PK                                           */
+/*==============================================================*/
+create unique index PERSONAS_PK on PERSONAS (
+CEDULA ASC
+);
+
+/*==============================================================*/
+/* Table: USUARIOS                                              */
+/*==============================================================*/
+create table USUARIOS 
+(
+   ID_USER              integer            AUTO_INCREMENT            not null,
+   CEDULA               char(10)                       null,
+   USER               char(10)                       not null,
+   PASSWORD             varchar(255)                   not null,
+   ROL                  integer                        not null,
+   REGISTRO             DATETIME                      not null,
+   constraint PK_USUARIOS primary key (ID_USER)
+);
+
+INSERT INTO USUARIOS (ID_USER, CEDULA, USER, PASSWORD, ROL, REGISTRO)
+VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP);
+
+
+/*==============================================================*/
+/* Index: USUARIOS_PK                                           */
+/*==============================================================*/
+create unique index USUARIOS_PK on USUARIOS (
+ID_USER ASC
+);
+
+/*==============================================================*/
+/* Index: RELATIONSHIP_1_FK                                     */
+/*==============================================================*/
+create index RELATIONSHIP_1_FK on USUARIOS (
+CEDULA ASC
+);
 /*==============================================================*/
 /* Table: ACTIVIDADES                                           */
 /*==============================================================*/
 create table ACTIVIDADES 
 (
-   IDACTIVIDAD          integer                        not null,
+   IDACTIVIDAD          integer             AUTO_INCREMENT           not null,
    IDREGISTRO           integer                        null,
    ACTDETALLE           varchar(255)                   not null,
+   USER_ID INT NOT NULL,
+   Foreign Key (USER_ID) REFERENCES USUARIOS(ID_USER),
    constraint PK_ACTIVIDADES primary key (IDACTIVIDAD)
 );
 
@@ -38,7 +97,7 @@ IDREGISTRO ASC
 /*==============================================================*/
 create table KARDEX 
 (
-   IDKARDEX             integer                        not null,
+   IDKARDEX             integer           AUTO_INCREMENT             not null,
    ID_USERKARDEX        integer                        not null,
    KARACCION            integer                        not null,
    KARTABLA             char(10)                       not null,
@@ -56,10 +115,13 @@ IDKARDEX ASC
 /*==============================================================*/
 /* Table: LUGARPRODUCCION                                       */
 /*==============================================================*/
+
 create table LUGARPRODUCCION 
 (
-   IDLUGAR              integer                        not null,
+   IDLUGAR              integer         AUTO_INCREMENT               not null,
    CIUDAD               char(16)                       not null,
+   USER_ID INT NOT NULL,
+   Foreign Key (USER_ID) REFERENCES USUARIOS(ID_USER),
    constraint PK_LUGARPRODUCCION primary key (IDLUGAR)
 );
 
@@ -90,6 +152,8 @@ create table OP
    OPTELEFONO           char(15)                       null,
    OPOBSERVACIONES      varchar(255)                   null,
    OPESTADO             char(25)                       null,
+   USER_ID INT NOT NULL,
+   Foreign Key (USER_ID) REFERENCES USUARIOS(ID_USER),
    constraint PK_OP primary key (IDOP)
 );
 
@@ -114,39 +178,18 @@ create index RELATIONSHIP_7_FK on OP (
 IDLUGAR ASC
 );
 
-/*==============================================================*/
-/* Table: PERSONAS                                              */
-/*==============================================================*/
-create table PERSONAS 
-(
-   CEDULA               char(10)                       not null,
-   PERNOMBRES           varchar(100)                   not null,
-   PERAPELLIDOS         varchar(100)                   not null,
-   PERFECHANACIMIENTO   date                           not null,
-   PERESTADO            smallint                       not null,
-   PERAREATRABAJO       char(25)                       not null,
-   constraint PK_PERSONAS primary key (CEDULA)
-);
 
-INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO)
-VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics');
-
-
-/*==============================================================*/
-/* Index: PERSONAS_PK                                           */
-/*==============================================================*/
-create unique index PERSONAS_PK on PERSONAS (
-CEDULA ASC
-);
 
 /*==============================================================*/
 /* Table: PLANOS                                                */
 /*==============================================================*/
 create table PLANOS 
 (
-   IDPLANO              integer                        not null,
+   IDPLANO              integer            AUTO_INCREMENT            not null,
    IDOP                 integer                        null,
    PLANUMERO            integer                        not null,
+   USER_ID INT NOT NULL,
+   Foreign Key (USER_ID) REFERENCES USUARIOS(ID_USER),
    constraint PK_PLANOS primary key (IDPLANO)
 );
 
@@ -169,11 +212,13 @@ IDOP ASC
 /*==============================================================*/
 create table PRODUCCION 
 (
-   IDPRODUCCION         integer                        not null,
+   IDPRODUCCION         integer             AUTO_INCREMENT           not null,
    IDPLANO              integer                        null,
    PROOBSERVACIONES     varchar(255)                   not null,
    ATTRIBUTE_32         integer                        not null,
    PROPORCENTAJE        integer                        not null,
+   USER_ID INT NOT NULL,
+   Foreign Key (USER_ID) REFERENCES USUARIOS(ID_USER),
    constraint PK_PRODUCCION primary key (IDPRODUCCION)
 );
 
@@ -196,12 +241,14 @@ IDPLANO ASC
 /*==============================================================*/
 create table REGISTROS 
 (
-   IDREGISTRO           integer                        not null,
+   IDREGISTRO           integer             AUTO_INCREMENT           not null,
    IDPRODUCCION         integer                        null,
    REGHORAINICIA        DATETIME                      not null,
    REGHORAFINAL         DATETIME                      null,
    REGAVANCE            integer                        null,
    REGOBSERVACION       varchar(255)                   null,
+   USER_ID INT NOT NULL,
+   Foreign Key (USER_ID) REFERENCES USUARIOS(ID_USER),
    constraint PK_REGISTROS primary key (IDREGISTRO)
 );
 
@@ -219,37 +266,7 @@ create index RELATIONSHIP_5_FK on REGISTROS (
 IDPRODUCCION ASC
 );
 
-/*==============================================================*/
-/* Table: USUARIOS                                              */
-/*==============================================================*/
-create table USUARIOS 
-(
-   ID_USER              integer                        not null,
-   CEDULA               char(10)                       null,
-   USER               char(10)                       not null,
-   PASSWORD             varchar(255)                   not null,
-   ROL                  integer                        not null,
-   REGISTRO             DATETIME                      not null,
-   constraint PK_USUARIOS primary key (ID_USER)
-);
 
-INSERT INTO USUARIOS (ID_USER, CEDULA, USER, PASSWORD, ROL, REGISTRO)
-VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP);
-
-
-/*==============================================================*/
-/* Index: USUARIOS_PK                                           */
-/*==============================================================*/
-create unique index USUARIOS_PK on USUARIOS (
-ID_USER ASC
-);
-
-/*==============================================================*/
-/* Index: RELATIONSHIP_1_FK                                     */
-/*==============================================================*/
-create index RELATIONSHIP_1_FK on USUARIOS (
-CEDULA ASC
-);
 
 alter table ACTIVIDADES
    add constraint FK_ACTIVIDA_RELATIONS_REGISTRO foreign key (IDREGISTRO)

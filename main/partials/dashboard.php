@@ -27,6 +27,24 @@
       </li>
     </ul>
   </li><!-- End Components Nav -->
+
+  <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+      <i class="bi bi-journal-text"></i><span>OP's</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+    <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+      <li>
+        <a href="ciudades.php">
+          <i class="bi bi-circle"></i><span>Ciudad de Produccion</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bi bi-circle"></i><span>Orden de Produccion</span>
+        </a>
+      </li>
+    </ul>
+  </li>
     
 </ul>
 
