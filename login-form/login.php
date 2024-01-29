@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 </p>
               <?php endif ?>
               <div class="form-group first">
-                <label for="user">Correo</label>
+                <label for="user">Usuario</label>
                 <input type="text" class="form-control" id="user" name="user" required autocomplete="user" autofocus>
 
               </div>

@@ -63,6 +63,12 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 <div class="card-body">
                     <h5 class="card-title">Nuevo Trabajador</h5>
 
+                    <!-- si hay un error mandar un danger -->
+                    <?php if ($error): ?> 
+                        <p class="text-danger">
+                            <?= $error ?>
+                        </p>
+                    <?php endif ?>
                     <form class="row g-3" method="POST" action="personas.php">
                     <div class="col-md-6">
                         <div class="form-floating">

@@ -1,5 +1,18 @@
 
+<?php 
 
+require "../sql/database.php";
+
+session_start();
+//si la sesion no existe, mandar al login.php y dejar de ejecutar el resto; se puede hacer un required para ahorra codigo
+if (!isset($_SESSION["user"])) {
+  header("Location: ../login-form/login.php");
+  return;
+}
+
+
+
+?>
 
 <?php require "./partials/header.php"; ?>
 <?php require "./partials/dashboard.php"; ?>
