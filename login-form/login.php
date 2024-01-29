@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         
 
         //redirige al home.php
-        header("Location: ../main/index.html");
+        header("Location: ../main/index.php");
       }
     }
   }
