@@ -194,7 +194,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                        <input value="<?= $usuarioEditar['PASSWORD'] ?>" type="password" class="form-control" id="password" name="password" placeholder="password">
+                        <input value="<?= $usuarioEditar['PASSWORD'] ?>" type="text" class="form-control" id="password" name="password" placeholder="password">
                         <label for="password">Contraseña</label>
                         </div>
                     </div>
@@ -242,7 +242,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <th>ROL</th>
                                 <th>REGISTRO</th>
                                 <th></th>
-                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -254,9 +253,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <td><?= $usu["REGISTRO"]?></td>
                                 <td>
                                     <a href="usuarios.php?id=<?= $usu["ID_USER"] ?>" class="btn btn-secondary mb-2">Editar</a>
-                                </td>
-                                <td>
-                                    <a href="#" class="btn btn-danger mb-2">Eliminar</a>
                                 </td>
                                 </tr>
                             <?php endforeach ?>

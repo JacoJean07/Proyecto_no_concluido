@@ -12,7 +12,7 @@ if (!isset($_SESSION["user"])) {
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
 $id = isset($_GET["id"]) ? $_GET["id"] : null; 
-$usuarioEditar = null;
+$ciudadEditar = null;
 
 if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     // Verificamos el método que usa el formulario con un if
@@ -22,25 +22,26 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
         } else {
             // Verificamos si ya existe un registro para la ciudad actual
-            $existingStatement = $conn->prepare("SELECT IDLUGAR FROM LUGARPRODUCCION WHERE CIUDAD = :ciudad");
-            $existingStatement->execute([":ciudad" => $_POST['ciudad']]);
-            $existingLugar = $existingStatement->fetch(PDO::FETCH_ASSOC);
+            $existingStatement = $conn->prepare("SELECT IDLUGAR FROM LUGARPRODUCCION WHERE IDLUGAR = :id");
+            $existingStatement->execute([":id" => $id]);
+            $existingCiudad = $existingStatement->fetch(PDO::FETCH_ASSOC);
         
-            if ($existingLugar) {
+            if ($existingCiudad) {
                 // Si existe, actualizamos el registro existente
-                $statement = $conn->prepare("UPDATE LUGARPRODUCCION SET
-                    CIUDAD = :ciudad,
-                    USER_ID = :user_id
-                    WHERE IDLUGAR = :id");
+                $statement = $conn->prepare("UPDATE LUGARPRODUCCION SET CIUDAD = :ciudad WHERE IDLUGAR = :id");
+                $statement->execute([
+                    ":id" => $id,
+                    ":ciudad" => $_POST["ciudad"],
+                ]);
+            } else {
+                // Si no existe, insertamos un nuevo registro
+                $statement = $conn->prepare("INSERT INTO LUGARPRODUCCION (CIUDAD, USER_ID) 
+                                              VALUES (:ciudad, :user_id)");
         
                 $statement->execute([
-                    ":id" => $existingLugar["IDLUGAR"],
                     ":ciudad" => $_POST["ciudad"],
                     ":user_id" => $_SESSION["user"]["ID_USER"],
                 ]);
-            } else {
-                // No deberías llegar a este caso en la edición, pero por si acaso
-                $error = "No se encontró la ciudad a editar.";
             }
         
             // Redirigimos a ciudades.php
@@ -51,6 +52,13 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 
     // Llamamos los lugares de producción de la base de datos
     $ciudades = $conn->query("SELECT * FROM LUGARPRODUCCION");
+
+    // Obtenemos la información de la ciudad a editar
+    $statement = $conn->prepare("SELECT * FROM LUGARPRODUCCION WHERE IDLUGAR = :id");
+    $statement->bindParam(":id", $id);
+    $statement->execute();
+    $ciudadEditar = $statement->fetch(PDO::FETCH_ASSOC);
+
 } else {
     header("Location: ./index.php");
     return;
@@ -88,55 +96,45 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         </form>
                     </div>
                 </div>
-                <?php else : ?>
-                    <!-- Código para editar una ciudad existente -->
-                    <?php 
-                        $statement = $conn->prepare("SELECT * FROM LUGARPRODUCCION WHERE IDLUGAR = :id");
-                        $statement->bindParam(":id", $id);
-                        $statement->execute();
-                        $ciudadEditar = $statement->fetch(PDO::FETCH_ASSOC);
-                    ?>
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Editar Ciudad de Produccion</h5>
+            <?php else : ?>
+                <!-- Código para editar una ciudad existente -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Editar Ciudad de Producción</h5>
 
-                            <!-- si hay un error mandar un danger -->
-                            <?php if ($error): ?> 
-                                <p class="text-danger">
-                                    <?= $error ?>
-                                </p>
-                            <?php endif ?>
-                            <form class="row g-3" method="POST" action="ciudades.php">
-                                <div class="col-md-12">
-                                    <div class="form-floating mb-3">
-                                        <!-- Cambiado a "ciudad_id" para evitar conflicto con $_GET["id"] -->
-                                        <input type="hidden" name="ciudad_id" value="<?= $ciudadEditar["IDLUGAR"] ?>">
-                                        <input value="<?= $ciudadEditar["CIUDAD"] ?>" type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad">
-                                        <label for="ciudad">Ciudad</label>
-                                    </div>
+                        <!-- si hay un error mandar un danger -->
+                        <?php if ($error): ?> 
+                            <p class="text-danger">
+                                <?= $error ?>
+                            </p>
+                        <?php endif ?>
+                        <form class="row g-3" method="POST" action="ciudades.php?id=<?= $id ?>">
+                            <div class="col-md-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad" value="<?= $ciudadEditar["CIUDAD"] ?>">
+                                    <label for="ciudad">Ciudad</label>
                                 </div>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Actualizar</button>
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                                <button type="reset" class="btn btn-secondary">Reset</button>
+                            </div>
+                        </form>
                     </div>
-                <?php endif ?>
-
+                </div>
+            <?php endif ?>
 
             <section class="section">
                 <div class="row">
                     <div class="col-lg-12">
-
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Ciudades de Produccion</h5>
+                                <h5 class="card-title">Ciudades de Producción</h5>
                                 <!-- si el array asociativo $ciudades no tiene nada dentro, entonces imprimir el siguiente div -->
                                 <?php if ($ciudades->rowCount() == 0): ?>
                                     <div class= "col-md-4 mx-auto mb-3">
                                         <div class= "card card-body text-center">
-                                            <p>No hay Ciudades de Produccion Aun.</p>
+                                            <p>No hay Ciudades de Producción Aun.</p>
                                         </div>
                                     </div>
                                 <?php else: ?>
@@ -157,7 +155,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                         <a href="ciudades.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-secondary mb-2">Editar</a>
                                                     </td>
                                                     <td>
-                                                        <a href="#" class="btn btn-danger mb-2">Eliminar</a>
+                                                        <a href="delete/ciudad.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-danger mb-2">Eliminar</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>
@@ -166,7 +164,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <?php endif ?>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>

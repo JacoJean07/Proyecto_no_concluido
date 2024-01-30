@@ -25,6 +25,11 @@
           <i class="bi bi-circle"></i><span>Usuarios</span>
         </a>
       </li>
+      <li>
+        <a href="personasEliminadas.php">
+          <i class="bi bi-circle"></i><span>Personas Eliminadas</span>
+        </a>
+      </li>
     </ul>
   </li><!-- End Components Nav -->
 
