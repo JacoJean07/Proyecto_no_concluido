@@ -7,7 +7,7 @@
     </div>
     <div class="credits">
 
-      Designed by <a href="#"></a>
+      Designed by <a target="_blank" href="#">Jean</a> &  <a target="_blank" href="#">Lenin</a>
     </div>
   </footer><!-- End Footer -->
 

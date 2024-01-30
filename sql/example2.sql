@@ -2,11 +2,11 @@
 /* DBMS name:      MySQL 5.0                                    */
 /* Created on:     30/01/2024 9:54:26                           */
 /*==============================================================*/
-DROP DATABASE IF EXISTS example2;
+DROP DATABASE IF EXISTS example;
 
-CREATE DATABASE example2;
+CREATE DATABASE example;
 
-USE example2;
+USE example;
 /*==============================================================*/
 /* Table: PERSONAS                                              */
 /*==============================================================*/
