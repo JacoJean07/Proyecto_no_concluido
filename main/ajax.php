@@ -25,20 +25,21 @@ require "../sql/database.php";
 if(isset($_GET['nombres'])){
     $NOMBRES =$_GET['nombres'];
 
-    //REALIZAR LA COULTA EN LA BASE DE DATOS PARA OBTENER LA EULA DEL TRABAJDOR
-    $statement+$onn->prepare("SELECT CEDULA FROM PERSONAS WHERE PERNOMBRES =:nombres");
-    $statement->bindParam(":nombres",$cedula);
+    //REALIZAR LA COULTA EN LA BASE DE DATOS PARA OBTENER LA CEDULA DEL TRABAJADOR
+    $statement = $conn->prepare("SELECT CEDULA FROM PERSONAS WHERE PERNOMBRES = :nombres");
+    $statement->bindParam(":nombres", $nombres);
     $statement->execute();
-    $statement=$statement->fetch(PDO::FETCH_ASSOC);
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-    //VERIFICAR SI LAC ONSULTA FUE EXITOSA ANTES DE ACCEDER A LOS VALORES DEL DEL ARRAY
-    if($result!== false){
-        //DEVUELVA LA CEDULA DEL TRABAJADOR COMO RESPUETA
+    // VERIFICAR SI LA CONSULTA FUE EXITOSA ANTES DE ACCEDER A LOS VALORES DEL ARRAY
+    if ($result !== false) {
+        // DEVUELVE LA CEDULA DEL TRABAJADOR COMO RESPUESTA
         echo $result['CEDULA'];
-    }else{
-        //MANEJAR EL CASO EN QUE LAC ONSULTA NO FUE EXITOSAMENTE
-        echo"NO SE ENCONTRO TRABAJADOR CON ESE NOMBRE";
+    } else {
+        // MANEJAR EL CASO EN QUE LA CONSULTA NO FUE EXITOSAMENTE
+        echo "NO SE ENCONTRÓ TRABAJADOR CON ESE NOMBRE";
     }
-
 }
+
+
 ?>
