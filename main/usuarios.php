@@ -1,6 +1,7 @@
 <?php
 
 require "../sql/database.php";
+require "./partials/kardex.php";
 
 session_start();
 
@@ -37,16 +38,16 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                 // Si existe, actualizamos el registro existente
                 $statement = $conn->prepare("UPDATE USUARIOS SET
                     USER = :usuario,
-                    PASSWORD = :password,
                     ROL = :rol
                     WHERE ID_USER = :id");
         
                 $statement->execute([
                     ":id" => $existingUsuario["ID_USER"],
                     ":usuario" => $_POST["usuario"],
-                    ":password" => password_hash($_POST["password"], PASSWORD_BCRYPT),
                     ":rol" => $_POST["rol"],
                 ]);
+                // Registramos el movimiento en el kardex
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'USUARIOS', $_POST["usuario"]);
             } else {
                 // Si no existe, insertamos un nuevo registro
                 $statement = $conn->prepare("INSERT INTO USUARIOS (CEDULA, USER, PASSWORD, ROL, REGISTRO) 
@@ -58,6 +59,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":password" => password_hash($_POST["password"], PASSWORD_BCRYPT),
                     ":rol" => $_POST["rol"],
                 ]);
+                // Registramos el movimiento en el kardex
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'USUARIOS', $_POST["usuario"]);
             }
         
         
@@ -120,9 +123,10 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-floating">
-                        <input type="text" class="form-control" id="password" name="password" placeholder="password">
+                        <div class="form-floating d-flex">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="password">
                         <label for="password">Contraseña</label>
+                        <button id="show_password" class="btn btn-primary" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -193,12 +197,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-floating">
-                        <input value="<?= $usuarioEditar['PASSWORD'] ?>" type="text" class="form-control" id="password" name="password" placeholder="password">
-                        <label for="password">Contraseña</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
                         <div class="form-floating mb-3">
                             <select class="form-select" id="rol" aria-label="State" name="rol">
                                 <option value="1" <?= ($usuarioEditar['ROL'] == 1) ? 'selected' : '' ?>>Administrador</option>
@@ -242,6 +240,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <th>ROL</th>
                                 <th>REGISTRO</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -253,6 +252,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <td><?= $usu["REGISTRO"]?></td>
                                 <td>
                                     <a href="usuarios.php?id=<?= $usu["ID_USER"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                </td>
+                                <td>
+                                    <a href="cambiar_contrasena.php?id=<?= $usu["CEDULA"] ?>" class="btn btn-danger mb-2">Cambiar Contraseña</a>
                                 </td>
                                 </tr>
                             <?php endforeach ?>

@@ -2,11 +2,11 @@
 /* DBMS name:      MySQL 5.0                                    */
 /* Created on:     31/01/2024 9:39:31                           */
 /*==============================================================*/
-DROP DATABASE IF EXISTS example2;
+DROP DATABASE IF EXISTS example;
 
-CREATE DATABASE example2;
+CREATE DATABASE example;
 
-USE example2;
+USE example;
 /*==============================================================*/
 /* Table: PERSONAS                                              */
 /*==============================================================*/
@@ -61,7 +61,7 @@ CEDULA ASC
 /*==============================================================*/
 create table ACTIVIDADES
 (
-   IDACTIVIDADES        int not null,
+   IDACTIVIDADES        int AUTO_INCREMENT not null,
    IDREGISTRO           int,
    ACTDETALLE           varchar(255) not null,
    primary key (IDACTIVIDADES)
@@ -72,7 +72,7 @@ create table ACTIVIDADES
 /*==============================================================*/
 create table AREAS
 (
-   IDAREA               int not null,
+   IDAREA               int AUTO_INCREMENT not null,
    AREDETALLE           varchar(30) not null,
    primary key (IDAREA)
 );
@@ -82,11 +82,13 @@ create table AREAS
 /*==============================================================*/
 create table KARDEX
 (
-   IDKARDEX             int not null,
-   ID_USERKADEXX        int not null,
-   KARACCION            int not null,
-   KARTABLA             char(10) not null,
-   KARIDROW             int not null,
+   IDKARDEX             int AUTO_INCREMENT not null,
+   ID_USERKARDEX        int not null,
+   KARUSER              VARCHAR(50),
+   KARACCION            VARCHAR(20) not null,  -- 1 = CREO ; 2 = EDITO ; 3 ELIMINO ; 4 = RESTAURO
+   KARTABLA             VARCHAR(50) not null,
+   KARROW               VARCHAR(255) not null,
+   KARFECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
    primary key (IDKARDEX)
 );
 
@@ -95,7 +97,7 @@ create table KARDEX
 /*==============================================================*/
 create table LUGARPRODUCCION
 (
-   IDLUGAR              int not null,
+   IDLUGAR              int AUTO_INCREMENT not null,
    CIUDAD               char(16) not null,
    primary key (IDLUGAR)
 );
@@ -105,7 +107,7 @@ create table LUGARPRODUCCION
 /*==============================================================*/
 create table OP
 (
-   IDOP                 int not null,
+   IDOP                 int AUTO_INCREMENT not null,
    CEDULA               char(10),
    IDLUGAR              int,
    OPCLIENTE            char(50) not null,
@@ -142,7 +144,7 @@ create table PERSONAS
 /*==============================================================*/
 create table PLANOS
 (
-   IDPLANO              int not null,
+   IDPLANO              int AUTO_INCREMENT not null,
    IDOP                 int,
    PLANNUMERO           int not null,
    primary key (IDPLANO)
@@ -153,7 +155,7 @@ create table PLANOS
 /*==============================================================*/
 create table PRODUCCION
 (
-   IDPRODUCION          int not null,
+   IDPRODUCION          int AUTO_INCREMENT not null,
    IDPLANO              int,
    IDAREA               int,
    PROOBSERVACIONES     varchar(255) not null,
@@ -167,7 +169,7 @@ create table PRODUCCION
 /*==============================================================*/
 create table REGISTRO
 (
-   IDREGISTRO           int not null,
+   IDREGISTRO           int AUTO_INCREMENT not null,
    IDPRODUCION          int,
    REGHORAINICIO        datetime not null,
    REGHORAFINAL         datetime,

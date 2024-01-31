@@ -11,6 +11,10 @@ if (!isset($_SESSION["user"])) {
 }
 
 $totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM PERSONAS WHERE PERESTADO = 1")->fetchColumn();
+$kardex = $conn->query("SELECT * FROM KARDEX ORDER BY IDKARDEX DESC LIMIT 15");
+
+date_default_timezone_set('America/Lima'); 
+
 
 
 ?>
@@ -386,57 +390,53 @@ $totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM PERSONAS WHERE P
             </div>
 
             <div class="card-body">
-              <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+              <h5 class="card-title">Actividad Reciente <span>| Today</span></h5>
 
               <div class="activity">
+                
+                <?php foreach($kardex as $kar) : ?>
+                  <?php
+                  // PARA CALCULAR EL TIEMPO DE CADA ACCION
+                  $fechaMovimiento = new DateTime($kar["KARFECHA"]);
+                  $fechaActual = new DateTime();
 
+                  // Calcula la diferencia entre las dos fechas
+                  $diferencia = $fechaActual->diff($fechaMovimiento);
+
+                  // Accede a los componentes de la diferencia
+                  $horas = $diferencia->h;
+                  $minutos = $diferencia->i;
+
+                  // Formatea el resultado
+                  $tiempoTranscurrido = '';
+                  if ($horas > 0) {
+                      $tiempoTranscurrido .= $horas . ' h ';
+                  }
+                  $tiempoTranscurrido .= $minutos . ' min';
+                  ?>
                 <div class="activity-item d-flex">
-                  <div class="activite-label">32 min</div>
-                  <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                  <div class="activite-label"><?= $tiempoTranscurrido ?></div>
+                  <i class='bi bi-circle-fill activity-badge align-self-start 
+                  <?php if ($kar["KARACCION"] == "ELIMINO") :?>
+                    text-danger
+                  <?php elseif ($kar["KARACCION"] == "CREO") : ?>
+                    text-success
+                  <?php elseif ($kar["KARACCION"] == "EDITO") : ?>
+                    text-warning
+                  <?php elseif ($kar["KARACCION"] == "RESTAURO") : ?>
+                    text-primary
+                  <?php else : ?>
+                    text-muted
+                  <?php endif ?>
+                    '></i>
                   <div class="activity-content">
-                    Quia quae rerum <a href="#" class="fw-bold text-dark">explicabo officiis</a> beatae
+                    <?= $kar["KARUSER"]?> <b><?= $kar["KARACCION"]?></b> un registro en la tabla <b><?= $kar["KARTABLA"]?></b><br>
+                    Dato : <?= $kar["KARROW"]?><br>
+                    Fecha: <?= $kar["KARFECHA"]?>
                   </div>
                 </div><!-- End activity item-->
 
-                <div class="activity-item d-flex">
-                  <div class="activite-label">56 min</div>
-                  <i class='bi bi-circle-fill activity-badge text-danger align-self-start'></i>
-                  <div class="activity-content">
-                    Voluptatem blanditiis blanditiis eveniet
-                  </div>
-                </div><!-- End activity item-->
-
-                <div class="activity-item d-flex">
-                  <div class="activite-label">2 hrs</div>
-                  <i class='bi bi-circle-fill activity-badge text-primary align-self-start'></i>
-                  <div class="activity-content">
-                    Voluptates corrupti molestias voluptatem
-                  </div>
-                </div><!-- End activity item-->
-
-                <div class="activity-item d-flex">
-                  <div class="activite-label">1 day</div>
-                  <i class='bi bi-circle-fill activity-badge text-info align-self-start'></i>
-                  <div class="activity-content">
-                    Tempore autem saepe <a href="#" class="fw-bold text-dark">occaecati voluptatem</a> tempore
-                  </div>
-                </div><!-- End activity item-->
-
-                <div class="activity-item d-flex">
-                  <div class="activite-label">2 days</div>
-                  <i class='bi bi-circle-fill activity-badge text-warning align-self-start'></i>
-                  <div class="activity-content">
-                    Est sit eum reiciendis exercitationem
-                  </div>
-                </div><!-- End activity item-->
-
-                <div class="activity-item d-flex">
-                  <div class="activite-label">4 weeks</div>
-                  <i class='bi bi-circle-fill activity-badge text-muted align-self-start'></i>
-                  <div class="activity-content">
-                    Dicta dolorem harum nulla eius. Ut quidem quidem sit quas
-                  </div>
-                </div><!-- End activity item-->
+                <?php endforeach ?>
 
               </div>
 

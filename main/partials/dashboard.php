@@ -51,8 +51,30 @@
           <i class="bi bi-circle"></i><span>Orden de Produccion</span>
         </a>
       </li>
+      <li>
+        <a href="areas.php">
+          <i class="bi bi-circle"></i><span>Areas</span>
+        </a>
+      </li>
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+      <i class="bi bi-bar-chart"></i><span>Produccion</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+    <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+      <li>
+        <a href="produccion.php">
+          <i class="bi bi-circle"></i><span>Produccion</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bi bi-circle"></i><span>Registros</span>
+        </a>
+      </li>
+    </ul>
+  </li><!-- End Charts Nav -->
 
   <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
   <?php elseif($_SESSION["user"]["ROL"] == 2) : ?>

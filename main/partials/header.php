@@ -35,6 +35,11 @@ $data = $dataUser->fetch(PDO::FETCH_ASSOC);
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
+  <!-- BOOTSTRAP LIBRARIES -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <script refer src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 
@@ -46,7 +51,7 @@ $data = $dataUser->fetch(PDO::FETCH_ASSOC);
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.php" class="logo d-flex align-items-center">
         <img src="https://www.javierdiez.com/wp-content/uploads/2022/01/LOGO-JD-RED.jpeg" alt="LOGO">
         <span class="d-none d-lg-block">JavierDiez</span>
       </a>

@@ -2,7 +2,6 @@
 require "../sql/database.php";
 require "./partials/kardex.php";
 
-
 session_start();
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
@@ -14,59 +13,56 @@ if (!isset($_SESSION["user"])) {
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
 $id = isset($_GET["id"]) ? $_GET["id"] : null; 
-$ciudadEditar = null;
+$areaEditar = null;
 
 if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
-        if (empty($_POST["ciudad"])) {
+        if (empty($_POST["area"])) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
         } else {
-            // Verificamos si ya existe un registro para la ciudad actual
-            $existingStatement = $conn->prepare("SELECT IDLUGAR FROM LUGARPRODUCCION WHERE IDLUGAR = :id");
+            // Verificamos si ya existe un registro para el área actual
+            $existingStatement = $conn->prepare("SELECT IDAREA FROM AREAS WHERE IDAREA = :id");
             $existingStatement->execute([":id" => $id]);
-            $existingCiudad = $existingStatement->fetch(PDO::FETCH_ASSOC);
+            $existingArea = $existingStatement->fetch(PDO::FETCH_ASSOC);
         
-            if ($existingCiudad) {
+            if ($existingArea) {
                 // Si existe, actualizamos el registro existente
-                $statement = $conn->prepare("UPDATE LUGARPRODUCCION SET CIUDAD = :ciudad WHERE IDLUGAR = :id");
+                $statement = $conn->prepare("UPDATE AREAS SET AREDETALLE = :area WHERE IDAREA = :id");
                 $statement->execute([
                     ":id" => $id,
-                    ":ciudad" => $_POST["ciudad"],
+                    ":area" => $_POST["area"],
                 ]);
 
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'CIUDADES', $_POST["ciudad"]);
-
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'AREAS', $_POST["area"]);
 
             } else {
                 // Si no existe, insertamos un nuevo registro
-                $statement = $conn->prepare("INSERT INTO LUGARPRODUCCION (CIUDAD) 
-                                              VALUES (:ciudad)");
+                $statement = $conn->prepare("INSERT INTO AREAS (AREDETALLE) VALUES (:area)");
         
                 $statement->execute([
-                    ":ciudad" => $_POST["ciudad"],
+                    ":area" => $_POST["area"],
                 ]);
-
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'CIUDADES', $_POST["ciudad"]);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'AREAS', $_POST["area"]);
             }
         
-            // Redirigimos a ciudades.php
-            header("Location: ciudades.php");
+            // Redirigimos a areas.php
+            header("Location: areas.php");
             return;
         }
     }
 
-    // Llamamos los lugares de producción de la base de datos
-    $ciudades = $conn->query("SELECT * FROM LUGARPRODUCCION");
+    // Llamamos las áreas de la base de datos
+    $areas = $conn->query("SELECT * FROM AREAS");
 
-    // Obtenemos la información de la ciudad a editar
-    $statement = $conn->prepare("SELECT * FROM LUGARPRODUCCION WHERE IDLUGAR = :id");
+    // Obtenemos la información del área a editar
+    $statement = $conn->prepare("SELECT * FROM AREAS WHERE IDAREA = :id");
     $statement->bindParam(":id", $id);
     $statement->execute();
-    $ciudadEditar = $statement->fetch(PDO::FETCH_ASSOC);
+    $areaEditar = $statement->fetch(PDO::FETCH_ASSOC);
 
 } else {
     header("Location: ./index.php");
@@ -80,10 +76,10 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     <div class="row">
         <div class="">
             <?php if (empty($id)) : ?>
-                <!-- Código para agregar una nueva ciudad -->
+                <!-- Código para agregar una nueva área -->
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Nuevo Lugar de Producción</h5>
+                        <h5 class="card-title">Nueva Área</h5>
 
                         <!-- si hay un error mandar un danger -->
                         <?php if ($error): ?> 
@@ -91,11 +87,11 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <?= $error ?>
                             </p>
                         <?php endif ?>
-                        <form class="row g-3" method="POST" action="ciudades.php">
+                        <form class="row g-3" method="POST" action="areas.php">
                             <div class="col-md-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad">
-                                    <label for="ciudad">Ciudad</label>
+                                    <input type="text" class="form-control" id="area" name="area" placeholder="Área">
+                                    <label for="area">Área</label>
                                 </div>
                             </div>
                             <div class="text-center">
@@ -106,10 +102,10 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     </div>
                 </div>
             <?php else : ?>
-                <!-- Código para editar una ciudad existente -->
+                <!-- Código para editar un área existente -->
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Editar Ciudad de Producción</h5>
+                        <h5 class="card-title">Editar Área</h5>
 
                         <!-- si hay un error mandar un danger -->
                         <?php if ($error): ?> 
@@ -117,11 +113,11 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <?= $error ?>
                             </p>
                         <?php endif ?>
-                        <form class="row g-3" method="POST" action="ciudades.php?id=<?= $id ?>">
+                        <form class="row g-3" method="POST" action="areas.php?id=<?= $id ?>">
                             <div class="col-md-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad" value="<?= $ciudadEditar["CIUDAD"] ?>">
-                                    <label for="ciudad">Ciudad</label>
+                                    <input type="text" class="form-control" id="area" name="area" placeholder="Área" value="<?= $areaEditar["AREDETALLE"] ?>">
+                                    <label for="area">Área</label>
                                 </div>
                             </div>
                             <div class="text-center">
@@ -138,12 +134,12 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Ciudades de Producción</h5>
-                                <!-- si el array asociativo $ciudades no tiene nada dentro, entonces imprimir el siguiente div -->
-                                <?php if ($ciudades->rowCount() == 0): ?>
+                                <h5 class="card-title">Áreas</h5>
+                                <!-- si el array asociativo $areas no tiene nada dentro, entonces imprimir el siguiente div -->
+                                <?php if ($areas->rowCount() == 0): ?>
                                     <div class= "col-md-4 mx-auto mb-3">
                                         <div class= "card card-body text-center">
-                                            <p>No hay Ciudades de Producción Aun.</p>
+                                            <p>No hay Áreas aún.</p>
                                         </div>
                                     </div>
                                 <?php else: ?>
@@ -151,20 +147,18 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
-                                                <th>CIUDAD</th>
-                                                <th></th>
+                                                <th>#</th>
+                                                <th>ÁREA</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($ciudades as $ciudad): ?>
+                                            <?php foreach ($areas as $area): ?>
                                                 <tr>
-                                                    <th><?= $ciudad["CIUDAD"]?></th>
+                                                    <th><?= $area["IDAREA"] ?></th>
+                                                    <th><?= $area["AREDETALLE"] ?></th>
                                                     <td>
-                                                        <a href="ciudades.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-secondary mb-2">Editar</a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="delete/ciudad.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-danger mb-2">Eliminar</a>
+                                                        <a href="areas.php?id=<?= $area["IDAREA"] ?>" class="btn btn-secondary mb-2">Editar</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>

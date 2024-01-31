@@ -1,6 +1,9 @@
 .card-body{
   overflow-x: auto;
 }
+.card{
+  overflow-x: auto;
+}
 :root {
   scroll-behavior: smooth;
 }
