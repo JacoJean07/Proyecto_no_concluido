@@ -1,6 +1,7 @@
 <?php
 
 require "../../sql/database.php";
+require "../partials/kardex_delete.php";
 session_start();
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
@@ -28,6 +29,9 @@ $conn->prepare("UPDATE PERSONAS SET PERESTADO = :estado WHERE CEDULA = :id")->ex
     ":id" => $id,
     ":estado" => 0,
 ]);
+// Registramos el movimiento en el kardex
+registrarEnKardex($_SESSION["user"]["ID_USER"], "ELIMINO", 'PERSONAS', $id);
+
 
 // Redirigimos a personas.php
 header("Location: ../personas.php");

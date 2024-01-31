@@ -1,7 +1,7 @@
 <?php
 // DEFINIMOS LAS VARIABLES CON LOS VALORES PARA CONEXION
 $host = "localhost";
-$database = "example2";
+$database = "example";
 $user = "root";
 $password = "";
 

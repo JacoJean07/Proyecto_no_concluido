@@ -23,6 +23,7 @@
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/js/usuarios.js"></script>
+  <script src="assets/js/mostrarpass.js"></script>
 
   
 

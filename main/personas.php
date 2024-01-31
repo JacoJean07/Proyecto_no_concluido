@@ -1,5 +1,6 @@
 <?php
 require "../sql/database.php";
+require "./partials/kardex.php";
 
 session_start();
 
@@ -65,6 +66,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         ":nacimiento" => $nacimiento,
                         ":areatrabajo" => $areatrabajo,
                     ]);
+                    // Registramos el movimiento en el kardex
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], "EDITO", 'PERSONAS', $_POST["cedula"]);
                 } else {
                     // Si no hay un ID, estamos insertando un nuevo registro
                     $statement = $conn->prepare("INSERT INTO PERSONAS ( CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo)");
@@ -78,6 +81,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         ":areatrabajo" => $areatrabajo,
                         ":estado" => $estado,
                     ]);
+                    // Registramos el movimiento en el kardex
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], "CREO", 'PERSONAS', $_POST["cedula"]);
                 }
 
                 // Redirigimos a personas.php
