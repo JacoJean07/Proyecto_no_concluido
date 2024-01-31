@@ -113,10 +113,9 @@ create table OP
    OPCLIENTE            char(50) not null,
    OPCIUDAD             varchar(255) not null,
    OPDETALLE            varchar(255) not null,
-   OPREGISTRO           datetime not null,
-   OPNOTIFICACIONCORREO datetime not null,
-   OPVENDEDOR           char(10) not null,
-   OPDISENIADOR         char(10) not null,
+   OPREGISTRO           datetime not null CURRENT_TIMESTAMP,
+   OPNOTIFICACIONCORREO datetime,
+   OPVENDEDOR           char(20) not null,
    OPDIRECCIONLOCAL     varchar(255) not null,
    OPPERESONACONTACTO   varchar(100),
    TELEFONO             char(10),
@@ -125,19 +124,6 @@ create table OP
    primary key (IDOP)
 );
 
-/*==============================================================*/
-/* Table: PERSONAS                                              */
-/*==============================================================*/
-create table PERSONAS
-(
-   CEDULA               char(10) not null,
-   PERNOMBRES           varchar(100) not null,
-   PERAPELLIDOS         varchar(100) not null,
-   PERFECHANCIMINETO    date not null,
-   PERESTADO            bool not null,
-   PERAREATRABAJO       char(25) not null,
-   primary key (CEDULA)
-);
 
 /*==============================================================*/
 /* Table: PLANOS                                                */
@@ -176,20 +162,6 @@ create table REGISTRO
    REGAVANCE            int,
    REGOBSERVACION       varchar(255),
    primary key (IDREGISTRO)
-);
-
-/*==============================================================*/
-/* Table: USUARIOS                                              */
-/*==============================================================*/
-create table USUARIOS
-(
-   ID_USER              int not null,
-   CEDULA               char(10),
-   USER                 char(10) not null,
-   PASSWORD             varchar(255) not null,
-   ROL                  int not null,
-   REGISTRO             datetime not null,
-   primary key (ID_USER)
 );
 
 alter table ACTIVIDADES add constraint FK_RELATIONSHIP_7 foreign key (IDREGISTRO)

@@ -19,11 +19,9 @@ if (isset($_GET['cedula'])) {
         echo "No se encontró un trabajador con esa cédula";
     }
 }
-?>
-<?php
-require "../sql/database.php";
+
 if(isset($_GET['nombres'])){
-    $NOMBRES =$_GET['nombres'];
+    $nombres =$_GET['nombres'];
 
     //REALIZAR LA COULTA EN LA BASE DE DATOS PARA OBTENER LA CEDULA DEL TRABAJADOR
     $statement = $conn->prepare("SELECT CEDULA FROM PERSONAS WHERE PERNOMBRES = :nombres");
