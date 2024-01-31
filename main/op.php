@@ -18,7 +18,9 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
     if ($_SERVER["RQUEST_METHOD"] == "POST") {
         //VALIDFAMOS QUE NO SE MANDEN DATOS VASIOS
         if (empty($_POST["cliente"])||empty($_POST["ciudad"])||empty($_POST["notificacion"])|| empty($_POST["vendedor"])||empty($_POST["direccion"])||empty($_POST["contacto"])||empty($_POST["telefono"])||empty($_POST["observaciones"])||empty($_POST["estado"]) ) {
+            $error="POR FAVOR LLENAR TODOS LOS CAMPOS";
         } else {
+            //VERIFICAR 
         }
     }
 } else {

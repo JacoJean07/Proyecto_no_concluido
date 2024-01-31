@@ -226,11 +226,9 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <?php endif ?>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>
-
         </div>
     </div>
 </section>

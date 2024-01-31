@@ -20,4 +20,25 @@ if (isset($_GET['cedula'])) {
     }
 }
 ?>
+<?php
+require "../sql/database.php";
+if(isset($_GET['nombres'])){
+    $NOMBRES =$_GET['nombres'];
 
+    //REALIZAR LA COULTA EN LA BASE DE DATOS PARA OBTENER LA EULA DEL TRABAJDOR
+    $statement+$onn->prepare("SELECT CEDULA FROM PERSONAS WHERE PERNOMBRES =:nombres");
+    $statement->bindParam(":nombres",$cedula);
+    $statement->execute();
+    $statement=$statement->fetch(PDO::FETCH_ASSOC);
+
+    //VERIFICAR SI LAC ONSULTA FUE EXITOSA ANTES DE ACCEDER A LOS VALORES DEL DEL ARRAY
+    if($result!== false){
+        //DEVUELVA LA CEDULA DEL TRABAJADOR COMO RESPUETA
+        echo $result['CEDULA'];
+    }else{
+        //MANEJAR EL CASO EN QUE LAC ONSULTA NO FUE EXITOSAMENTE
+        echo"NO SE ENCONTRO TRABAJADOR CON ESE NOMBRE";
+    }
+
+}
+?>
