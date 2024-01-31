@@ -10,6 +10,7 @@ if (!isset($_SESSION["user"])) {
   return;
 }
 
+$totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM PERSONAS WHERE PERESTADO = 1")->fetchColumn();
 
 
 ?>
@@ -122,8 +123,8 @@ if (!isset($_SESSION["user"])) {
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>-</h6>
-                      <span class="text-danger small pt-1 fw-bold">...</span> <span class="text-muted small pt-2 ps-1">--</span>
+                      <h6><?= $totalFilas ?></h6>
+                      <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 ps-1">Personas</span>
 
                     </div>
                   </div>

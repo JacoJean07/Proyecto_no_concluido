@@ -2,27 +2,59 @@
 /* DBMS name:      MySQL 5.0                                    */
 /* Created on:     31/01/2024 9:39:31                           */
 /*==============================================================*/
+DROP DATABASE IF EXISTS example2;
 
+CREATE DATABASE example2;
 
-drop table if exists ACTIVIDADES;
-
-drop table if exists AREAS;
-
-drop table if exists KARDEX;
-
-drop table if exists LUGARPRODUCCION;
-
-drop table if exists OP;
-
-drop table if exists PERSONAS;
-
-drop table if exists PLANOS;
-
-drop table if exists PRODUCCION;
-
-drop table if exists REGISTRO;
-
-drop table if exists USUARIOS;
+USE example2;
+/*==============================================================*/
+/* Table: PERSONAS                                              */
+/*==============================================================*/
+create table PERSONAS
+(
+   CEDULA               char(10) not null,
+   PERNOMBRES           varchar(100) not null,
+   PERAPELLIDOS         varchar(100) not null,
+   PERFECHANACIMIENTO    date not null,
+   PERESTADO            bool not null,
+   PERAREATRABAJO       char(25) not null,
+   constraint PK_PERSONAS primary key (CEDULA)
+);
+INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO)
+VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics');
+/*==============================================================*/
+/* Index: PERSONAS_PK                                           */
+/*==============================================================*/
+create unique index PERSONAS_PK on PERSONAS (
+CEDULA ASC
+);
+/*==============================================================*/
+/* Table: USUARIOS                                              */
+/*==============================================================*/
+create table USUARIOS
+(
+   ID_USER              int AUTO_INCREMENT  not null,
+   CEDULA               char(10),
+   USER                 char(10) not null,
+   PASSWORD             varchar(255) not null,
+   ROL                  int not null,
+   REGISTRO             datetime not null,
+   constraint PK_USUARIOS primary key (ID_USER)
+);
+INSERT INTO USUARIOS (ID_USER, CEDULA, USER, PASSWORD, ROL, REGISTRO)
+VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP);
+/*==============================================================*/
+/* Index: USUARIOS_PK                                           */
+/*==============================================================*/
+create unique index USUARIOS_PK on USUARIOS (
+ID_USER ASC
+);
+/*==============================================================*/
+/* Index: RELATIONSHIP_1_FK                                     */
+/*==============================================================*/
+create index RELATIONSHIP_1_FK on USUARIOS (
+CEDULA ASC
+);
 
 /*==============================================================*/
 /* Table: ACTIVIDADES                                           */

@@ -123,7 +123,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     <form class="row g-3" method="POST" action="personas.php<?= $id ? "?id=$id" : "" ?>">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>" readonly>
+                                <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>">
                                 <label for="cedula">Cedula</label>
                             </div>
                         </div>

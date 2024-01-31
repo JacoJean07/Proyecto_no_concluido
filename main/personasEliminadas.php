@@ -41,7 +41,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <?php if ($personas->rowCount() == 0): ?>
                                     <div class= "col-md-4 mx-auto mb-3">
                                         <div class= "card card-body text-center">
-                                            <p>No hay Trabajadores Aun.</p>
+                                            <p>No hay Trabajadores Eliminados Aun.</p>
                                         </div>
                                     </div>
                                 <?php else: ?>
