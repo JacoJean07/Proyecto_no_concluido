@@ -113,7 +113,7 @@ create table OP
    OPCLIENTE            char(50) not null,
    OPCIUDAD             varchar(255) not null,
    OPDETALLE            varchar(255) not null,
-   OPREGISTRO           datetime not null CURRENT_TIMESTAMP,
+   OPREGISTRO           DATETIME DEFAULT CURRENT_TIMESTAMP,
    OPNOTIFICACIONCORREO datetime,
    OPVENDEDOR           char(20) not null,
    OPDIRECCIONLOCAL     varchar(255) not null,
