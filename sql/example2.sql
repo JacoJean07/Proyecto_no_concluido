@@ -80,11 +80,11 @@ create table AREAS
 /*==============================================================*/
 /* Table: KARDEX                                                */
 /*==============================================================*/
-
 create table KARDEX
 (
    IDKARDEX             int AUTO_INCREMENT not null,
    ID_USERKARDEX        int not null,
+   KARUSER              VARCHAR(50),
    KARACCION            VARCHAR(20) not null,  -- 1 = CREO ; 2 = EDITO ; 3 ELIMINO ; 4 = RESTAURO
    KARTABLA             VARCHAR(50) not null,
    KARROW               VARCHAR(255) not null,

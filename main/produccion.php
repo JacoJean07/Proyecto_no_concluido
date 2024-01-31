@@ -1,5 +1,6 @@
 <?php
 require "../sql/database.php";
+require "./partials/kardex.php";
 
 session_start();
 
@@ -44,6 +45,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":porcentaje" => $_POST["porcentaje"],
                     ":fecha" => $_POST["fecha"],
                 ]);
+                // Registramos el movimiento en el kardex
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'PRODUCCION', $id);
             } else {
                 // Si no existe, insertamos un nuevo registro
                 $statement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, IDAREA, PROOBSERVACIONES, PROPORCENTAJE, PROFECHA) 
@@ -56,6 +59,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":porcentaje" => $_POST["porcentaje"],
                     ":fecha" => $_POST["fecha"],
                 ]);
+                // Registramos el movimiento en el kardex
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PRODUCCION', $id);
             }
         
             // Redirigimos a produccion.php

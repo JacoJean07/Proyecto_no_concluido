@@ -430,7 +430,7 @@ date_default_timezone_set('America/Lima');
                   <?php endif ?>
                     '></i>
                   <div class="activity-content">
-                    Se <b><?= $kar["KARACCION"]?></b> un registro en la tabla <b><?= $kar["KARTABLA"]?></b><br>
+                    <?= $kar["KARUSER"]?> <b><?= $kar["KARACCION"]?></b> un registro en la tabla <b><?= $kar["KARTABLA"]?></b><br>
                     Dato : <?= $kar["KARROW"]?><br>
                     Fecha: <?= $kar["KARFECHA"]?>
                   </div>

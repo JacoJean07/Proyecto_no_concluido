@@ -34,7 +34,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                 ":password" => password_hash($_POST["password"], PASSWORD_BCRYPT),
             ]);
             // Registramos el movimiento en el kardex
-            registrarEnKardex($_SESSION["user"]["ID_USER"], "EDITO", 'USUARIOS', "CONTRASEÑA<br>C.I.: " . $id );
+            registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'USUARIOS', "CONTRASEÑA<br>C.I.: " . $id );
 
             // Redirigimos a usuarios.php
             header("Location: usuarios.php");

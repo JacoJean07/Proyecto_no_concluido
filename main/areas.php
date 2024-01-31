@@ -36,7 +36,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                 ]);
 
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], "EDITO", 'AREAS', $_POST["area"]);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'AREAS', $_POST["area"]);
 
             } else {
                 // Si no existe, insertamos un nuevo registro
@@ -46,7 +46,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":area" => $_POST["area"],
                 ]);
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], "CREO", 'AREAS', $_POST["area"]);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'AREAS', $_POST["area"]);
             }
         
             // Redirigimos a areas.php

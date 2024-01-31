@@ -1,6 +1,7 @@
 <?php
 
 require "../sql/database.php";
+require "./partials/kardex.php";
 
 session_start();
 
@@ -45,6 +46,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":usuario" => $_POST["usuario"],
                     ":rol" => $_POST["rol"],
                 ]);
+                // Registramos el movimiento en el kardex
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'USUARIOS', $_POST["usuario"]);
             } else {
                 // Si no existe, insertamos un nuevo registro
                 $statement = $conn->prepare("INSERT INTO USUARIOS (CEDULA, USER, PASSWORD, ROL, REGISTRO) 
@@ -56,6 +59,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":password" => password_hash($_POST["password"], PASSWORD_BCRYPT),
                     ":rol" => $_POST["rol"],
                 ]);
+                // Registramos el movimiento en el kardex
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'USUARIOS', $_POST["usuario"]);
             }
         
         
