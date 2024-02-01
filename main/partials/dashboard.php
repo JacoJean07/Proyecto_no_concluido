@@ -48,7 +48,12 @@
       </li>
       <li>
         <a href="op.php">
-          <i class="bi bi-circle"></i><span>Orden de Produccion</span>
+          <i class="bi bi-circle"></i><span>Registro de OP</span>
+        </a>
+      </li>
+      <li>
+        <a href="opProduccion.php">
+          <i class="bi bi-circle"></i><span>Lista de OP's en Produccion</span>
         </a>
       </li>
       <li>

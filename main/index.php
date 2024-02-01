@@ -12,6 +12,15 @@ if (!isset($_SESSION["user"])) {
 
 $totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM PERSONAS WHERE PERESTADO = 1")->fetchColumn();
 $kardex = $conn->query("SELECT * FROM KARDEX ORDER BY IDKARDEX DESC LIMIT 15");
+$op = $conn->query("SELECT OP.*, 
+                          CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
+                          VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS,
+                          COUNT(PLANOS.IDPLANO) AS NUMERO_PLANOS
+                   FROM OP
+                   LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
+                   LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
+                   LEFT JOIN PLANOS ON OP.IDOP = PLANOS.IDOP
+                   GROUP BY OP.IDOP ORDER BY IDOP DESC");
 
 date_default_timezone_set('America/Lima'); 
 
@@ -29,7 +38,7 @@ date_default_timezone_set('America/Lima');
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
@@ -243,49 +252,31 @@ date_default_timezone_set('America/Lima');
                   <table class="table table-borderless datatable">
                     <thead>
                       <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">ID OP</th>
                         <th scope="col">Cliente</th>
                         <th scope="col">Descripcion</th>
                         <th scope="col">Planos</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Estado</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>Brandon Jacob</td>
-                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                        <td>64</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2147</a></th>
-                        <td>Bridie Kessler</td>
-                        <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-                        <td>47</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2049</a></th>
-                        <td>Ashleigh Langosh</td>
-                        <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-                        <td>147</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2644</a></th>
-                        <td>Angus Grady</td>
-                        <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-                        <td>67</td>
-                        <td><span class="badge bg-danger">Rejected</span></td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><a href="#">#2644</a></th>
-                        <td>Raheem Lehner</td>
-                        <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-                        <td>165</td>
-                        <td><span class="badge bg-success">Approved</span></td>
-                      </tr>
+                      <?php foreach($op as $op) : ?>
+                        <tr>
+                          <th scope="row"><a href="#"><?= $op["IDOP"] ?> </a></th>
+                          <td><?= $op["OPCLIENTE"] ?></td>
+                          <td><a href="#" class="text-primary"><?= $op["OPDETALLE"] ?></a></td>
+                          <td><?= $op["NUMERO_PLANOS"] ?></td>
+                          <td><span class="badge 
+                            <?php if ($op["OPESTADO"] == 'OP CREADA') : ?>
+                              bg-secondary
+                            <?php elseif ($op["OPESTADO"] == 'EN PRODUCCION') : ?>
+                              bg-primary
+                            <?php elseif ($op["OPESTADO"] == 'FINALIZADA') : ?>
+                              bg-success
+                            <?php endif ?>
+                          "><?= $op["OPESTADO"] ?></span></td>
+                        </tr>
+                      <?php endforeach ?>
                     </tbody>
                   </table>
 
