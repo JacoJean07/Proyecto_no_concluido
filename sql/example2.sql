@@ -18,10 +18,11 @@ create table PERSONAS
    PERFECHANACIMIENTO    date not null,
    PERESTADO            bool not null,
    PERAREATRABAJO       char(25) not null,
+   PERCORREO            varchar(150) not null,
    constraint PK_PERSONAS primary key (CEDULA)
 );
-INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO)
-VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics');
+INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO,PERCORREO)
+VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics','example@example.com');
 /*==============================================================*/
 /* Index: PERSONAS_PK                                           */
 /*==============================================================*/
@@ -133,6 +134,8 @@ create table PLANOS
    IDPLANO              int AUTO_INCREMENT not null,
    IDOP                 int,
    PLANNUMERO           int not null,
+   PLAESTADO            int not null,
+   PLANOTIFICACION      bool not null,
    primary key (IDPLANO)
 );
 
@@ -145,7 +148,6 @@ create table PRODUCCION
    IDPLANO              int,
    IDAREA               int,
    PROOBSERVACIONES     varchar(255) not null,
-   PROPORCENTAJE        int not null,
    PROFECHA             datetime not null,
    primary key (IDPRODUCION)
 );
@@ -157,11 +159,24 @@ create table REGISTRO
 (
    IDREGISTRO           int AUTO_INCREMENT not null,
    IDPRODUCION          int,
-   REGHORAINICIO        datetime not null,
+   REGHORAINICIO        DATETIME DEFAULT CURRENT_TIMESTAMP,
    REGHORAFINAL         datetime,
    REGAVANCE            int,
    REGOBSERVACION       varchar(255),
    primary key (IDREGISTRO)
+);
+
+/*==============================================================*/
+/* Table: REGISTROPRODUCCION                                    */
+/*==============================================================*/
+create table REGISTROPRODUCCION
+(
+   IDREPR               int AUTO_INCREMENT not null,
+   IDPRODUCION          int,
+   REPRFECHAHORA        DATETIME DEFAULT CURRENT_TIMESTAMP,
+   REPRPORCENTAJE       int not null,
+   REPROBSERVACIONES    varchar(255),
+   primary key (IDREPR)
 );
 
 alter table ACTIVIDADES add constraint FK_RELATIONSHIP_7 foreign key (IDREGISTRO)
@@ -188,3 +203,5 @@ alter table REGISTRO add constraint FK_RELATIONSHIP_6 foreign key (IDPRODUCION)
 alter table USUARIOS add constraint FK_RELATIONSHIP_1 foreign key (CEDULA)
       references PERSONAS (CEDULA) on delete restrict on update restrict;
 
+alter table REGISTROPRODUCCION add constraint FK_RELATIONSHIP_9 foreign key (IDPRODUCION)
+      references PRODUCCION (IDPRODUCION) on delete restrict on update restrict;

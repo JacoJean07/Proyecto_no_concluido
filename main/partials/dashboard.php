@@ -57,10 +57,11 @@
         </a>
       </li>
       <li>
-        <a href="areas.php">
-          <i class="bi bi-circle"></i><span>Areas</span>
+        <a href="planos.php">
+          <i class="bi bi-circle"></i><span>Planos</span>
         </a>
       </li>
+      
     </ul>
   </li>
   <li class="nav-item">
@@ -76,6 +77,11 @@
       <li>
         <a href="#">
           <i class="bi bi-circle"></i><span>Registros</span>
+        </a>
+      </li>
+      <li>
+        <a href="areas.php">
+          <i class="bi bi-circle"></i><span>Areas</span>
         </a>
       </li>
     </ul>
