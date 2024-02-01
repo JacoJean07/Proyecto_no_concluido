@@ -35,6 +35,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             $error = "La fecha de nacimiento es obligatoria.";
         } elseif (empty($_POST["areatrabajo"])) {
             $error = "El área de trabajo es obligatoria.";
+        } elseif (!filter_var($_POST["correo"], FILTER_VALIDATE_EMAIL)) {
+            $error = "El formato del correo electrónico no es válido.";
         } else {
             // Verificar si la cédula ya existe (excepto para el ID que estamos editando)
             $existingStatement = $conn->prepare("SELECT COUNT(*) FROM PERSONAS WHERE CEDULA = :cedula AND CEDULA != :id");
@@ -54,10 +56,11 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 $nacimiento = $_POST["nacimiento"];
                 $estado = $state;
                 $areatrabajo = $_POST["areatrabajo"];
+                $correo = $_POST["correo"];
 
                 if ($id) {
                     // Si hay un ID, estamos editando, por lo que actualizamos el registro existente
-                    $statement = $conn->prepare("UPDATE PERSONAS SET CEDULA = :cedula, PERNOMBRES = :nombres, PERAPELLIDOS = :apellidos, PERFECHANACIMIENTO = :nacimiento, PERAREATRABAJO = :areatrabajo WHERE CEDULA = :id");
+                    $statement = $conn->prepare("UPDATE PERSONAS SET CEDULA = :cedula, PERNOMBRES = :nombres, PERAPELLIDOS = :apellidos, PERFECHANACIMIENTO = :nacimiento, PERAREATRABAJO = :areatrabajo, PERCORREO = :correo WHERE CEDULA = :id");
                     $statement->execute([
                         ":id" => $id,
                         ":cedula" => $cedula,
@@ -65,12 +68,15 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         ":apellidos" => $apellidos,
                         ":nacimiento" => $nacimiento,
                         ":areatrabajo" => $areatrabajo,
+                        ":correo" => $correo,
                     ]);
                     // Registramos el movimiento en el kardex
-                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'PERSONAS', $_POST["cedula"]);
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'PERSONAS', $cedula);
+                
+                
                 } else {
                     // Si no hay un ID, estamos insertando un nuevo registro
-                    $statement = $conn->prepare("INSERT INTO PERSONAS ( CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo)");
+                    $statement = $conn->prepare("INSERT INTO PERSONAS ( CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO, PERCORREO) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo, :correo)");
                     
                     // Ejecutamos
                     $statement->execute([
@@ -80,6 +86,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         ":nacimiento" => $nacimiento,
                         ":areatrabajo" => $areatrabajo,
                         ":estado" => $estado,
+                        ":correo" => $correo,
                     ]);
                     // Registramos el movimiento en el kardex
                     registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PERSONAS', $_POST["cedula"]);
@@ -164,6 +171,12 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <label for="areatrabajo">Area de Trabajo</label>
                             </div>
                         </div>
+                        <div class="col-6">
+                        <div class="form-floating">
+                                <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>">
+                                <label for="correo">Correo Electronico</label>
+                            </div>
+                        </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary"><?= $id ? "Actualizar" : "Submit" ?></button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
@@ -197,6 +210,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                         <th>Cedula</th>
                                         <th>Edad</th>
                                         <th>Area de Trabajo</th>
+                                        <th>Correo Electronico</th>
                                         <th></th>
                                         <th></th>
                                     </tr>
@@ -217,6 +231,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                             ?>
                                         </td>
                                         <td><?= $persona["PERAREATRABAJO"]?></td>
+                                        <td><?= $persona["PERCORREO"]?></td>
                                         <td>
                                             <a href="personas.php?id=<?= $persona["CEDULA"] ?>" class="btn btn-secondary mb-2">Editar</a>
                                         </td>
