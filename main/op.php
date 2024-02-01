@@ -111,7 +111,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         $planoNumero = $i;
 
                         // Insertamos el registro en la tabla PLANOS
-                        $stmt = $conn->prepare("INSERT INTO PLANOS (IDOP, PLANNUMERO) VALUES (:idop, :plannumero)");
+                        $stmt = $conn->prepare("INSERT INTO PLANOS (IDOP, PLANNUMERO, PLAESTADO, PLANOTIFICACION) VALUES (:idop, :plannumero, 1, 0)");
                         $stmt->execute([
                             ":idop" => $lastInsertId,
                             ":plannumero" => $planoNumero
@@ -137,7 +137,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
     <div class="row">
         <div class="">
             <?php if (empty($id)) : ?>
-                <div class="card">
+                <div class="card" id="minimizableCard" class="collapse show">
                     <div class="card-body">
                         <h5 class="card-title">NUEVA OP</h5>
 
