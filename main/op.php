@@ -137,102 +137,109 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
     <div class="row">
         <div class="">
             <?php if (empty($id)) : ?>
-                <div class="card" id="minimizableCard" class="collapse show">
-                    <div class="card-body">
-                        <h5 class="card-title">NUEVA OP</h5>
+                <div class="card accordion" id="accordionExample">
+                    <div class="card-body accordion-item">
+                        <h5 class="card-title accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                NUEVA OP
+                            </button>
+                        </h5>
 
                         <?php if ($error) : ?>
                             <p class="text_danger">
                                 <?= $error ?>
                             </p>
                         <?php endif ?>
-
-                        <form class="row g-3" method="POST" action="op.php">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="nombres" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()">
-                                    <label for="vendedor">Ingresar ambos nombres del vendedor</label>
-                                    <datalist id="nombresList">
-                                        <?php foreach ($personas as $persona) : ?>
-                                            <option value="<?= $persona["PERNOMBRES"] ?>">
-                                        <?php endforeach ?>
-                                    </datalist>
-                                </div>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <form class="row g-3" method="POST" action="op.php">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="nombres" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()">
+                                            <label for="vendedor">Ingresar ambos nombres del vendedor</label>
+                                            <datalist id="nombresList">
+                                                <?php foreach ($personas as $persona) : ?>
+                                                    <option value="<?= $persona["PERNOMBRES"] ?>">
+                                                <?php endforeach ?>
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" readonly>
+                                            <label for="cedula"> Cedula</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" id="planos" name="planos" placeholder="">
+                                            <label for="planos"> Planos</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="idlugarproduccion" class="form-label">Lugar de Produccion</label>
+                                        <select class="form-select" id="idlugarproduccion" name="idlugarproduccion">
+                                            <?php foreach ($lugarproduccion as $lugar) : ?>
+                                                <option value="<?= $lugar["IDLUGAR"] ?>"><?= $lugar["CIUDAD"] ?></option>
+                                            <?php endforeach ?>
+                                        </select>
+                                    </div>
+                                    <!-- Agregar otros campos según la estructura de la tabla OP -->
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente">
+                                            <label for="cliente">Cliente</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad">
+                                            <label for="ciudad">Ciudad de Entrega</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating datetimepicker">
+                                            <input type="text" class="form-control" id="detalle" name="detalle" placeholder="Detalle">
+                                            <label for="detalle">Detalles </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating datetimepicker">
+                                            <input type="date" class="form-control" id="notificacion" name="notificacion" placeholder="Notificacion">
+                                            <label for="notificacion">Notificacion Correo</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion">
+                                            <label for="direccion">Direccion del Local</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="contacto" name="contacto" placeholder="Contacto">
+                                            <label for="contacto">Persona de Contacto</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
+                                            <label for="telefono">Telefono</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="observaciones" name="observaciones" placeholder="Observaciones">
+                                            <label for="observaciones">Observaciones</label>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Guardar</button>
+                                        <button type="reset" class="btn btn-secondary">Reset</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" readonly>
-                                    <label for="cedula"> Cedula</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" id="planos" name="planos" placeholder="">
-                                    <label for="planos"> Planos</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="idlugarproduccion" class="form-label">Lugar de Produccion</label>
-                                <select class="form-select" id="idlugarproduccion" name="idlugarproduccion">
-                                    <?php foreach ($lugarproduccion as $lugar) : ?>
-                                        <option value="<?= $lugar["IDLUGAR"] ?>"><?= $lugar["CIUDAD"] ?></option>
-                                    <?php endforeach ?>
-                                </select>
-                            </div>
-                            <!-- Agregar otros campos según la estructura de la tabla OP -->
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente">
-                                    <label for="cliente">Cliente</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad">
-                                    <label for="ciudad">Ciudad de Entrega</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating datetimepicker">
-                                    <input type="text" class="form-control" id="detalle" name="detalle" placeholder="Detalle">
-                                    <label for="detalle">Detalles </label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating datetimepicker">
-                                    <input type="date" class="form-control" id="notificacion" name="notificacion" placeholder="Notificacion">
-                                    <label for="notificacion">Notificacion Correo</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion">
-                                    <label for="direccion">Direccion del Local</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="contacto" name="contacto" placeholder="Contacto">
-                                    <label for="contacto">Persona de Contacto</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
-                                    <label for="telefono">Telefono</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="observaciones" name="observaciones" placeholder="Observaciones">
-                                    <label for="observaciones">Observaciones</label>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             <?php else : ?>

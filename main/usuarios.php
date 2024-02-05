@@ -84,67 +84,74 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     <div class="row">
         <div class="">
             <?php if (empty($id)) : ?>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Nuevo Usuario</h5>
+            <div class="card accordion" id="accordionExample">
+                <div class="card-body accordion-item">
+                    <h5 class="card-title accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Nuevo Usuario
+                        </button>
+                    </h5>
 
-                    <!-- si hay un error mandar un danger -->
-                    <?php if ($error): ?> 
-                        <p class="text-danger">
-                            <?= $error ?>
-                        </p>
-                    <?php endif ?>
-                    <form class="row g-3" method="POST" action="usuarios.php">
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()">
-                            <label for="cedula">Cedula</label>
-                            <datalist id="cedulaList">
-                                <?php foreach ($personas as $persona): ?>
-                                <option value="<?= $persona["CEDULA"]?>">
-                                <?php endforeach ?>
-                            </datalist>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <!-- si hay un error mandar un danger -->
+                            <?php if ($error): ?> 
+                                <p class="text-danger">
+                                    <?= $error ?>
+                                </p>
+                            <?php endif ?>
+                            <form class="row g-3" method="POST" action="usuarios.php">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()">
+                                    <label for="cedula">Cedula</label>
+                                    <datalist id="cedulaList">
+                                        <?php foreach ($personas as $persona): ?>
+                                        <option value="<?= $persona["CEDULA"]?>">
+                                        <?php endforeach ?>
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Trabajador" readonly>
+                                    <label for="nombre">Trabajador</label>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
+                                <label for="usuario">usuario</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating d-flex">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                                <label for="password">Contraseña</label>
+                                <button id="show_password" class="btn btn-primary" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                <select class="form-select" id="rol" aria-label="State" name="rol">
+                                    <option value="1">Administrador</option>
+                                    <option value="2">Empleado</option>
+                                    <option value="3">Diseño Grafico</option>
+                                </select>
+                                <label for="rol">Rol de Usuario</label>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="reset" class="btn btn-secondary">Reset</button>
+                            </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Trabajador" readonly>
-                            <label for="nombre">Trabajador</label>
-                        </div>
-                    </div>
-
-
-
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                        <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
-                        <label for="usuario">usuario</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating d-flex">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="password">
-                        <label for="password">Contraseña</label>
-                        <button id="show_password" class="btn btn-primary" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                        <select class="form-select" id="rol" aria-label="State" name="rol">
-                            <option value="1">Administrador</option>
-                            <option value="2">Empleado</option>
-                            <option value="3">Diseño Grafico</option>
-                        </select>
-                        <label for="rol">Rol de Usuario</label>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button type="reset" class="btn btn-secondary">Reset</button>
-                    </div>
-                    </form>
-
                 </div>
             </div>
             <?php else : ?>

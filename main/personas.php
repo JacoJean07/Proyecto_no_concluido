@@ -118,71 +118,78 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
 <section class="section">
     <div class="row">
         <div class="">
-            <div class="card">
-                <div class="card-body">
+            <div class="card accordion" id="accordionExample">
+                <div class="card-body accordion-item">
                     <?php if ($id): ?>
                         <h5 class="card-title">Editar Trabajador</h5>
                     <?php else: ?>
-                        <h5 class="card-title">Nuevo Trabajador</h5>
+                        <h5 class="card-title accordion-header" id="headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Nuevo Trabajador
+                            </button>
+                        </h5>
                     <?php endif ?>
 
-                    <!-- si hay un error mandar un danger -->
-                    <?php if ($error): ?> 
-                        <p class="text-danger">
-                            <?= $error ?>
-                        </p>
-                    <?php endif ?>
-                    <form class="row g-3" method="POST" action="personas.php<?= $id ? "?id=$id" : "" ?>">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>">
-                                <label for="cedula">Cedula</label>
-                            </div>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <!-- si hay un error mandar un danger -->
+                            <?php if ($error): ?> 
+                                <p class="text-danger">
+                                    <?= $error ?>
+                                </p>
+                            <?php endif ?>
+                            <form class="row g-3" method="POST" action="personas.php<?= $id ? "?id=$id" : "" ?>">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>">
+                                        <label for="cedula">Cedula</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" value="<?= $personaEditar ? $personaEditar["PERNOMBRES"] : "" ?>">
+                                        <label for="nombres">Nombres</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos" value="<?= $personaEditar ? $personaEditar["PERAPELLIDOS"] : "" ?>">
+                                        <label for="apellidos">Apellidos</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" placeholder="Nacimiento" id="nacimiento" name="nacimiento" value="<?= $personaEditar ? $personaEditar["PERFECHANACIMIENTO"] : "" ?>"></input>
+                                        <label for="nacimiento">Fecha de Nacimiento</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="areatrabajo" aria-label="State" name="areatrabajo">
+                                            <option value="Carpinteria" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Carpinteria") ? "selected" : "" ?>>Carpinteria</option>
+                                            <option value="ACM" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "ACM") ? "selected" : "" ?>>ACM</option>
+                                            <option value="Pintura" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Pintura") ? "selected" : "" ?>>Pintura</option>
+                                            <option value="Acrilicos y Acabados" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Acrilicos y Acabados") ? "selected" : "" ?>>Acrilicos y Acabados</option>
+                                            <option value="Maquinas" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Maquinas") ? "selected" : "" ?>>Maquinas</option>
+                                            <option value="Impresiones" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Impresiones") ? "selected" : "" ?>>Impresiones</option>
+                                            <option value="Diseno Grafico" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Diseno Grafico") ? "selected" : "" ?>>Diseno Grafico</option>
+                                        </select>
+                                        <label for="areatrabajo">Area de Trabajo</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                <div class="form-floating">
+                                        <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>">
+                                        <label for="correo">Correo Electronico</label>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary"><?= $id ? "Actualizar" : "Submit" ?></button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" value="<?= $personaEditar ? $personaEditar["PERNOMBRES"] : "" ?>">
-                                <label for="nombres">Nombres</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos" value="<?= $personaEditar ? $personaEditar["PERAPELLIDOS"] : "" ?>">
-                                <label for="apellidos">Apellidos</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-floating">
-                                <input type="date" class="form-control" placeholder="Nacimiento" id="nacimiento" name="nacimiento" value="<?= $personaEditar ? $personaEditar["PERFECHANACIMIENTO"] : "" ?>"></input>
-                                <label for="nacimiento">Fecha de Nacimiento</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="areatrabajo" aria-label="State" name="areatrabajo">
-                                    <option value="Carpinteria" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Carpinteria") ? "selected" : "" ?>>Carpinteria</option>
-                                    <option value="ACM" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "ACM") ? "selected" : "" ?>>ACM</option>
-                                    <option value="Pintura" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Pintura") ? "selected" : "" ?>>Pintura</option>
-                                    <option value="Acrilicos y Acabados" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Acrilicos y Acabados") ? "selected" : "" ?>>Acrilicos y Acabados</option>
-                                    <option value="Maquinas" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Maquinas") ? "selected" : "" ?>>Maquinas</option>
-                                    <option value="Impresiones" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Impresiones") ? "selected" : "" ?>>Impresiones</option>
-                                    <option value="Diseno Grafico" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Diseno Grafico") ? "selected" : "" ?>>Diseno Grafico</option>
-                                </select>
-                                <label for="areatrabajo">Area de Trabajo</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                        <div class="form-floating">
-                                <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>">
-                                <label for="correo">Correo Electronico</label>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary"><?= $id ? "Actualizar" : "Submit" ?></button>
-                            <button type="reset" class="btn btn-secondary">Reset</button>
-                        </div>
-                    </form>
-
+                    </div>
                 </div>
             </div>
 
