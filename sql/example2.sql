@@ -129,9 +129,9 @@ create table PLANOS
    IDPLANO              int AUTO_INCREMENT not null,
    IDOP                 int,
    PLANNUMERO           int not null,
-   PLAESTADO            int not null,  /*1 = activo  2 = pausado 3 = anulado*/
-   PLANOTIFICACION      bool not null, /* 0 no hay notificacion, 1 si hay notificacion*/
-   PLAFECHANOTI         datetime,
+   PLAESTADO            int not null,  /*1 = activo  2 = pausado 3 = anulado 4 = concluido*/
+   PLANOTIFICACION      bool not null, /* 0 no hay notificacion, 1 si hay notificacion */
+   PLAFECHANOTI            datetime,
    primary key (IDPLANO)
 );
 

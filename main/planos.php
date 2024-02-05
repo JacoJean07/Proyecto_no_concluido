@@ -24,7 +24,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
         } else {
             // Obtener la información de la OP y sus planos
-            $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop");
+            $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop AND OPNOTIFICACIONCORREO != 'OP CREADA'");
             $opInfoStatement->bindParam(":idop", $_POST["idop"]);
             $opInfoStatement->execute();
             $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);

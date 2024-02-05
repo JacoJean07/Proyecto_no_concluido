@@ -31,14 +31,14 @@ if ($statement->rowCount() == 0) {
 // Actualizamos el row con el ID de la cédula seleccionada
 $conn->prepare("UPDATE PLANOS SET PLANOTIFICACION = :estado, PLAFECHANOTI = CURRENT_TIMESTAMP WHERE IDPLANO = :id")->execute([
     ":id" => $id,
-    ":estado" => 1,
+    ":estado" => 0,
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "NOTIFICO ERROR", 'PLANOS', "<br>OP: " . $plano["IDOP"] . "<br>Plano: " . $plano["PLANNUMERO"]);
+registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "APROBÓ", 'PLANOS', "<br>OP: " . $plano["IDOP"] . "<br>Plano: " . $plano["PLANNUMERO"]);
 
 
 // Redirigimos a personas.php
-header("Location: ../planos.php");
+header("Location: ../planosError.php");
 
 // Finalizamos el código aquí porque ya nos redirige a personas.php
 return;
