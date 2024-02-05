@@ -1,6 +1,12 @@
 <?php
 $dataUser = $conn->query("SELECT * FROM PERSONAS WHERE CEDULA = {$_SESSION["user"]["CEDULA"]} LIMIT 1");
 $data = $dataUser->fetch(PDO::FETCH_ASSOC);
+$notis = $conn->query("SELECT * FROM PLANOS WHERE PLANOTIFICACION = 1 ");
+$totalNotificaciones = $notis->rowCount(); 
+
+
+date_default_timezone_set('America/Lima'); 
+
 
 ?>
 
@@ -73,29 +79,50 @@ $data = $dataUser->fetch(PDO::FETCH_ASSOC);
       <ul class="d-flex align-items-center">
 
         <li class="nav-item dropdown">
-
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-bell"></i>
-            <span class="badge bg-danger badge-number">X</span>
-          </a><!-- End Notification Icon -->
+          <?php if(!empty($totalNotificaciones)) : ?>
+            <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="badge bg-danger badge-number"><?= $totalNotificaciones ?></span>
+            </a><!-- End Notification Icon -->
+          <?php else : ?>
+            <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="badge badge-number"></span>
+            </a><!-- End Notification Icon -->
+          <?php endif ?>
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-            <li class="dropdown-header">
-              Tienes X notificaciones
-            </li>
+            <?php if(empty($notis)) : ?>
+            <?php endif ?>
 
+            <li class="dropdown-header">
+              Tienes <?= $totalNotificaciones ?> notificaciones
+            </li>
+            
             <li>
               <hr class="dropdown-divider">
             </li>
 
-            <li class="notification-item">
-              <i class="bi bi-x-circle text-danger"></i>
-              <div>
-                <h4>Sit rerum fuga</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>2 hrs. ago</p>
-              </div>
-            </li>
+            <?php foreach($notis as $noti) : ?>
+              <?php
+              // Obtén la fecha de la notificación
+              $fechaNotificacion = new DateTime($noti["PLAFECHANOTI"]);
+
+              // Calcula la diferencia entre la fecha actual y la fecha de la notificación
+              $tiempoTranscurrido = $fechaNotificacion->diff(new DateTime());
+
+              // utilizar $tiempoTranscurrido para mostrar el tiempo transcurrido 
+              ?>
+              <li class="notification-item">
+                <i class="bi bi-x-circle text-danger"></i>
+                <div>
+                  <h4>Contactarse con Produccion</h4>
+                  <p>Error en la OP # <?= $noti["IDOP"] ?> <br> Plano # <?= $noti["PLANNUMERO"] ?></p>
+                  <p><?= $tiempoTranscurrido->format('%h hrs. %i mins. ago') ?></p>
+                </div>
+              </li>
+            <?php endforeach ?>
+
 
             <li>
               <hr class="dropdown-divider">

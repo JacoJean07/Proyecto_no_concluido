@@ -61,6 +61,11 @@
           <i class="bi bi-circle"></i><span>Planos</span>
         </a>
       </li>
+      <li>
+        <a href="planosError.php">
+          <i class="bi bi-circle"></i><span>Planos Con errores</span>
+        </a>
+      </li>
       
     </ul>
   </li>

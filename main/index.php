@@ -11,7 +11,7 @@ if (!isset($_SESSION["user"])) {
 }
 
 $totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM PERSONAS WHERE PERESTADO = 1")->fetchColumn();
-$kardex = $conn->query("SELECT * FROM KARDEX ORDER BY IDKARDEX DESC LIMIT 15");
+$kardex = $conn->query("SELECT * FROM KARDEX ORDER BY IDKARDEX DESC LIMIT 10");
 $op = $conn->query("SELECT OP.*, 
                           CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
                           VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS,
