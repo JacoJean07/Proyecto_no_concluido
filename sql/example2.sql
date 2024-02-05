@@ -22,7 +22,9 @@ create table PERSONAS
    constraint PK_PERSONAS primary key (CEDULA)
 );
 INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO,PERCORREO)
-VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics','example@example.com');
+VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics','example@example.com'),
+('1750541730', 'lenin jeerson', 'puetate obando', '1998-02-17', '1', 'Diseno Grafico','puetateobando@gamil.com');
+
 /*==============================================================*/
 /* Index: PERSONAS_PK                                           */
 /*==============================================================*/
@@ -43,7 +45,8 @@ create table USUARIOS
    constraint PK_USUARIOS primary key (ID_USER)
 );
 INSERT INTO USUARIOS (ID_USER, CEDULA, USER, PASSWORD, ROL, REGISTRO)
-VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP);
+VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP),
+(2, '1750541730', 'jefer', '$2y$10$WOw2hlz8Ts5Iu5ahK4cHq./ME6Fn/5B7JMug67gfs5NoGLT832Kpa', '1',CURRENT_TIMESTAMP);
 /*==============================================================*/
 /* Index: USUARIOS_PK                                           */
 /*==============================================================*/
@@ -68,15 +71,7 @@ create table ACTIVIDADES
    primary key (IDACTIVIDADES)
 );
 
-/*==============================================================*/
-/* Table: AREAS                                                 */
-/*==============================================================*/
-create table AREAS
-(
-   IDAREA               int AUTO_INCREMENT not null,
-   AREDETALLE           varchar(30) not null,
-   primary key (IDAREA)
-);
+
 
 /*==============================================================*/
 /* Table: KARDEX                                                */
@@ -134,8 +129,9 @@ create table PLANOS
    IDPLANO              int AUTO_INCREMENT not null,
    IDOP                 int,
    PLANNUMERO           int not null,
-   PLAESTADO            int not null,  --1 = activo  2 = pausado 3 = anulado
-   PLANOTIFICACION      bool not null, -- 0 no hay notificacion, 1 si hay notificacion
+   PLAESTADO            int not null,  /*1 = activo  2 = pausado 3 = anulado*/
+   PLANOTIFICACION      bool not null, /* 0 no hay notificacion, 1 si hay notificacion*/
+   PLAFECHANOTI         datetime,
    primary key (IDPLANO)
 );
 
@@ -144,12 +140,22 @@ create table PLANOS
 /*==============================================================*/
 create table PRODUCCION
 (
-   IDPRODUCION          int AUTO_INCREMENT not null,
+  IDPRODUCION          int not null,
    IDPLANO              int,
-   IDAREA               int,
    PROOBSERVACIONES     varchar(255) not null,
    PROFECHA             datetime not null,
+   PROPORCENTAJE        int,
    primary key (IDPRODUCION)
+);
+/*==============================================================*/
+/* Table: AREAS                                                 */
+/*==============================================================*/
+create table AREAS
+(
+   IDAREA               int not null,
+   IDPRODUCION          int,
+   AREDETALLE           int not null,
+   primary key (IDAREA)
 );
 
 /*==============================================================*/
@@ -157,12 +163,14 @@ create table PRODUCCION
 /*==============================================================*/
 create table REGISTRO
 (
-   IDREGISTRO           int AUTO_INCREMENT not null,
-   IDPRODUCION          int,
-   REGHORAINICIO        DATETIME DEFAULT CURRENT_TIMESTAMP,
+   IDREGISTRO           int not null,
+   IDAREA               int,
+   REGHORAINICIO        datetime not null,
    REGHORAFINAL         datetime,
    REGAVANCE            int,
    REGOBSERVACION       varchar(255),
+   REGAYUDA             bool not null,
+   REGCEDULA            char(10) not null,
    primary key (IDREGISTRO)
 );
 
@@ -171,16 +179,37 @@ create table REGISTRO
 /*==============================================================*/
 create table REGISTROPRODUCCION
 (
-   IDREPR               int AUTO_INCREMENT not null,
-   IDPRODUCION          int,
-   REPRFECHAHORA        DATETIME DEFAULT CURRENT_TIMESTAMP,
+     IDREPR               int not null,
+   IDAREA               int,
+   REPRFECHAHORA        datetime not null,
    REPRPORCENTAJE       int not null,
    REPROBSERVACIONES    varchar(255),
    primary key (IDREPR)
 );
 
+/*==============================================================*/
+/* Table: LOGISTICA                                             */
+/*==============================================================*/
+create table LOGISTICA
+(
+   IDLOGISTICA          int not null,
+   IDPLANO              int,
+   LOGAREATRABAJO       int not null,
+   LOGHORAINCIO         datetime not null,
+   LOGHORAFINAL         datetime,
+   LOGOBSERVACIONES     varchar(255),
+   LOGCEDULA            char(10) not null,
+   primary key (IDLOGISTICA)
+);
+
 alter table ACTIVIDADES add constraint FK_RELATIONSHIP_7 foreign key (IDREGISTRO)
       references REGISTRO (IDREGISTRO) on delete restrict on update restrict;
+
+alter table AREAS add constraint FK_RELATIONSHIP_8 foreign key (IDPRODUCION)
+      references PRODUCCION (IDPRODUCION) on delete restrict on update restrict;
+
+alter table LOGISTICA add constraint FK_RELATIONSHIP_11 foreign key (IDPLANO)
+      references PLANOS (IDPLANO) on delete restrict on update restrict;
 
 alter table OP add constraint FK_RELATIONSHIP_2 foreign key (CEDULA)
       references PERSONAS (CEDULA) on delete restrict on update restrict;
@@ -194,14 +223,11 @@ alter table PLANOS add constraint FK_RELATIONSHIP_4 foreign key (IDOP)
 alter table PRODUCCION add constraint FK_RELATIONSHIP_5 foreign key (IDPLANO)
       references PLANOS (IDPLANO) on delete restrict on update restrict;
 
-alter table PRODUCCION add constraint FK_RELATIONSHIP_8 foreign key (IDAREA)
+alter table REGISTRO add constraint FK_RELATIONSHIP_10 foreign key (IDAREA)
       references AREAS (IDAREA) on delete restrict on update restrict;
 
-alter table REGISTRO add constraint FK_RELATIONSHIP_6 foreign key (IDPRODUCION)
-      references PRODUCCION (IDPRODUCION) on delete restrict on update restrict;
+alter table REGISTROPRODUCCION add constraint FK_RELATIONSHIP_9 foreign key (IDAREA)
+      references AREAS (IDAREA) on delete restrict on update restrict;
 
 alter table USUARIOS add constraint FK_RELATIONSHIP_1 foreign key (CEDULA)
       references PERSONAS (CEDULA) on delete restrict on update restrict;
-
-alter table REGISTROPRODUCCION add constraint FK_RELATIONSHIP_9 foreign key (IDPRODUCION)
-      references PRODUCCION (IDPRODUCION) on delete restrict on update restrict;
