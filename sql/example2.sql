@@ -140,7 +140,7 @@ create table PLANOS
 /*==============================================================*/
 create table PRODUCCION
 (
-  IDPRODUCION          int not null,
+  IDPRODUCION           int  AUTO_INCREMENT not null,
    IDPLANO              int,
    PROOBSERVACIONES     varchar(255) not null,
    PROFECHA             datetime not null,
@@ -152,7 +152,7 @@ create table PRODUCCION
 /*==============================================================*/
 create table AREAS
 (
-   IDAREA               int not null,
+   IDAREA               int AUTO_INCREMENT not null,
    IDPRODUCION          int,
    AREDETALLE           int not null,
    primary key (IDAREA)
@@ -163,7 +163,7 @@ create table AREAS
 /*==============================================================*/
 create table REGISTRO
 (
-   IDREGISTRO           int not null,
+   IDREGISTRO           int AUTO_INCREMENT not null,
    IDAREA               int,
    REGHORAINICIO        datetime not null,
    REGHORAFINAL         datetime,
@@ -179,7 +179,7 @@ create table REGISTRO
 /*==============================================================*/
 create table REGISTROPRODUCCION
 (
-     IDREPR               int not null,
+   IDREPR               int AUTO_INCREMENT not null,
    IDAREA               int,
    REPRFECHAHORA        datetime not null,
    REPRPORCENTAJE       int not null,
@@ -192,7 +192,7 @@ create table REGISTROPRODUCCION
 /*==============================================================*/
 create table LOGISTICA
 (
-   IDLOGISTICA          int not null,
+   IDLOGISTICA          int AUTO_INCREMENT not null,
    IDPLANO              int,
    LOGAREATRABAJO       int not null,
    LOGHORAINCIO         datetime not null,

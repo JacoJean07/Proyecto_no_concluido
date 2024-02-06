@@ -12,76 +12,103 @@ if (!isset($_SESSION["user"])) {
 
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
-$id = isset($_GET["id"]) ? $_GET["id"] : null; 
-$produccionEditar = null;
+$idop = isset($_GET["idop"]) ? $_GET["idop"] : null; 
+$opInfo = null;
+$opPlanos = null;
 
 if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
-    // Obtener opciones para IDPLANO desde la base de datos
-    $planos = $conn->query("SELECT IDPLANO, NOMBRE_PLANO FROM PLANOS");
+    
+    // Llamamos las áreas de la base de datos
+    $produccionRegistros = $conn->query("SELECT OP.IDOP, PLANOS.PLANNUMERO, PRODUCCION.*
+    FROM OP
+    INNER JOIN PLANOS ON OP.IDOP = PLANOS.IDOP
+    INNER JOIN PRODUCCION ON PLANOS.IDPLANO = PRODUCCION.IDPLANO;
+    ");
+    $produccionRegistro = $produccionRegistros->fetch(PDO::FETCH_ASSOC);
 
-    // Obtener opciones para IDAREA desde la base de datos
-    $areas = $conn->query("SELECT IDAREA, AREDETALLE FROM AREAS");
-
+    // Verificamos si se encontró un registro
+    if ($produccionRegistro) {
+        // Obtenemos el ID de producción
+        $idProduccion = $produccionRegistro["IDPRODUCION"];
+        
+        // Consultamos las áreas asociadas a la producción
+        $areasAsociadasStatement = $conn->prepare("SELECT * FROM AREAS where IDPRODUCION = :idProduccion");
+        $areasAsociadasStatement->execute([":idProduccion" => $idProduccion]);
+        
+        // Obtenemos las áreas asociadas
+        $areasAsociadas = $areasAsociadasStatement->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // Si no se encontró ningún registro de producción, asignamos un array vacío
+        $areasAsociadas = [];
+    }
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
-        if (empty($_POST["idplano"]) || empty($_POST["idarea"]) || empty($_POST["observaciones"]) || empty($_POST["porcentaje"]) || empty($_POST["fecha"])) {
+        if (empty($_POST["idop"] )) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
         } else {
-            // Verificamos si ya existe un registro para la producción actual
-            $existingStatement = $conn->prepare("SELECT IDPRODUCION FROM PRODUCCION WHERE IDPRODUCION = :id");
-            $existingStatement->execute([":id" => $id]);
-            $existingProduccion = $existingStatement->fetch(PDO::FETCH_ASSOC);
-        
-            if ($existingProduccion) {
-                // Si existe, actualizamos el registro existente
-                $statement = $conn->prepare("UPDATE PRODUCCION SET IDPLANO = :idplano, IDAREA = :idarea, PROOBSERVACIONES = :observaciones, 
-                                            PROPORCENTAJE = :porcentaje, PROFECHA = :fecha WHERE IDPRODUCION = :id");
-                $statement->execute([
-                    ":id" => $id,
+            // Obtener la información de la OP y sus planos
+            $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop");
+            $opInfoStatement->bindParam(":idop", $_POST["idop"]);
+            $opInfoStatement->execute();
+            $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
+            
+
+            // Obtener los planos asociados a la OP
+            $opPlanosStatement = $conn->prepare("SELECT * FROM PLANOS WHERE IDOP = :idop");
+            $opPlanosStatement->bindParam(":idop", $_POST["idop"]);
+            $opPlanosStatement->execute();
+            $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (isset($_POST["idplano"]) && isset($_POST["proobservaciones"])) {
+                // Insertar datos de producción en la tabla PRODUCCION
+                $insertStatement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, PROOBSERVACIONES, PROFECHA) VALUES (:idplano, :proobservaciones, CURRENT_TIMESTAMP)");
+                $insertStatement->execute([
                     ":idplano" => $_POST["idplano"],
-                    ":idarea" => $_POST["idarea"],
-                    ":observaciones" => $_POST["observaciones"],
-                    ":porcentaje" => $_POST["porcentaje"],
-                    ":fecha" => $_POST["fecha"],
+                    ":proobservaciones" => $_POST["proobservaciones"]
                 ]);
-                // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'PRODUCCION', $id);
-            } else {
-                // Si no existe, insertamos un nuevo registro
-                $statement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, IDAREA, PROOBSERVACIONES, PROPORCENTAJE, PROFECHA) 
-                                              VALUES (:idplano, :idarea, :observaciones, :porcentaje, :fecha)");
-        
-                $statement->execute([
-                    ":idplano" => $_POST["idplano"],
-                    ":idarea" => $_POST["idarea"],
-                    ":observaciones" => $_POST["observaciones"],
-                    ":porcentaje" => $_POST["porcentaje"],
-                    ":fecha" => $_POST["fecha"],
-                ]);
-                // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PRODUCCION', $id);
+
             }
-        
-            // Redirigimos a produccion.php
-            header("Location: produccion.php");
-            return;
+
+             if (isset($_POST["idplano"]) && isset($_POST["proobservaciones"])) {
+            if (isset($_POST["idproduccion"])) {
+                // Actualizar datos de producción en la tabla PRODUCCION
+                $updateStatement = $conn->prepare("UPDATE PRODUCCION SET IDPLANO = :idplano, PROOBSERVACIONES = :proobservaciones WHERE IDPRODUCION = :idproduccion");
+                $updateStatement->execute([
+                    ":idplano" => $_POST["idplano"],
+                    ":proobservaciones" => $_POST["proobservaciones"],
+                    ":idproduccion" => $_POST["idproduccion"]
+                ]);
+            } else {
+                // Insertar datos de producción en la tabla PRODUCCION
+                $insertStatement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, PROOBSERVACIONES, PROFECHA) VALUES (:idplano, :proobservaciones, CURRENT_TIMESTAMP)");
+                $insertStatement->execute([
+                    ":idplano" => $_POST["idplano"],
+                    ":proobservaciones" => $_POST["proobservaciones"]
+                ]);
+            }
+        }
+
+            // Registramos el movimiento en el kardex
+            $lastInsertId = $conn->lastInsertId();
+            registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PRODUCCION', $lastInsertId);
+
+            // Obtenemos la cantidad de áreas de trabajo seleccionadas
+            $areasSeleccionadas = isset($_POST["areatrabajo"]) ? $_POST["areatrabajo"] : [];
+            if (!empty($areasSeleccionadas)) {
+                foreach ($areasSeleccionadas as $area) {
+                    // Insertar áreas de trabajo seleccionadas en la tabla AREAS
+                    $insertStatement = $conn->prepare("INSERT INTO AREAS (IDPRODUCION, AREDETALLE) VALUES (:idproduccion, :aredetalle)");
+                    $insertStatement->execute([
+                        ":idproduccion" => $lastInsertId,
+                        ":aredetalle" => $area
+                    ]);
+                }
+            }
         }
     }
-
-    // Llamamos las producciones de la base de datos
-    $producciones = $conn->query("SELECT * FROM PRODUCCION");
-
-    // Obtenemos la información de la producción a editar
-    $statement = $conn->prepare("SELECT * FROM PRODUCCION WHERE IDPRODUCION = :id");
-    $statement->bindParam(":id", $id);
-    $statement->execute();
-    $produccionEditar = $statement->fetch(PDO::FETCH_ASSOC);
-
-} else {
-    header("Location: ./index.php");
-    return;
 }
+
 ?>
 
 <?php require "./partials/header.php"; ?>
@@ -89,168 +116,193 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 <section class="section">
     <div class="row">
         <div class="">
-            <?php if (empty($id)) : ?>
-                <!-- Código para agregar una nueva producción -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Registro de Producción</h5>
+            <!-- Código para buscar OP por IDOP -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Buscar OP por IDOP</h5>
 
-                        <!-- si hay un error mandar un danger -->
-                        <?php if ($error): ?> 
-                            <p class="text-danger">
-                                <?= $error ?>
-                            </p>
-                        <?php endif ?>
-                        <form class="row g-3" method="POST" action="produccion.php">
-                            <div class="col-md-6">
-                                <label for="idplano" class="form-label">ID Plano</label>
-                                <select class="form-select" id="idplano" name="idplano">
-                                    <?php foreach ($planos as $plano): ?>
-                                        <option value="<?= $plano["IDPLANO"] ?>"><?= $plano["NOMBRE_PLANO"] ?></option>
-                                    <?php endforeach ?>
-                                </select>
+                    <!-- si hay un error mandar un danger -->
+                    <?php if ($error): ?> 
+                        <p class="text-danger">
+                            <?= $error ?>
+                        </p>
+                    <?php endif ?>
+                    <form class="row g-3" method="POST" action="produccion.php">
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="idop" name="idop" placeholder="IDOP">
+                                <label for="idop">IDOP</label>
                             </div>
-                            <div class="col-md-6">
-                                <label for="idarea" class="form-label">ID Área</label>
-                                <select class="form-select" id="idarea" name="idarea">
-                                    <?php foreach ($areas as $area): ?>
-                                        <option value="<?= $area["IDAREA"] ?>"><?= $area["AREDETALLE"] ?></option>
-                                    <?php endforeach ?>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-floating mb-3">
-                                    <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Observaciones"></textarea>
-                                    <label for="observaciones">Observaciones</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="number" class="form-control" id="porcentaje" name="porcentaje" placeholder="Porcentaje">
-                                    <label for="porcentaje">Porcentaje</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="datetime-local" class="form-control" id="fecha" name="fecha">
-                                    <label for="fecha">Fecha</label>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Buscar</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
                 </div>
-            <?php else : ?>
-                <!-- Código para editar una producción existente -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Editar Producción</h5>
+            </div>
 
-                        <!-- si hay un error mandar un danger -->
-                        <?php if ($error): ?> 
-                            <p class="text-danger">
-                                <?= $error ?>
-                            </p>
-                        <?php endif ?>
-                        <form class="row g-3" method="POST" action="produccion.php?id=<?= $id ?>">
-                            <div class="col-md-6">
-                                <label for="idplano" class="form-label">ID Plano</label>
-                                <select class="form-select" id="idplano" name="idplano">
-                                    <?php foreach ($planos as $plano): ?>
-                                        <option value="<?= $plano["IDPLANO"] ?>" <?= ($plano["IDPLANO"] == $produccionEditar["IDPLANO"]) ? "selected" : "" ?>><?= $plano["NOMBRE_PLANO"] ?></option>
-                                    <?php endforeach ?>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="idarea" class="form-label">ID Área</label>
-                                <select class="form-select" id="idarea" name="idarea">
-                                    <?php foreach ($areas as $area): ?>
-                                        <option value="<?= $area["IDAREA"] ?>" <?= ($area["IDAREA"] == $produccionEditar["IDAREA"]) ? "selected" : "" ?>><?= $area["AREDETALLE"] ?></option>
-                                    <?php endforeach ?>
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-floating mb-3">
-                                    <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Observaciones"><?= $produccionEditar["PROOBSERVACIONES"] ?></textarea>
-                                    <label for="observaciones">Observaciones</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="number" class="form-control" id="porcentaje" name="porcentaje" placeholder="Porcentaje" value="<?= $produccionEditar["PROPORCENTAJE"] ?>">
-                                    <label for="porcentaje">Porcentaje</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="datetime-local" class="form-control" id="fecha" name="fecha" value="<?= date("Y-m-d\TH:i", strtotime($produccionEditar["PROFECHA"])) ?>">
-                                    <label for="fecha">Fecha</label>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Actualizar</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            <?php endif ?>
+            <!-- Mostrar información de la OP y sus planos -->
+            <?php if ($opInfo): ?>
 
-            <section class="section">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Producciones</h5>
-                                <!-- si el array asociativo $producciones no tiene nada dentro, entonces imprimir el siguiente div -->
-                                <?php if ($producciones->rowCount() == 0): ?>
-                                    <div class= "col-md-4 mx-auto mb-3">
-                                        <div class= "card card-body text-center">
-                                            <p>No hay Producciones aún.</p>
-                                        </div>
+                <?php if ($opPlanos): ?>
+                    <section class="section">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Datos de la OP</h5>
+                                        <p>IDOP: <?= $opInfo["IDOP"] ?></p>
+                                        <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
+                                        <hr>
+                                        <h5 class="card-title">Planos de la OP</h5>
+                                        <!-- si el array asociativo $opPlanos no tiene nada dentro, entonces imprimir el siguiente div -->
+                                        <?php if (empty($opPlanos)): ?>
+                                            <div class="col-md-4 mx-auto mb-3">
+                                                <div class="card card-body text-center">
+                                                    <p>No hay planos asociados a esta OP.</p>
+                                                </div>
+                                            </div>
+                                        <?php else: ?>
+                                            <!-- Formulario para ingresar datos de producción -->
+                                            <form class="row g-3" method="POST" action="produccion.php">
+                                                <input type="hidden" name="idproduccion" value="<?= $produccionRegistro["IDPRODUCION"] ?>">
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3">
+                                                        <select class="form-select" id="idplano" name="idplano">
+                                                            <?php foreach ($opPlanos as $opPlano): ?>
+                                                                <option value="<?= $opPlano["IDPLANO"] ?>"><?= $opPlano["PLANNUMERO"] ?></option>
+                                                            <?php endforeach ?>
+                                                        </select>
+                                                        <label for="idplano">Seleccionar Plano</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3">
+                                                        <input type="text" class="form-control" id="proobservaciones" name="proobservaciones" placeholder="Observaciones">
+                                                        <label for="proobservaciones">Observaciones</label>
+                                                    </div>
+                                                </div>
+
+                                                <h5 class="card-title">Vincular Áreas</h5>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-floating mb-3">
+                                                        <?php
+                                                        // Definir las áreas de trabajo
+                                                        $areas = array(
+                                                            "Carpinteria",
+                                                            "ACM",
+                                                            "Pintura",
+                                                            "Acrilicos",
+                                                            "Maquinas",
+                                                            "Metal Mecánica"
+                                                        );
+                                                        foreach ($areas as $index => $area) {
+                                                            if ($area != "Diseno Grafico") {
+                                                                echo "<div class='form-check'>";
+                                                                echo "<input class='form-check-input' type='checkbox' name='areatrabajo[]' value='" . ($index + 1) . "' id='areatrabajo" . ($index + 1) . "'>";
+                                                                echo "<label class='form-check-label' for='areatrabajo" . ($index + 1) . "'>" . $area . "</label>";
+                                                                echo "</div>";
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                                    <button type="reset" class="btn btn-secondary">Limpiar Campos</button>
+                                                </div>
+                                            </form>
+                                        <?php endif ?>
                                     </div>
-                                <?php else: ?>
-                                    <!-- Table with stripped rows -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                <?php endif ?>
+            <?php endif ?>
+                
+            <div class="card">
+                <div class="card-body">
+                    <section class="section">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h2>Registros de Producción</h2>
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
-                                                <th>IDPLANO</th>
-                                                <th>IDAREA</th>
-                                                <th>OBSERVACIONES</th>
-                                                <th>PORCENTAJE</th>
-                                                <th>FECHA</th>
+                                                <th scope="col">#</th>
+                                                <th scope="col">ID OP</th>
+                                                <th scope="col">ID Plano</th>
+                                                <th scope="col">Observaciones</th>
+                                                <th scope="col">Fecha</th>
+                                                <th scope="col">Áreas Asociadas</th>
                                                 <th></th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($producciones as $produccion): ?>
-                                                <tr>
-                                                    <th><?= $produccion["IDPLANO"] ?></th>
-                                                    <th><?= $produccion["IDAREA"] ?></th>
-                                                    <th><?= $produccion["PROOBSERVACIONES"] ?></th>
-                                                    <th><?= $produccion["PROPORCENTAJE"] ?></th>
-                                                    <th><?= date("d-m-Y H:i", strtotime($produccion["PROFECHA"])) ?></th>
-                                                    <td>
-                                                        <a href="produccion.php?id=<?= $produccion["IDPRODUCION"] ?>" class="btn btn-secondary mb-2">Editar</a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="delete/produccion.php?id=<?= $produccion["IDPRODUCION"] ?>" class="btn btn-danger mb-2">Eliminar</a>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach ?>
+                                        <?php foreach ($produccionRegistros as $registro): ?>
+                                            <tr>
+                                                <th scope="row"><?= $registro["IDPRODUCION"] ?></th>
+                                                <td><?= $registro["IDOP"] ?></td>
+                                                <td><?= $registro["IDPLANO"] ?></td>
+                                                <td><?= $registro["PROOBSERVACIONES"] ?></td>
+                                                <td><?= $registro["PROFECHA"] ?></td>
+                                                <td>
+                                                    <?php
+                                                    // Consultamos las áreas asociadas para el registro actual
+                                                    $idProduccion = $registro["IDPRODUCION"];
+                                                    $areasAsociadasStatement = $conn->prepare("SELECT AREDETALLE FROM AREAS WHERE IDPRODUCION = :idProduccion");
+                                                    $areasAsociadasStatement->execute([":idProduccion" => $idProduccion]);
+                                                    $areasAsociadas = $areasAsociadasStatement->fetchAll(PDO::FETCH_ASSOC);
+
+                                                    // Mostramos las áreas asociadas
+                                                    foreach ($areasAsociadas as $area) {
+                                                        switch ($area["AREDETALLE"]) {
+                                                            case 1:
+                                                                echo "Carpinteria<br>";
+                                                                break;
+                                                            case 2:
+                                                                echo "ACM<br>";
+                                                                break;
+                                                            case 3:
+                                                                echo "Pintura<br>";
+                                                                break;
+                                                            case 4:
+                                                                echo "Acrilicos y Acabados<br>";
+                                                                break;
+                                                            case 5:
+                                                                echo "Maquinas<br>";
+                                                                break;
+                                                            case 6:
+                                                                echo "Impresiones<br>";
+                                                                break;
+                                                            default:
+                                                                echo "Área no especificada<br>";
+                                                                break;
+                                                        }
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <a href="produccionEdit.php?id=<?= $registro["IDPRODUCION"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+
                                         </tbody>
                                     </table>
-                                <?php endif ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
-            </section>
-
+            </div>
         </div>
     </div>
 </section>
