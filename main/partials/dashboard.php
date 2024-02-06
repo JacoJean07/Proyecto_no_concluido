@@ -91,6 +91,19 @@
       </li>
     </ul>
   </li><!-- End Charts Nav -->
+  <li class="nav-item">
+    <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+      <i class="bi bi-truck"></i><span>Logistica</span><i class="bi bi-chevron-down ms-auto"></i>
+    </a>
+      <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="logistica.php">
+            <i class="bi bi-circle"></i><span>Registro Logistica</span>
+          </a>
+        </li>
+
+      </ul>
+  </li>
 
   <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
   <?php elseif($_SESSION["user"]["ROL"] == 2) : ?>
