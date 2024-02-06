@@ -14,6 +14,8 @@ $state = "Regitro Creado";
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $logisticaEdiatar = null;
 if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
+    $logistica = $conn->query("SELECT * from LOGISTICA");
+    $logi = $logistica->fetch(PDO::FETCH_ASSOC);
     //LLAMR LOS DATOS DELA ABSE4D E DATOS Y ESPECIFICAR QUE SEAN LOS QUE SE SOLICTA
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if(empty($_POST["op"])||empty($_POST["area"])||empty($_POST["observacion"])){
