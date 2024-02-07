@@ -25,6 +25,7 @@
   <script src="assets/js/usuarios.js"></script>
   <script src="assets/js/op.js"></script>
   <script src="assets/js/mostrarpass.js"></script>
+  <script src="assets/js/logistica.js"></script>
 
   
 

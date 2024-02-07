@@ -39,5 +39,22 @@ if(isset($_GET['nombres'])){
     }
 }
 
+if(isset($_GET['op'])){
+    $op = $_GET['op'];
 
+    //REALIZAR LA CONSULTA EN LA BASE DE DATOS PARA OBTENER EL CLIENTE DE LA OP
+    $statement = $conn->prepare("SELECT OPCLIENTE FROM OP WHERE IDOP = :op");
+    $statement->bindParam(":op", $op);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+    //VERIFICAR SI LAC ONSULTA FUE EXITOSA ANTES DE ACCEDER A LOS VALORES DEL ARRAY
+    if($result !== false){
+        //DEVUELVE EL CLIENTE DEL TRABAJADOR COMO RESPUESTA
+        echo $result['OPCLIENTE'];
+    }else{
+        //MANEJAR EL CASO EN QUE LA CONSULTA NO FUE EXITOSAMENTE
+        echo "NO SE ENCONTRO EL CLIENTE CON LA OP INGRESADA";
+    }
+}
 ?>

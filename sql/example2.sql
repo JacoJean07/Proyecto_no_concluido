@@ -199,6 +199,7 @@ create table LOGISTICA
    LOGHORAFINAL         datetime,
    LOGOBSERVACIONES     varchar(255),
    LOGCEDULA            char(10) not null,
+   LOGESTADO            char(25),
    primary key (IDLOGISTICA)
 );
 
