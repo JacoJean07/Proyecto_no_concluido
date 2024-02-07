@@ -43,42 +43,29 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     }
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Validamos que no se manden datos vacíos
-        if (empty($_POST["idop"] )) {
-            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
-        } else {
-            // Obtener la información de la OP y sus planos
-            $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop");
-            $opInfoStatement->bindParam(":idop", $_POST["idop"]);
-            $opInfoStatement->execute();
-            $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
+        
+        
+        // Obtener la información de la OP y sus planos
+        $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop");
+        $opInfoStatement->bindParam(":idop", $_POST["idop"]);
+        $opInfoStatement->execute();
+        $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
+        
+
+        // Obtener los planos asociados a la OP
+        $opPlanosStatement = $conn->prepare("SELECT * FROM PLANOS WHERE IDOP = :idop");
+        $opPlanosStatement->bindParam(":idop", $_POST["idop"]);
+        $opPlanosStatement->execute();
+        $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (isset($_POST["idplano"])) {
+            // Verificar si ya existe un registro con el mismo IDPLANO
+            $existingRecordStatement = $conn->prepare("SELECT COUNT(*) AS count FROM PRODUCCION WHERE IDPLANO = :idplano");
+            $existingRecordStatement->execute([":idplano" => $_POST["idplano"]]);
+            $existingRecord = $existingRecordStatement->fetch(PDO::FETCH_ASSOC);
             
-
-            // Obtener los planos asociados a la OP
-            $opPlanosStatement = $conn->prepare("SELECT * FROM PLANOS WHERE IDOP = :idop");
-            $opPlanosStatement->bindParam(":idop", $_POST["idop"]);
-            $opPlanosStatement->execute();
-            $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
-            
-            if (isset($_POST["idplano"]) && isset($_POST["proobservaciones"])) {
-                // Insertar datos de producción en la tabla PRODUCCION
-                $insertStatement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, PROOBSERVACIONES, PROFECHA) VALUES (:idplano, :proobservaciones, CURRENT_TIMESTAMP)");
-                $insertStatement->execute([
-                    ":idplano" => $_POST["idplano"],
-                    ":proobservaciones" => $_POST["proobservaciones"]
-                ]);
-
-            }
-
-             if (isset($_POST["idplano"]) && isset($_POST["proobservaciones"])) {
-            if (isset($_POST["idproduccion"])) {
-                // Actualizar datos de producción en la tabla PRODUCCION
-                $updateStatement = $conn->prepare("UPDATE PRODUCCION SET IDPLANO = :idplano, PROOBSERVACIONES = :proobservaciones WHERE IDPRODUCION = :idproduccion");
-                $updateStatement->execute([
-                    ":idplano" => $_POST["idplano"],
-                    ":proobservaciones" => $_POST["proobservaciones"],
-                    ":idproduccion" => $_POST["idproduccion"]
-                ]);
+            if ($existingRecord["count"] > 0) {
+                $error = "El registro ya existe para el Plano " . $_POST["idplano"] . " de la OP " . $_POST["IDOP"] . " proporcionado. EDITELO O REVISE LA INFORMACION";
             } else {
                 // Insertar datos de producción en la tabla PRODUCCION
                 $insertStatement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, PROOBSERVACIONES, PROFECHA) VALUES (:idplano, :proobservaciones, CURRENT_TIMESTAMP)");
@@ -86,26 +73,28 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":idplano" => $_POST["idplano"],
                     ":proobservaciones" => $_POST["proobservaciones"]
                 ]);
+                // Registramos el movimiento en el kardex
+                $lastInsertId = $conn->lastInsertId();
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PRODUCCION', $lastInsertId);
+                
+                // Obtenemos la cantidad de áreas de trabajo seleccionadas
+                $areasSeleccionadas = isset($_POST["areatrabajo"]) ? $_POST["areatrabajo"] : [];
+                if (!empty($areasSeleccionadas)) {
+                    foreach ($areasSeleccionadas as $area) {
+                        // Insertar áreas de trabajo seleccionadas en la tabla AREAS
+                        
+                        $insertStatement = $conn->prepare("INSERT INTO AREAS (IDPRODUCION, AREDETALLE) VALUES (:idproduccion, :aredetalle)");
+                        $insertStatement->execute([
+                            ":idproduccion" => $lastInsertId,
+                            ":aredetalle" => $area
+                        ]);
+                    }
+                }  
             }
         }
 
-            // Registramos el movimiento en el kardex
-            $lastInsertId = $conn->lastInsertId();
-            registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PRODUCCION', $lastInsertId);
-
-            // Obtenemos la cantidad de áreas de trabajo seleccionadas
-            $areasSeleccionadas = isset($_POST["areatrabajo"]) ? $_POST["areatrabajo"] : [];
-            if (!empty($areasSeleccionadas)) {
-                foreach ($areasSeleccionadas as $area) {
-                    // Insertar áreas de trabajo seleccionadas en la tabla AREAS
-                    $insertStatement = $conn->prepare("INSERT INTO AREAS (IDPRODUCION, AREDETALLE) VALUES (:idproduccion, :aredetalle)");
-                    $insertStatement->execute([
-                        ":idproduccion" => $lastInsertId,
-                        ":aredetalle" => $area
-                    ]);
-                }
-            }
-        }
+         
+        
     }
 }
 
@@ -166,6 +155,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                         <?php else: ?>
                                             <!-- Formulario para ingresar datos de producción -->
                                             <form class="row g-3" method="POST" action="produccion.php">
+                                                <input type="hidden" value="<?= $opInfo["IDOP"]?>"  name="IDOP">
                                                 <input type="hidden" name="idproduccion" value="<?= $produccionRegistro["IDPRODUCION"] ?>">
                                                 <div class="col-md-6">
                                                     <div class="form-floating mb-3">
@@ -211,7 +201,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                 </div>
 
                                                 <div class="text-center">
-                                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                                    <button type="submit" class="btn btn-primary">GUARDAR</button>
                                                     <button type="reset" class="btn btn-secondary">Limpiar Campos</button>
                                                 </div>
                                             </form>
@@ -230,13 +220,13 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h2>Registros de Producción</h2>
+                                    <h5 class="card-title">Registros de Producción</h5>
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">ID OP</th>
-                                                <th scope="col">ID Plano</th>
+                                                <th scope="col">Numero de Plano</th>
                                                 <th scope="col">Observaciones</th>
                                                 <th scope="col">Fecha</th>
                                                 <th scope="col">Áreas Asociadas</th>
@@ -249,7 +239,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                             <tr>
                                                 <th scope="row"><?= $registro["IDPRODUCION"] ?></th>
                                                 <td><?= $registro["IDOP"] ?></td>
-                                                <td><?= $registro["IDPLANO"] ?></td>
+                                                <td><?= $registro["PLANNUMERO"] ?></td>
                                                 <td><?= $registro["PROOBSERVACIONES"] ?></td>
                                                 <td><?= $registro["PROFECHA"] ?></td>
                                                 <td>
@@ -273,7 +263,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                 echo "Pintura<br>";
                                                                 break;
                                                             case 4:
-                                                                echo "Acrilicos y Acabados<br>";
+                                                                echo "Acrilicos<br>";
                                                                 break;
                                                             case 5:
                                                                 echo "Maquinas<br>";

@@ -17,16 +17,25 @@ $opEditar=null;
 if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
     //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     $op = $conn->query("SELECT OP.*, 
-                          CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
-                          VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS
-                   FROM OP
-                   LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
-                   LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
-                   WHERE OP.OPESTADO = 'OP CREADA'");
+                        CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
+                        VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS,
+                        COUNT(PLANOS.IDPLANO) AS TOTAL_PLANOS
+                    FROM OP
+                    LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
+                    LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
+                    LEFT JOIN PLANOS ON OP.IDOP = PLANOS.IDOP
+                    WHERE OP.OPESTADO = 'OP CREADA'
+                    GROUP BY OP.IDOP");
+
     // Obtener opciones para IDAREA desde la base de datos
     $lugarproduccion = $conn->query("SELECT * FROM LUGARPRODUCCION");
     
     $personas=$conn->query("SELECT*FROM PERSONAS");
+    // Calculamos el número total de planos asociados a la OP actual
+    $planoCountStatement = $conn->prepare("SELECT COUNT(*) AS total_planos FROM PLANOS WHERE IDOP = :id");
+    $planoCountStatement->execute([":id" => $id]);
+    $planoCountResult = $planoCountStatement->fetch(PDO::FETCH_ASSOC);
+    $totalPlanos = $planoCountResult['total_planos'];
     //VERFIFICAMOS EL METODOD QUE SE USA EL FORM CON UN IF 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
@@ -373,7 +382,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                             <tr>
                                                 <th>OP</th>
                                                 <th>Diseñador</th>
-                                                <th>Lugar de Produccion</th>
+                                                <th>PlanosTotales</th>
                                                 <th>Cliente</th>
                                                 <th>Detalle</th>
                                                 <th>Registro</th>
@@ -392,15 +401,16 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                 <tr>
                                                     <th><?= $op["IDOP"] ?></th>
                                                     <th><?= $op["CEDULA_NOMBRES"] . " " . $op["CEDULA_APELLIDOS"] ?></th>
-                                                    <th><?= $op["IDLUGAR"] ?></th>
+                                                    <th><?= $op["TOTAL_PLANOS"] ?></th>
                                                     <td><?= $op["OPCLIENTE"] ?></td>
                                                     <td><?= $op["OPDETALLE"] ?></td>
                                                     <td><?= $op["OPREGISTRO"] ?></td>
                                                     <td>
-                                                        <?php if ($op["OPNOTIFICACIONCORREO"] == "0000-00-00 00:00:00") : ?>
-                                                            <a href="./validaciones/notiOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Notificar</a>
-                                                        <?php endif ?>
-                                                    </td>
+                                                    <?php if ($op["OPNOTIFICACIONCORREO"] == "0000-00-00 00:00:00" && $op["TOTAL_PLANOS"] != 0) : ?>
+                                                        <a href="./validaciones/notiOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Notificar</a>
+                                                    <?php else : ?>
+                                                        <a href="#" class="btn btn-secondary mb-2">Ingrese planos</a>
+                                                    <?php endif ?>
                                                     </td>
                                                     <td><?= $op["VENDEDOR_NOMBRES"] . " " . $op["VENDEDOR_APELLIDOS"] ?></td>
                                                     <td><?= $op["OPDIRECCIONLOCAL"] ?></td>
