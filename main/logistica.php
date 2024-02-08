@@ -10,6 +10,7 @@ if (!isset($_SESSION["user"])) {
 }
 //declaramos la variable error que nos ayudara a mostrar errores, etc.
 $error = null;
+$final ="0000-00-00 00:00:00";
 $state = "REGISTRO SIN FINALIZAR";
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $logisticaEdiatar = null;
@@ -21,15 +22,38 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                            JOIN PERSONAS AS CEDULA ON LOGI.LOGCEDULA = CEDULA.CEDULA 
                            LEFT JOIN PLANOS   ON LOGI.IDPLANO= PLANOS.IDPLANO
                            WHERE LOGI.LOGESTADO ='REGISTRO SIN FINALIZAR'");
-   // $logi = $logistica->fetch(PDO::FETCH_ASSOC);
+   
     //OBTENER LOS DATOS DE LA OP
     $op=$conn->query("SELECT*FROM OP");
     //LLAMR LOS DATOS DELA ABSE4D E DATOS Y ESPECIFICAR QUE SEAN LOS QUE SE SOLICTA
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        if(empty($_POST["op"])||empty($_POST["area"])||empty($_POST["observacion"])||empty($_POST["plano"])){
-            
+        if(empty($_POST["op"])||empty($_POST["area"])||empty($_POST["plano"])){
+            $error="POR FAVOR LLENAR TODOS LOS CAMPOS.";  
+        }elseif (!preg_match('/^[0-9]+$/',$_POST["op"])){ 
+            $error="La OP solo admite solo numeros.";
         }else{
+            //VERIFICAR SI YA EXITE UN REGISTRO DE LA LOGISTICA ACTUAL
+            $existingStament=$conn->prepare("SELECT*FROM LOGISTICA WHERE IDLOGISTICA=:id");
+            $existingStament->execute([":id"=> $id]);
+            $esiteRegistro=$existingStament->fetch(PDO::FETCH_ASSOC);
+            if($esiteRegistro){
 
+            }else{
+                //SI NOY REGSITRO INGRESO LOS DATOS
+                $stament = $conn->prepare("INSERT INTO LOGISTICA (IDPLANO, LOGAREATRABAJO,LOGHORAFINAL,LOGOBSERVACIONES,LOGCEDULA,LOGESTADO)
+                VALUES(:plano, :larea, :horafinal, :observaciones, :cedula, :estado)");
+                $stament->execute([
+                    ":plano" => $_POST["plano"],
+                    ":larea" => $_POST["area"],
+                    ":horafinal" => $final,
+                    ":observaciones" => $_POST["observaciones"],
+                    ":cedula" => $_SESSION["user"]["CEDULA"],
+                    ":estado" => $state
+                ]);
+            }
+              //REDIRIGIREMOS AHOME.PHP
+              header("Location: logistica.php");
+              return;
         }
     }
 }else{
@@ -105,14 +129,14 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                                      </div>
                                      <div class="col-mb-6">
                                         <div class="form-floating">
-                                            <select class="form-select" id="plano" aria-label="Stat e">
+                                            <select class="form-select" id="plano" name="plano" aria-label="Stat e">
                                                 <option selected>Selecione el numero de plano</option>
                                             </select>
                                         </div>
                                      </div>
                                     <div class="col-mb-6">
                                         <div class="form-floating ">
-                                            <select class="form-select" id="area" aria-label="Stat e">
+                                            <select class="form-select" id="area" name="area" aria-label="Stat e">
                                                 <option selected>Are de Trabajo</option>
                                                 <option value="1">Carpinteria</option>
                                                 <option value="2">ACM</option>

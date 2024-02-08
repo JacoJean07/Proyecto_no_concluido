@@ -195,7 +195,7 @@ create table LOGISTICA
    IDLOGISTICA          int AUTO_INCREMENT not null,
    IDPLANO              int,
    LOGAREATRABAJO       int not null,
-   LOGHORAINCIO         datetime not null,
+   LOGHORAINCIO         DATETIME DEFAULT CURRENT_TIMESTAMP,
    LOGHORAFINAL         datetime,
    LOGOBSERVACIONES     varchar(255),
    LOGCEDULA            char(10) not null,

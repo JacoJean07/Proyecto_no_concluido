@@ -99,10 +99,15 @@
       <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
           <a href="logistica.php">
-            <i class="bi bi-circle"></i><span>Registro Logistica</span>
+            <i class="bi bi-circle"></i><span>Formulario Logistica</span>
           </a>
         </li>
-
+        <li>
+          <a href="registroFormulario.php">
+            <i class="bi bi-circle"></i><span>Registro de Formularios  de Logistica</span>
+          </a>
+        </li>
+        
       </ul>
   </li>
 
