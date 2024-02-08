@@ -121,7 +121,10 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             <div class="card accordion" id="accordionExample">
                 <div class="card-body accordion-item">
                     <?php if ($id): ?>
-                        <h5 class="card-title">Editar Trabajador</h5>
+                        <h5 class="card-title">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Editar Persona
+                            </button></h5>
                     <?php else: ?>
                         <h5 class="card-title accordion-header" id="headingOne">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">

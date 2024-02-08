@@ -213,12 +213,6 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-floating datetimepicker">
-                                            <input type="date" class="form-control" id="notificacion" name="notificacion" placeholder="Notificacion">
-                                            <label for="notificacion">Notificacion Correo</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion">
                                             <label for="direccion">Direccion del Local</label>
@@ -409,7 +403,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                     <?php if ($op["OPNOTIFICACIONCORREO"] == "0000-00-00 00:00:00" && $op["TOTAL_PLANOS"] != 0) : ?>
                                                         <a href="./validaciones/notiOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Notificar</a>
                                                     <?php else : ?>
-                                                        <a href="#" class="btn btn-secondary mb-2">Ingrese planos</a>
+                                                        <a href="planosAdd.php?id=<?= $op["IDOP"]?>" class="btn btn-secondary mb-2">Ingrese planos</a>
                                                     <?php endif ?>
                                                     </td>
                                                     <td><?= $op["VENDEDOR_NOMBRES"] . " " . $op["VENDEDOR_APELLIDOS"] ?></td>
