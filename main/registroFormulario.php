@@ -10,34 +10,209 @@ if (!isset($_SESSION["user"])) {
 }
 //declaramos la variable error que nos ayudara a mostrar errores, etc.
 $error = null;
-
+$sinFinalizar = "Sin Finalizar";
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 
 if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
-    
+    //CONSULTA DE L FORMULARIOS SIN TERMIANR
+    $logistica1 = $conn->query("SELECT LOGI.*, 
+    CEDULA.PERNOMBRES AS CEDULA_NOMBRES1, 
+    CEDULA.PERAPELLIDOS AS CEDULA_APELLDIOS1,
+    PLANOS.PLANNUMERO  AS IDPLANO1, 
+    PLANOS.IDOP AS IDOP1
+   FROM LOGISTICA AS LOGI
+   JOIN PERSONAS AS CEDULA ON LOGI.LOGCEDULA = CEDULA.CEDULA 
+   LEFT JOIN PLANOS   ON LOGI.IDPLANO = PLANOS.IDPLANO
+   
+   WHERE LOGI.LOGESTADO ='REGISTRO SIN FINALIZAR'");
+
+    //CONSULTADE  LOS REGISTRO COMPLETADOS
+    $logistica = $conn->query("SELECT LOGI.*, 
+                                CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLDIOS,
+                                  PLANOS.PLANNUMERO  AS IDPLANO  , PLANOS.IDOP AS IDOP 
+                                FROM LOGISTICA AS LOGI
+                                JOIN PERSONAS AS CEDULA ON LOGI.LOGCEDULA = CEDULA.CEDULA 
+                                LEFT JOIN PLANOS   ON LOGI.IDPLANO= PLANOS.IDPLANO
+                                 
+                                WHERE LOGI.LOGESTADO ='FINALIZADO EL REGISTRO'");
+
+    //OBTENER LOS DATOS DE LA OP
+    $op = $conn->query("SELECT*FROM OP");
 } else {
     header("Location:./index.php");
     return;
-}   
+}
 ?>
 <?php require "./partials/header.php"; ?>
 <?php require "./partials/dashboard.php"; ?>
+<!-- Agrega el script jQuery y el script AJAX aquí -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function(){
+        var timeout;
+
+        $('#op').on('input', function(){
+            var opValue = $(this).val();
+
+            // Cancela la solicitud anterior si aún no se ha completado
+            clearTimeout(timeout);
+
+            // Espera 500ms después de que el usuario haya dejado de escribir
+            timeout = setTimeout(function(){
+                // Realizar la solicitud AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: 'buscar_planos.php',
+                    data: { op: opValue },
+                    success: function(response){
+                        // Actualizar las opciones del select
+                        $('#plano').html(response);
+                    }
+                });
+            }, 500);
+        });
+    });
+</script>
 
 <section class="section">
     <div class="row">
         <div class="">
-            <div class="card accordion" id="accordionExample">
-            <h5 class="card-title accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Actuakizar Registro de Formulario de cambioLogistica
-                </button>
-            </h5>
-            <?php if ($error) : ?>
-                <p class="text_danger">
-                    <?= $error ?>
-                </p>
-            
-            <?php endif ?>
+            <div class="card">
+                <h5 class="card-title">Tipos de Registros de los formularios</h5>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="sinFinalizar-tab" data-bs-toggle="tab" data-bs-target="#sinFinalizar" type="button" role="tab" aria-controls="sinFinalizar" aria-selected="true">Registros sin Finalizar</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="finalizado-tab" data-bs-toggle="tab" data-bs-target="#finalizado" type="button" role="tab" aria-controls="finalizar" aria-selected="false" tabindex="-1">Registros Finalizados</button>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2" id="myTabContent">
+                    <div class="tab-pane fade show active" id="sinFinalizar" role="tabpanel1" aria-labelledby="sinFinalizar-tab">
+                        <section class="section">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-header">
+                                                <h5 class="card-title"> Registros de los Formularios de Logistica sin Terminar </h5>
+                                            </div>
+                                            <table class="table datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Registro</th>
+                                                        <th>OP</th>
+                                                        <th>Plano</th>
+                                                        <th>Area de Trabajo</th>
+                                                        <th>Hora y Fecha de Registro</th>
+                                                        <th>Hora y Fecha del final del Trabajo</th>
+                                                        <th>Observaciones</th>
+                                                        <th>Persona que realizo el Registro</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach($logistica1 as $logistica1) : ?>
+                                                        <tr>
+                                                            <td><?= $logistica1["IDLOGISTICA"] ?></td>
+                                                            <td><?= $logistica1["IDOP1"] ?></td>
+                                                            <td><?= $logistica1["IDPLANO1"] ?></td>
+                                                            <td><?= $logistica1["LOGAREATRABAJO"] ?></td>
+                                                            <td><?= $logistica1["LOGHORAINCIO"] ?></td>
+                                                            <td><?= $sinFinalizar ?></td>
+                                                            <td><?= $logistica1["LOGOBSERVACIONES"] ?></td>
+                                                            <td><?= $logistica1["CEDULA_NOMBRES1"] ."" .$logistica1["CEDULA_APELLDIOS1"] ?></td>
+                                                            <td><?= $logistica1["LOGESTADO"] ?></td>
+                                                        
+                                                        </tr> 
+                                                    <?php endforeach ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+                    <div class="tab-pane fade" id="finalizado" role="tabpanel1" aria-labelledby="finalizado-tab">
+                        <section class="section">
+                            <div class="row">
+                                <div class="">
+                                    <?php if(empty($id)) : ?>
+
+                                    <?php else : ?>
+                                        <?php
+                                             $stament = $conn->prepare("SELECT");
+                                             $stament->bindParam(":id", $id);
+                                             $registroEditar = $stament->fetch(PDO::FETCH_ASSOC);
+                                        ?>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Editar Registro de Logistica</h5>
+                                                <?php if ($error) : ?>
+                                                    <p class="text-danger">
+                                                        <?=$error ?>
+                                                    </p>
+                                                <?php endif ?>
+                                                <form class="row g-3" method="POST" action="registroFormulario.php">
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    <?php endif ?>
+                                        <section class="section">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="card-header">
+                                                                <h5 class="card-title">Registro de los Formularios de Logistica Terminados</h5>
+                                                            </div>
+                                                            <table class="table datatable">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Registro</th>  
+                                                                        <th>OP</th> 
+                                                                        <th>Plano</th>
+                                                                        <th>Area de Trabajo</th>
+                                                                        <th>Hora y Fecha de Registro</th>
+                                                                        <th>Hora y Fecha del final del Trabajo</th>
+                                                                        <th>Observaciones</th>
+                                                                        <th>Persona que realizo el Registro</th>
+                                                                        <th>Estado</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php foreach($logistica as $logistica) : ?>
+                                                                        <tr>
+                                                                            <td><?= $logistica["IDLOGISTICA"] ?></td>
+                                                                            <td><?= $logistica["IDOP"] ?></td>
+                                                                            <td><?= $logistica["IDPLANO"] ?></td>
+                                                                            <td><?= $logistica["LOGAREATRABAJO"] ?></td>
+                                                                            <td><?= $logistica["LOGHORAINCIO"] ?></td>
+                                                                            <td><?= $logistica["LOGHORAFINAL"] ?></td>
+                                                                            <td><?= $logistica["LOGOBSERVACIONES"] ?></td>
+                                                                            <td><?= $logistica["CEDULA_NOMBRES"] ."" .$logistica["CEDULA_APELLDIOS"]?></td>
+                                                                            <td><?= $logistica["LOGESTADO"] ?></td>
+                                                                            <td>
+                                                                                <a href="registroFormulario.php?id=<?= $logistica["IDLOGISTICA"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php endforeach ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

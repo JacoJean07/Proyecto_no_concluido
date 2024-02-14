@@ -201,7 +201,7 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                                                 <th>Registro</th>
                                                 <th>OP</th>
                                                 <th>Are de Trabajo</th>
-                                                <th>Hora de Regsitro</th>
+                                                <th>Hora de Registro</th>
                                                 <th>Hora de Finalizacion</th>
                                                 <th>Observaciones</th>
                                                 <th>Persona del Registro</th>
