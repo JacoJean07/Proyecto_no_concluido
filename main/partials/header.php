@@ -116,7 +116,7 @@ date_default_timezone_set('America/Lima');
               <li class="notification-item">
                 <i class="bi bi-x-circle text-danger"></i>
                 <div>
-                  <h4>Contactarse con Produccion</h4>
+                  <h4>Contactarse con Producción</h4>
                   <p>Error en la OP # <?= $noti["IDOP"] ?> <br> Plano # <?= $noti["PLANNUMERO"] ?></p>
                   <p><?= $tiempoTranscurrido->format('%h hrs. %i mins. ago') ?></p>
                 </div>
@@ -165,7 +165,7 @@ date_default_timezone_set('America/Lima');
             <li>
               <a class="dropdown-item d-flex align-items-center" href="./logout.php">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
+                <span>Cerrar Sesión</span>
               </a>
             </li>
 

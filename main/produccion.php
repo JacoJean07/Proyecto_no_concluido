@@ -108,7 +108,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
             <!-- Código para buscar OP por IDOP -->
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Buscar OP por IDOP</h5>
+                    <h5 class="card-title">Buscar OP por Número de OP</h5>
 
                     <!-- si hay un error mandar un danger -->
                     <?php if ($error): ?> 
@@ -120,7 +120,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="idop" name="idop" placeholder="IDOP">
-                                <label for="idop">IDOP</label>
+                                <label for="idop">Número de OP</label>
                             </div>
                         </div>
                         <div class="text-center">
@@ -141,7 +141,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">Datos de la OP</h5>
-                                        <p>IDOP: <?= $opInfo["IDOP"] ?></p>
+                                        <p>Número de OP: <?= $opInfo["IDOP"] ?></p>
                                         <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
                                         <hr>
                                         <h5 class="card-title">Planos de la OP</h5>
@@ -181,15 +181,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                         <?php
                                                         // Definir las áreas de trabajo
                                                         $areas = array(
-                                                            "Carpinteria",
+                                                            "Carpintería",
                                                             "ACM",
                                                             "Pintura",
-                                                            "Acrilicos",
-                                                            "Maquinas",
+                                                            "Acrílicos",
+                                                            "Máquinas",
                                                             "Metal Mecánica"
                                                         );
                                                         foreach ($areas as $index => $area) {
-                                                            if ($area != "Diseno Grafico") {
+                                                            if ($area != "Diseño Gráfico") {
                                                                 echo "<div class='form-check'>";
                                                                 echo "<input class='form-check-input' type='checkbox' name='areatrabajo[]' value='" . ($index + 1) . "' id='areatrabajo" . ($index + 1) . "'>";
                                                                 echo "<label class='form-check-label' for='areatrabajo" . ($index + 1) . "'>" . $area . "</label>";
@@ -225,8 +225,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
-                                                <th scope="col">ID OP</th>
-                                                <th scope="col">Numero de Plano</th>
+                                                <th scope="col">Número de OP</th>
+                                                <th scope="col">Número de Plano</th>
                                                 <th scope="col">Observaciones</th>
                                                 <th scope="col">Fecha</th>
                                                 <th scope="col">Áreas Asociadas</th>
@@ -254,7 +254,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                     foreach ($areasAsociadas as $area) {
                                                         switch ($area["AREDETALLE"]) {
                                                             case 1:
-                                                                echo "Carpinteria<br>";
+                                                                echo "Carpintería<br>";
                                                                 break;
                                                             case 2:
                                                                 echo "ACM<br>";
@@ -263,10 +263,10 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                 echo "Pintura<br>";
                                                                 break;
                                                             case 4:
-                                                                echo "Acrilicos<br>";
+                                                                echo "Acrílicos<br>";
                                                                 break;
                                                             case 5:
-                                                                echo "Maquinas<br>";
+                                                                echo "Máquinas<br>";
                                                                 break;
                                                             case 6:
                                                                 echo "Impresiones<br>";

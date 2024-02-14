@@ -51,7 +51,7 @@ date_default_timezone_set('America/Lima');
         <div class="col-lg-8">
           <div class="row">
 
-            <!-- Sales Card -->
+            <!-- Sales Card 
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
 
@@ -84,9 +84,9 @@ date_default_timezone_set('America/Lima');
                 </div>
 
               </div>
-            </div><!-- End Sales Card -->
+            </div> End Sales Card -->
 
-            <!-- Revenue Card -->
+            <!-- Revenue Card 
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card revenue-card">
 
@@ -119,7 +119,7 @@ date_default_timezone_set('America/Lima');
                 </div>
 
               </div>
-            </div><!-- End Revenue Card -->
+            </div> End Revenue Card -->
 
             <!-- Customers Card -->
             <div class="col-xxl-4 col-xl-12">
@@ -247,14 +247,14 @@ date_default_timezone_set('America/Lima');
                 </div>
 
                 <div class="card-body">
-                  <h5 class="card-title">Ordenes de produccion recientes <span>| Today</span></h5>
+                  <h5 class="card-title">Ordenes de produccion recientes <span>| </span></h5>
 
                   <table class="table table-borderless datatable">
                     <thead>
                       <tr>
                         <th scope="col">ID OP</th>
                         <th scope="col">Cliente</th>
-                        <th scope="col">Descripcion</th>
+                        <th scope="col">Descripción</th>
                         <th scope="col">Planos</th>
                         <th scope="col">Estado</th>
                       </tr>

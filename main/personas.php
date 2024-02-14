@@ -123,7 +123,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     <?php if ($id): ?>
                         <h5 class="card-title">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Editar Persona
+                                Editar Trabajador
                             </button></h5>
                     <?php else: ?>
                         <h5 class="card-title accordion-header" id="headingOne">
@@ -145,7 +145,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>">
-                                        <label for="cedula">Cedula</label>
+                                        <label for="cedula">Cédula</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -169,21 +169,21 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
                                         <select class="form-select" id="areatrabajo" aria-label="State" name="areatrabajo">
-                                            <option value="Carpinteria" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Carpinteria") ? "selected" : "" ?>>Carpinteria</option>
+                                            <option value="Carpintería" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Carpintería") ? "selected" : "" ?>>Carpintería</option>
                                             <option value="ACM" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "ACM") ? "selected" : "" ?>>ACM</option>
                                             <option value="Pintura" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Pintura") ? "selected" : "" ?>>Pintura</option>
-                                            <option value="Acrilicos y Acabados" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Acrilicos y Acabados") ? "selected" : "" ?>>Acrilicos y Acabados</option>
-                                            <option value="Maquinas" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Maquinas") ? "selected" : "" ?>>Maquinas</option>
+                                            <option value="Acrílicos y Acabados" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Acrílicos y Acabados") ? "selected" : "" ?>>Acrílicos y Acabados</option>
+                                            <option value="Máquinas" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Máquinas") ? "selected" : "" ?>>Máquinas</option>
                                             <option value="Impresiones" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Impresiones") ? "selected" : "" ?>>Impresiones</option>
-                                            <option value="Diseno Grafico" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Diseno Grafico") ? "selected" : "" ?>>Diseno Grafico</option>
+                                            <option value="Diseño Gráfico" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Diseño Gráfico") ? "selected" : "" ?>>Diseño Gráfico</option>
                                         </select>
-                                        <label for="areatrabajo">Area de Trabajo</label>
+                                        <label for="areatrabajo">Área de Trabajo</label>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                 <div class="form-floating">
                                         <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>">
-                                        <label for="correo">Correo Electronico</label>
+                                        <label for="correo">Correo Electrónico</label>
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -207,7 +207,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <?php if ($personas->rowCount() == 0): ?>
                                     <div class= "col-md-4 mx-auto mb-3">
                                         <div class= "card card-body text-center">
-                                            <p>No hay Trabajadores Aun.</p>
+                                            <p>No hay Trabajadores Aún.</p>
                                         </div>
                                     </div>
                                 <?php else: ?>
@@ -217,10 +217,10 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     <tr>
                                         <th>Apellidos</th>
                                         <th>Nombres</th>
-                                        <th>Cedula</th>
+                                        <th>Cúdula</th>
                                         <th>Edad</th>
-                                        <th>Area de Trabajo</th>
-                                        <th>Correo Electronico</th>
+                                        <th>Área de Trabajo</th>
+                                        <th>Correo Electrónico</th>
                                         <th></th>
                                         <th></th>
                                     </tr>

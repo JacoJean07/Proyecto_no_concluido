@@ -104,7 +104,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()">
-                                    <label for="cedula">Cedula</label>
+                                    <label for="cedula">Cédula</label>
                                     <datalist id="cedulaList">
                                         <?php foreach ($personas as $persona): ?>
                                         <option value="<?= $persona["CEDULA"]?>">
@@ -125,7 +125,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-md-6">
                                 <div class="form-floating">
                                 <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
-                                <label for="usuario">usuario</label>
+                                <label for="usuario">Usuario</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -140,7 +140,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <select class="form-select" id="rol" aria-label="State" name="rol">
                                     <option value="1">Administrador</option>
                                     <option value="2">Empleado</option>
-                                    <option value="3">Diseño Grafico</option>
+                                    <option value="3">Diseño Gráfico</option>
                                 </select>
                                 <label for="rol">Rol de Usuario</label>
                                 </div>
@@ -184,7 +184,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
                             <input value="<?= $usuarioEditar['CEDULA'] ?>" type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()" readonly>
-                            <label for="cedula">Cedula</label>
+                            <label for="cedula">Cédula</label>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -208,7 +208,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <select class="form-select" id="rol" aria-label="State" name="rol">
                                 <option value="1" <?= ($usuarioEditar['ROL'] == 1) ? 'selected' : '' ?>>Administrador</option>
                                 <option value="2" <?= ($usuarioEditar['ROL'] == 2) ? 'selected' : '' ?>>Empleado</option>
-                                <option value="3" <?= ($usuarioEditar['ROL'] == 3) ? 'selected' : '' ?>>Diseño Grafico</option>
+                                <option value="3" <?= ($usuarioEditar['ROL'] == 3) ? 'selected' : '' ?>>Diseño Gráfico</option>
                             </select>
                             <label for="rol">Rol de Usuario</label>
                         </div>
@@ -234,7 +234,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <?php if ($usuarios->rowCount() == 0): ?>
                             <div class= "col-md-4 mx-auto mb-3">
                                 <div class= "card card-body text-center">
-                                    <p>No hay Usuarios Aun.</p>
+                                    <p>No hay Usuarios Aún.</p>
                                 </div>
                             </div>
                         <?php else: ?>
@@ -242,8 +242,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <table class="table datatable">
                             <thead>
                             <tr>
-                                <th>CEDULA</th>
-                                <th>USER</th>
+                                <th>CÉDULA</th>
+                                <th>USUARIO</th>
                                 <th>ROL</th>
                                 <th>REGISTRO</th>
                                 <th></th>
@@ -255,7 +255,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <tr>
                                 <th><?= $usu["CEDULA"]?></th>
                                 <td><?= $usu["USER"]?></td>
-                                <td><?= $usu["ROL"]?></td>
+                                <td>
+                                    <?php if( $usu["ROL"] == 1): ?>
+                                        Administrador
+                                    <?php elseif( $usu["ROL"] == 2): ?>
+                                        Empleado
+                                    <?php elseif( $usu["ROL"] == 3): ?>
+                                        Diseño Gráfico
+                                    <?php endif ?>
+                                </td>
                                 <td><?= $usu["REGISTRO"]?></td>
                                 <td>
                                     <a href="usuarios.php?id=<?= $usu["ID_USER"] ?>" class="btn btn-secondary mb-2">Editar</a>

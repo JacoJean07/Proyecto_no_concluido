@@ -48,7 +48,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
             <!-- Código para buscar OP por IDOP -->
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Buscar OP por IDOP</h5>
+                    <h5 class="card-title">Buscar OP por Número de OP</h5>
 
                     <!-- si hay un error mandar un danger -->
                     <?php if ($error): ?> 
@@ -60,7 +60,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="idop" name="idop" placeholder="IDOP">
-                                <label for="idop">IDOP</label>
+                                <label for="idop">Número de OP</label>
                             </div>
                         </div>
                         <div class="text-center">
@@ -79,7 +79,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Datos de la OP</h5>
-                                    <p>IDOP: <?= $opInfo["IDOP"] ?></p>
+                                    <p>Número de OP: <?= $opInfo["IDOP"] ?></p>
                                     <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
                                 </div>
                             </div>

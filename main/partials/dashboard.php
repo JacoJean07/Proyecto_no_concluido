@@ -43,7 +43,7 @@
     <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
         <a href="ciudades.php">
-          <i class="bi bi-circle"></i><span>Ciudad de Produccion</span>
+          <i class="bi bi-circle"></i><span>Ciudad de Producción</span>
         </a>
       </li>
       <li>
@@ -53,7 +53,7 @@
       </li>
       <li>
         <a href="opProduccion.php">
-          <i class="bi bi-circle"></i><span>Lista de OP's en Produccion</span>
+          <i class="bi bi-circle"></i><span>Lista de OP's en Producción</span>
         </a>
       </li>
       <li>
@@ -76,7 +76,7 @@
     <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
         <a href="produccion.php">
-          <i class="bi bi-circle"></i><span>Produccion</span>
+          <i class="bi bi-circle"></i><span>Producción</span>
         </a>
       </li>
       <li>
@@ -86,7 +86,7 @@
       </li>
       <li>
         <a href="areas.php">
-          <i class="bi bi-circle"></i><span>Areas</span>
+          <i class="bi bi-circle"></i><span>Áreas</span>
         </a>
       </li>
     </ul>
@@ -94,17 +94,17 @@
   <!-- End Charts Nav -->
   <li class="nav-item">
     <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-      <i class="bi bi-truck"></i><span>Logistica</span><i class="bi bi-chevron-down ms-auto"></i>
+      <i class="bi bi-truck"></i><span>Logística</span><i class="bi bi-chevron-down ms-auto"></i>
     </a>
       <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
         <li>
           <a href="logistica.php">
-            <i class="bi bi-circle"></i><span>Formulario Logistica</span>
+            <i class="bi bi-circle"></i><span>Formulario Logística</span>
           </a>
         </li>
         <li>
           <a href="registroFormulario.php">
-            <i class="bi bi-circle"></i><span>Registro de Formularios  de Logistica</span>
+            <i class="bi bi-circle"></i><span>Registro de Formularios  de Logística</span>
           </a>
         </li>
         

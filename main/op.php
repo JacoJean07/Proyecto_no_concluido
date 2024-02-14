@@ -176,7 +176,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" readonly>
-                                            <label for="cedula"> Cedula</label>
+                                            <label for="cedula"> Cédula</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -186,7 +186,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="idlugarproduccion" class="form-label">Lugar de Produccion</label>
+                                        <label for="idlugarproduccion" class="form-label">Lugar de Producción</label>
                                         <select class="form-select" id="idlugarproduccion" name="idlugarproduccion">
                                             <?php foreach ($lugarproduccion as $lugar) : ?>
                                                 <option value="<?= $lugar["IDLUGAR"] ?>"><?= $lugar["CIUDAD"] ?></option>
@@ -215,7 +215,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion">
-                                            <label for="direccion">Direccion del Local</label>
+                                            <label for="direccion">Dirección del Local</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -227,7 +227,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     <div class="col-md-6">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
-                                            <label for="telefono">Telefono</label>
+                                            <label for="telefono">Teléfono</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -272,11 +272,11 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input value="<?= $opEditar['CEDULA'] ?>" type="text" class="form-control" id="cedula" placeholder="Vendedor" readonly>
-                                    <label for="cedula"> Cedula</label>
+                                    <label for="cedula"> Cédula</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="idlugarproduccion" class="form-label">ID Lugar de Produccion</label>
+                                <label for="idlugarproduccion" class="form-label">ID Lugar de Producción</label>
                                 <select class="form-select" id="idlugarproduccion" name="idlugarproduccion">
                                     <?php foreach ($lugarproduccion as $lugar) : ?>
                                         <option value="<?= $lugar["IDLUGAR"] ?>" <?= $opEditar["IDLUGAR"] == $lugar["IDLUGAR"] ? "selected" : "" ?>>
@@ -307,13 +307,13 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                             <div class="col-md-6">
                                 <div class="form-floating datetimepicker">
                                     <input value="<?= $opEditar["OPNOTIFICACIONCORREO"] ?>" type="date" class="form-control" id="notificacion" name="notificacion" placeholder="Notificacion">
-                                    <label for="notificacion">Notificacion Correo</label>
+                                    <label for="notificacion">Notificación Correo</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input value="<?= $opEditar["OPDIRECCIONLOCAL"] ?>" type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion">
-                                    <label for="direccion">Direccion del Local</label>
+                                    <label for="direccion">Dirección del Local</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -325,7 +325,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input value="<?= $opEditar["TELEFONO"] ?>" type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
-                                    <label for="telefono">Telefono</label>
+                                    <label for="telefono">Teléfono</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -360,7 +360,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     <div class="col-lg-12">
                         <div class="card"> 
                             <div class="card-body">
-                                <div class="card-header"><h5 class="card-tittle">OP's sin notificar a produccion</h5></div>
+                                <div class="card-header"><h5 class="card-tittle">OP's sin notificar a producción</h5></div>
                                 <h5 class="col-md-4 mx-auto mb-3"></h5>
 
                                 <?php if ($op->rowCount() == 0) : ?>
@@ -376,15 +376,15 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                             <tr>
                                                 <th>OP</th>
                                                 <th>Diseñador</th>
-                                                <th>PlanosTotales</th>
+                                                <th>Planos Totales</th>
                                                 <th>Cliente</th>
                                                 <th>Detalle</th>
                                                 <th>Registro</th>
-                                                <th>Notificacion del Correo</th>
+                                                <th>Notificación del Correo</th>
                                                 <th>Vendedor</th>
-                                                <th>Direccion del Local</th>
+                                                <th>Dirección del Local</th>
                                                 <th>Persona de Contacto</th>
-                                                <th>Telefono</th>
+                                                <th>Teléfono</th>
                                                 <th>Observaciones</th>
                                                 <th>Estado</th>
                                                 <th></th>
@@ -400,7 +400,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                     <td><?= $op["OPDETALLE"] ?></td>
                                                     <td><?= $op["OPREGISTRO"] ?></td>
                                                     <td>
-                                                    <?php if ($op["OPNOTIFICACIONCORREO"] == "0000-00-00 00:00:00" && $op["TOTAL_PLANOS"] != 0) : ?>
+                                                    <?php if ($op["TOTAL_PLANOS"] != 0) : ?>
                                                         <a href="./validaciones/notiOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Notificar</a>
                                                     <?php else : ?>
                                                         <a href="planosAdd.php?id=<?= $op["IDOP"]?>" class="btn btn-secondary mb-2">Ingrese planos</a>

@@ -143,13 +143,13 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     <div class="col-lg-12">
                         <div class="card"> 
                             <div class="card-body">
-                                <div class="card-header"><h5 class="card-tittle">OP's en produccion</h5></div>
+                                <div class="card-header"><h5 class="card-tittle">OP's en producción</h5></div>
                                 <h5 class="col-md-4 mx-auto mb-3"></h5>
 
                                 <?php if ($op->rowCount() == 0) : ?>
                                     <div class="col-md-4 mx-auto mb-3">
                                         <div class="card card-body text-center">
-                                            <p>No hay Op en Produccion</p>
+                                            <p>No hay Op en Producción</p>
                                         </div>
                                     </div>
                                 <?php else : ?>
@@ -159,15 +159,15 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                             <tr>
                                                 <th>OP</th>
                                                 <th>Diseñador</th>
-                                                <th>Lugar de Produccion</th>
+                                                <th>Lugar de Producción</th>
                                                 <th>Cliente</th>
                                                 <th>Detalle</th>
                                                 <th>Registro</th>
-                                                <th>Notificacion del Correo</th>
+                                                <th>Notificación del Correo</th>
                                                 <th>Vendedor</th>
-                                                <th>Direccion del Local</th>
+                                                <th>Dirección del Local</th>
                                                 <th>Persona de Contacto</th>
-                                                <th>Telefono</th>
+                                                <th>Teléfono</th>
                                                 <th>Observaciones</th>
                                                 <th>Estado</th>
                                             </tr>
