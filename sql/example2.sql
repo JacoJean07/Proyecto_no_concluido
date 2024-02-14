@@ -23,7 +23,19 @@ create table PERSONAS
 );
 INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO,PERCORREO)
 VALUES ('1728563592', 'Jean', 'Cedeno', '1990-01-15', 1, 'Tics','example@example.com'),
-('1750541730', 'lenin jeerson', 'puetate obando', '1998-02-17', '1', 'Diseno Grafico','puetateobando@gamil.com');
+('1750541730', 'lenin jeerson', 'puetate obando', '1998-02-17', '1', 'Diseño Grafico','puetateobando@gamil.com'),
+('1721403945','RAUL ALEJANDRO','BAUTISTA GARCIA','1990-01-01',1,'Diseño Grafico',''),
+('1723351076','CESAR ADRIAN','CORDOVA ESPINOSA','1990-01-01',1,'Diseño Grafico',''),
+('1725302002','BYRON DANIEL','OÑA SANCHEZ','1990-01-01',1,'Diseño Grafico',''),
+('2100196472','ROBERT FABRICIO','ROSILLO ROSILLO','1990-01-01',1,'Diseño Grafico',''),
+('1718432352','HENRY DAVID','SALAZAR ABAD','1990-01-01',1,'Diseño Grafico',''),
+('1724990807','MILTON MARCELO','HERMOZA ENRIQUEZ','1990-01-01',1,'PRODUCCIÓN',''),
+('1715923254','ANA CRISTINA','RAMON CONFORME','1990-01-01',1,'PRODUCCIÓN',''),
+('1717766826'	,'STALIN ADOLFO','SANCHEZ SANCHEZ','1990-01-01',1,'PRODUCCIÓN',''),
+('1716812951','LUIS EDUARDO','FREIRE LIQUIN','1990-01-01',1,'TEC',''),
+('0951881408','ALEJANDRO XAVIER','JORDAN ALVAREZ','1990-01-01',1,'Diseño Grafico',''),
+('0953292034','GEOVANNY EMMANUEL','HUMANANTE ALVAREZ','1990-01-01',1,'Diseño Grafico',''),
+('1720871142','ANGEL EDUARDO','AYALA ENDARA','1990-01-01',1,'Diseño Grafico','');
 
 /*==============================================================*/
 /* Index: PERSONAS_PK                                           */
@@ -97,7 +109,7 @@ create table LUGARPRODUCCION
    CIUDAD               char(16) not null,
    primary key (IDLUGAR)
 );
-
+INSERT INTO lugarproduccion (`IDLUGAR`,`CIUDAD`)VALUES (NULL,"QUITO");
 /*==============================================================*/
 /* Table: OP                                                    */
 /*==============================================================*/
@@ -118,7 +130,9 @@ create table OP
    OPOBSERAVACIONES     varchar(255),
    OPESTADO             char(25),
    primary key (IDOP)
-);
+)AUTO_INCREMENT = 11360;
+
+INSERT INTO OP 
 
 
 /*==============================================================*/
