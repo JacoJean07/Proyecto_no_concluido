@@ -151,13 +151,32 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                         <div class="card">
                                             <div class="card-body">
                                                 <h5 class="card-title">Editar Registro de Logistica</h5>
+                                                
                                                 <?php if ($error) : ?>
                                                     <p class="text-danger">
                                                         <?=$error ?>
                                                     </p>
                                                 <?php endif ?>
                                                 <form class="row g-3" method="POST" action="registroFormulario.php">
-
+                                                    <div class="col-md-6">
+                                                        <div class="form-floating mb-3">
+                                                            <input value="" type="text" class="form-control" id="op" name="op" placeholder="Buscar por  Op" list="opList" oninput="buscarPorOp()">
+                                                            <label for="op">Ingrese la Op</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente" readonly>
+                                                            <label for="cliente">Cliente</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-mb-6">
+                                                        <div class="form-floating">
+                                                            <select  class="form-select" id="plano" name="plano" aria-label="Stat e">
+                                                            <option value="" selected>Selecione el numero de plano</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
