@@ -99,8 +99,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="reset" class="btn btn-secondary">Limpiar</button>
                             </div>
                         </form>
                     </div>
@@ -126,7 +126,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Actualizar</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
+                                <button type="reset" class="btn btn-secondary">Limpiar</button>
                             </div>
                         </form>
                     </div>
@@ -163,9 +163,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                     <td>
                                                         <a href="ciudades.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-secondary mb-2">Editar</a>
                                                     </td>
-                                                    <td>
-                                                        <a href="delete/ciudad.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-danger mb-2">Eliminar</a>
-                                                    </td>
+                                                    
                                                 </tr>
                                             <?php endforeach ?>
                                         </tbody>

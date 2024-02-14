@@ -10,6 +10,7 @@ if (!isset($_SESSION["user"])) {
 }
 //declaramos la variable error que nos ayudara a mostrar errores, etc.
 $error = null;
+
 $state = "OP CREADA";
 //$state = 1;
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
@@ -238,7 +239,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     </div>
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-primary">Guardar</button>
-                                        <button type="reset" class="btn btn-secondary">Reset</button>
+                                        <button type="reset" class="btn btn-secondary">Limpiar</button>
                                     </div>
                                 </form>
                             </div>
@@ -348,7 +349,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Actualizar</button>
-                                <button type="reset" class="btn btn-secondary">Reset</button>
+                                <button type="reset" class="btn btn-secondary">Limpiar</button>
                             </div>
                         </form>
                     </div>
@@ -400,7 +401,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                     <td><?= $op["OPDETALLE"] ?></td>
                                                     <td><?= $op["OPREGISTRO"] ?></td>
                                                     <td>
-                                                    <?php if ($op["OPNOTIFICACIONCORREO"] == "0000-00-00 00:00:00" && $op["TOTAL_PLANOS"] != 0) : ?>
+                                                    <?php if ($op["TOTAL_PLANOS"] != 0) : ?>
                                                         <a href="./validaciones/notiOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Notificar</a>
                                                     <?php else : ?>
                                                         <a href="planosAdd.php?id=<?= $op["IDOP"]?>" class="btn btn-secondary mb-2">Ingrese planos</a>

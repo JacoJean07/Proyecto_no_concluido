@@ -83,7 +83,7 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                     data: { op: opValue },
                     success: function(response){
                         // Actualizar las opciones del select
-                        $('#plano').html(response);
+                        $('#plano').HTML(response);
                     }
                 });
             }, 500);
@@ -155,7 +155,7 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                                     </div>
                                     <div class="text-center">
                                        <button type="submit" class="btn btn-primary">Guardar</button>
-                                      <button type="reset" class="btn btn-secondary">Reset</button>
+                                      <button type="reset" class="btn btn-secondary">Limpiar</button>
                                    </div>
                                 </form>
                             </div>

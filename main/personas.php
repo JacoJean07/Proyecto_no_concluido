@@ -187,8 +187,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary"><?= $id ? "Actualizar" : "Submit" ?></button>
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                    <button type="submit" class="btn btn-primary"><?= $id ? "Actualizar" : "Guardar" ?></button>
+                                    <button type="reset" class="btn btn-secondary">Limpiar</button>
                                 </div>
                             </form>
                         </div>
@@ -243,7 +243,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                         <td><?= $persona["PERAREATRABAJO"]?></td>
                                         <td><?= $persona["PERCORREO"]?></td>
                                         <td>
-                                            <a href="personas.php?id=<?= $persona["CEDULA"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                            <a href="personas.php?id=<?= $persona["CEDULA"] ?>" class="btn btn-secondary mb-2">Actualizar</a>
                                         </td>
                                         <td>
                                             <a href="./delete/personas.php?id=<?= $persona["CEDULA"] ?>" class="btn btn-danger mb-2">Eliminar</a>

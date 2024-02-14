@@ -80,15 +80,16 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             <div class="card">
                 <h5 class="card-title">Tipos de Registros de los formularios</h5>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="sinFinalizar-tab" data-bs-toggle="tab" data-bs-target="#sinFinalizar" type="button" role="tab" aria-controls="sinFinalizar" aria-selected="true">Registros sin Finalizar</button>
+                    <li class="nav-item " role="presentation">
+                        <button class="nav-link active" id="finalizado-tab" data-bs-toggle="tab" data-bs-target="#finalizado" type="button" role="tab" aria-controls="finalizar" aria-selected="true" >Registros Finalizados</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="finalizado-tab" data-bs-toggle="tab" data-bs-target="#finalizado" type="button" role="tab" aria-controls="finalizar" aria-selected="false" tabindex="-1">Registros Finalizados</button>
+                        <button class="nav-link " id="sinFinalizar-tab" data-bs-toggle="tab" data-bs-target="#sinFinalizar" type="button" role="tab" aria-controls="sinFinalizar" aria-selected="false" tabindex="-1">Registros sin Finalizar</button>
                     </li>
+                    
                 </ul>
                 <div class="tab-content pt-2" id="myTabContent">
-                    <div class="tab-pane fade show active" id="sinFinalizar" role="tabpanel1" aria-labelledby="sinFinalizar-tab">
+                    <div class="tab-pane fade " id="sinFinalizar" role="tabpanel1" aria-labelledby="sinFinalizar-tab">
                         <section class="section">
                             <div class="row">
                                 <div class="col-lg-12">
@@ -135,7 +136,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
 
                         </section>
                     </div>
-                    <div class="tab-pane fade" id="finalizado" role="tabpanel1" aria-labelledby="finalizado-tab">
+                    <div class="tab-pane fade show active" id="finalizado" role="tabpanel1" aria-labelledby="finalizado-tab">
                         <section class="section">
                             <div class="row">
                                 <div class="">
