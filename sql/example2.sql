@@ -56,9 +56,20 @@ create table USUARIOS
    REGISTRO             datetime not null,
    constraint PK_USUARIOS primary key (ID_USER)
 );
-INSERT INTO USUARIOS (ID_USER, CEDULA, USER, PASSWORD, ROL, REGISTRO)
-VALUES (1, '1728563592', 'jeanC', '$2y$10$jeTbyOelKGtqXlEktSx7cei0UvlLj9uvjOQzJA3DV66AeOdfKLkxS', 1, CURRENT_TIMESTAMP),
-(2, '1750541730', 'jefer', '$2y$10$WOw2hlz8Ts5Iu5ahK4cHq./ME6Fn/5B7JMug67gfs5NoGLT832Kpa', '1',CURRENT_TIMESTAMP);
+INSERT INTO USUARIOS (CEDULA, USER, PASSWORD, ROL, REGISTRO)
+SELECT 
+    CEDULA,
+    CEDULA AS USER,
+    '$2y$10$Bq5e9XjZgytTIE/FTB7c6OM/34OzJthoAF5clGdX8emFZuJh5ArHe' AS PASSWORD,
+    1 AS ROL,
+    CURRENT_TIMESTAMP AS REGISTRO
+FROM 
+    PERSONAS
+WHERE 
+    CEDULA NOT IN (
+        SELECT CEDULA FROM USUARIOS
+    );
+
 /*==============================================================*/
 /* Index: USUARIOS_PK                                           */
 /*==============================================================*/
@@ -132,7 +143,6 @@ create table OP
    primary key (IDOP)
 )AUTO_INCREMENT = 11360;
 
-INSERT INTO OP 
 
 
 /*==============================================================*/
