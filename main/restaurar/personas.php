@@ -32,7 +32,7 @@ $conn->prepare("UPDATE PERSONAS SET PERESTADO = :estado WHERE CEDULA = :id")->ex
 ]);
 
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "RESTAURO", 'PERSONAS', $id);
+registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "RESTAURÓ", 'PERSONAS', $id);
 
 // Redirigimos a personas.php
 header("Location: ../personas.php");

@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
           <div class="row justify-content-center">
             <div class="col-md-8">
               <div class="mb-4">
-              <h3>Iniciar Sesion</h3>
+              <h3>Iniciar Sesión</h3>
             </div>
             
             <form action="login.php" method="POST">
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                 </label> 
               </div>
 
-              <button type="submit" class="btn btn-block btn-info">Iniciar Sesion</button>
+              <button type="submit" class="btn btn-block btn-info">Iniciar Sesión</button>
 
               
               

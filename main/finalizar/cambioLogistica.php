@@ -29,7 +29,7 @@ $conn->prepare("UPDATE LOGISTICA SET  LOGHORAFINAL = CURRENT_TIMESTAMP, LOGESTAD
    ":estado" => "FINALIZADO EL REGISTRO", 
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Finalizado el Registro", 'LOGISTICA', $id);
+registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Finalizadó el Registro", 'LOGíSTICA', $id);
 
 // Redirigimos a personas.php
 header("Location: ../logistica.php");

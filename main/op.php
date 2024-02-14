@@ -82,7 +82,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     ":observaciones"=>$_POST["observaciones"]
                 ]);
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'OP', $id);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'OP', $id);
 
             }else{
                 //SINO AY UN REGISTRO ACTUALIZARME
@@ -107,7 +107,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 // Registramos el movimiento en el kardex
                 // Obtenemos el último IDOP insertado o actualizado
                 $lastInsertId = $conn->lastInsertId();
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'OP', $lastInsertId);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'OP', $lastInsertId);
 
                 // Obtenemos la cantidad de planos ingresados
                 $cantidadPlanos = isset($_POST["planos"]) ? intval($_POST["planos"]) : 0;

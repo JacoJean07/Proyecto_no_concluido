@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Registramos el movimiento en el kardex
-        registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "ACTUALIZO", 'PRODUCCION', $idproduccion);
+        registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'PRODUCCIÓN', $idproduccion);
 
         // Redirigir a alguna página de éxito o a donde desees
         header("Location: produccion.php");

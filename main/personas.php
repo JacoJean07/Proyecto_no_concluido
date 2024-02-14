@@ -71,7 +71,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         ":correo" => $correo,
                     ]);
                     // Registramos el movimiento en el kardex
-                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'PERSONAS', $cedula);
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'PERSONAS', $cedula);
                 
                 
                 } else {
@@ -89,7 +89,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         ":correo" => $correo,
                     ]);
                     // Registramos el movimiento en el kardex
-                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PERSONAS', $_POST["cedula"]);
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'PERSONAS', $_POST["cedula"]);
                 }
 
                 // Redirigimos a personas.php

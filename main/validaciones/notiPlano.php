@@ -34,7 +34,7 @@ $conn->prepare("UPDATE PLANOS SET PLANOTIFICACION = :estado, PLAFECHANOTI = CURR
     ":estado" => 1,
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "NOTIFICO ERROR", 'PLANOS', "<br>OP: " . $plano["IDOP"] . "<br>Plano: " . $plano["PLANNUMERO"]);
+registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "NOTIFICÓ ERROR", 'PLANOS', "<br>OP: " . $plano["IDOP"] . "<br>Plano: " . $plano["PLANNUMERO"]);
 
 
 // Redirigimos a personas.php

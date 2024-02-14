@@ -75,7 +75,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                 ]);
                 // Registramos el movimiento en el kardex
                 $lastInsertId = $conn->lastInsertId();
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREO", 'PRODUCCION', $lastInsertId);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'PRODUCCIÓN', $lastInsertId);
                 
                 // Obtenemos la cantidad de áreas de trabajo seleccionadas
                 $areasSeleccionadas = isset($_POST["areatrabajo"]) ? $_POST["areatrabajo"] : [];

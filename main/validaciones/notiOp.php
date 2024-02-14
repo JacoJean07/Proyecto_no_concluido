@@ -47,7 +47,7 @@ $conn->prepare("UPDATE OP SET OPNOTIFICACIONCORREO = CURRENT_TIMESTAMP, OPESTADO
     ":estado" => "EN PRODUCCION",
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Notifico por Correo", 'OP', $id);
+registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Notificó por Correo", 'OP', $id);
 
 
 // Redirigimos a personas.php

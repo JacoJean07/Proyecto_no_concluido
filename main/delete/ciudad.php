@@ -23,7 +23,7 @@ if ($statement->rowCount() == 0) {
   return;
 }
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "ELIMINO", 'CIUDADES', $ciudad["CIUDAD"]);
+registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "ELIMINÓ", 'CIUDADES', $ciudad["CIUDAD"]);
 //ELIMINAMOS EL ROW CON EL ID DE LA TARGETA SELECCIONADA, nos ahorramos dos statement y ejecutamos en la misma linea
 $conn->prepare("DELETE FROM LUGARPRODUCCION WHERE IDLUGAR = :id")->execute([":id" => $id]);
 
