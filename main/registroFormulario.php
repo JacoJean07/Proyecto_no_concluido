@@ -122,7 +122,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                             <td><?= $logistica1["LOGHORAINCIO"] ?></td>
                                                             <td><?= $sinFinalizar ?></td>
                                                             <td><?= $logistica1["LOGOBSERVACIONES"] ?></td>
-                                                            <td><?= $logistica1["CEDULA_NOMBRES1"] ."" .$logistica1["CEDULA_APELLDIOS1"] ?></td>
+                                                            <td><?= $logistica1["CEDULA_NOMBRES1"] ." " .$logistica1["CEDULA_APELLDIOS1"] ?></td>
                                                             <td><?= $logistica1["LOGESTADO"] ?></td>
                                                         
                                                         </tr> 
@@ -201,7 +201,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                                         <th>Observaciones</th>
                                                                         <th>Persona que realizo el Registro</th>
                                                                         <th>Estado</th>
-                                                                        <th></th>
+                                                                        
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -214,11 +214,9 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                                             <td><?= $logistica["LOGHORAINCIO"] ?></td>
                                                                             <td><?= $logistica["LOGHORAFINAL"] ?></td>
                                                                             <td><?= $logistica["LOGOBSERVACIONES"] ?></td>
-                                                                            <td><?= $logistica["CEDULA_NOMBRES"] ."" .$logistica["CEDULA_APELLDIOS"]?></td>
+                                                                            <td><?= $logistica["CEDULA_NOMBRES"] ." " .$logistica["CEDULA_APELLDIOS"]?></td>
                                                                             <td><?= $logistica["LOGESTADO"] ?></td>
-                                                                            <td>
-                                                                                <a href="registroFormulario.php?id=<?= $logistica["IDLOGISTICA"] ?>" class="btn btn-secondary mb-2">Editar</a>
-                                                                            </td>
+                                                                            
                                                                         </tr>
                                                                     <?php endforeach ?>
                                                                 </tbody>

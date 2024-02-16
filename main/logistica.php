@@ -206,7 +206,7 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                                                 <th>Observaciones</th>
                                                 <th>Persona del Registro</th>
                                                 <th>Estado</th>
-                                                <th></th>
+                                               
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -225,9 +225,7 @@ if(($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)){
                                                     <td><?= $logistica["LOGOBSERVACIONES"] ?></td>
                                                     <td><?= $logistica["CEDULA_NOMBRES"] ."" .$logistica["CEDULA_APELLDIOS"] ?></td>
                                                     <td><?= $logistica["LOGESTADO"] ?></td>
-                                                    <td>
-                                                    <a href="logistica.php?id=<?=$logistica["IDLOGISTICA"] ?>" class="btn btn-secondary mb-2">Editar</a>
-                                                    </td>
+                                                    
                                                 </tr>
                                             <?php endforeach ?>
                                         </tbody>
