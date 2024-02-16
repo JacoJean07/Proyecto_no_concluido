@@ -109,8 +109,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                         <th>Número de Plano</th>
                                                         <th>Estado</th>
                                                         <th></th>
-                                                        <th></th>
-                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -129,27 +127,12 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                 ?>
                                                             </td>
                                                             <td>
-                                                                <?php if($opPlano["PLAESTADO"] == 1 ) : ?>
-                                                                    <a href="#" class="btn btn-primary mb-2">Pausar</a>
-                                                                <?php elseif($opPlano["PLAESTADO"] == 2 ) : ?>
-                                                                    <a href="#" class="btn btn-success mb-2">Activar</a>
-                                                                <?php else : ?>
-                                                                <?php endif ?>
-                                                            </td>
-                                                            <td>
                                                                 <?php if($opPlano["PLANOTIFICACION"] == 0 ) : ?>
                                                                     <a href="./validaciones/notiPlano.php?id=<?= $opPlano["IDPLANO"] ?>" class="btn btn-warning mb-2">Notificar problema</a>
                                                                 <?php else : ?>
                                                                 <?php endif ?>
                                                             </td>
-                                                            <td>
-                                                                <?php if($opPlano["PLAESTADO"] !== 3 ) : ?>
-                                                                    <a href="#" class="btn btn-danger mb-2">Anular</a>
-                                                                <?php elseif($opPlano["PLAESTADO"] == 3 ) : ?>
-                                                                    <a href="#" class="btn btn-success mb-2">Reanudar</a>
-                                                                <?php else : ?>
-                                                                <?php endif ?>
-                                                            </td>
+                                                            
                                                         </tr>
                                                     <?php endforeach ?>
                                                 </tbody>

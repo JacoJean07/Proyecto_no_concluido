@@ -79,16 +79,16 @@
           <i class="bi bi-circle"></i><span>Producción</span>
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class="bi bi-circle"></i><span>Registros</span>
         </a>
-      </li>
-      <li>
+      </li> -->
+      <!-- <li>
         <a href="areas.php">
           <i class="bi bi-circle"></i><span>Áreas</span>
         </a>
-      </li>
+      </li> -->
     </ul>
   </li>
   <!-- End Charts Nav -->

@@ -160,7 +160,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                 <form class="row g-3" method="POST" action="registroFormulario.php">
                                                     <div class="col-md-6">
                                                         <div class="form-floating mb-3">
-                                                            <input value="" type="text" class="form-control" id="op" name="op" placeholder="Buscar por  Op" list="opList" oninput="buscarPorOp()">
+                                                            <input value="" type="text" class="form-control" id="op" name="op" placeholder="Buscar por  Op" list="opList" >
                                                             <label for="op">Ingrese la Op</label>
                                                         </div>
                                                     </div>

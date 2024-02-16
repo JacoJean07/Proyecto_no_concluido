@@ -174,7 +174,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                             <option value="Pintura" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Pintura") ? "selected" : "" ?>>Pintura</option>
                                             <option value="Acrílicos y Acabados" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Acrílicos y Acabados") ? "selected" : "" ?>>Acrílicos y Acabados</option>
                                             <option value="Máquinas" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Máquinas") ? "selected" : "" ?>>Máquinas</option>
-                                            <option value="Impresiones" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Impresiones") ? "selected" : "" ?>>Impresiones</option>
+                                            <option value="MetalMecánica" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "MetalMecánica") ? "selected" : "" ?>>MetalMecánica</option>
                                             <option value="Diseño Gráfico" <?= ($personaEditar && $personaEditar["PERAREATRABAJO"] == "Diseño Gráfico") ? "selected" : "" ?>>Diseño Gráfico</option>
                                         </select>
                                         <label for="areatrabajo">Área de Trabajo</label>
@@ -217,7 +217,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     <tr>
                                         <th>Apellidos</th>
                                         <th>Nombres</th>
-                                        <th>Cúdula</th>
+                                        <th>Cédula</th>
                                         <th>Edad</th>
                                         <th>Área de Trabajo</th>
                                         <th>Correo Electrónico</th>

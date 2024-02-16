@@ -163,6 +163,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                     <td>
                                                         <a href="ciudades.php?id=<?= $ciudad["IDLUGAR"] ?>" class="btn btn-secondary mb-2">Editar</a>
                                                     </td>
+                                                    <td></td>
                                                     
                                                 </tr>
                                             <?php endforeach ?>
