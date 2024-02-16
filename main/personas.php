@@ -7,7 +7,7 @@ session_start();
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {
     header("Location: ../login-form/login.php");
-    return;
+    exit();
 }
 
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
@@ -72,8 +72,6 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     ]);
                     // Registramos el movimiento en el kardex
                     registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'PERSONAS', $cedula);
-                
-                
                 } else {
                     // Si no hay un ID, estamos insertando un nuevo registro
                     $statement = $conn->prepare("INSERT INTO PERSONAS ( CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO, PERCORREO) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo, :correo)");
@@ -94,7 +92,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
 
                 // Redirigimos a personas.php
                 header("Location: personas.php");
-                return;
+                exit();
             }
         }
     }
@@ -109,7 +107,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
 
 } else {
     header("Location: ./index.php");
-    return;
+    exit();
 }
 ?>
 
@@ -137,32 +135,32 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         <div class="accordion-body">
                             <!-- si hay un error mandar un danger -->
                             <?php if ($error): ?> 
-                                <p class="text-danger">
+                                <div class="alert alert-danger" role="alert">
                                     <?= $error ?>
-                                </p>
+                                </div>
                             <?php endif ?>
                             <form class="row g-3" method="POST" action="personas.php<?= $id ? "?id=$id" : "" ?>">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>">
+                                        <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>" autocomplete="cedula" required>
                                         <label for="cedula">Cédula</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" value="<?= $personaEditar ? $personaEditar["PERNOMBRES"] : "" ?>">
+                                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" value="<?= $personaEditar ? $personaEditar["PERNOMBRES"] : "" ?>"autocomplete="nombres" required>
                                         <label for="nombres">Nombres</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos" value="<?= $personaEditar ? $personaEditar["PERAPELLIDOS"] : "" ?>">
+                                        <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos" value="<?= $personaEditar ? $personaEditar["PERAPELLIDOS"] : "" ?>" autocomplete="apellidos" required>
                                         <label for="apellidos">Apellidos</label>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="date" class="form-control" placeholder="Nacimiento" id="nacimiento" name="nacimiento" value="<?= $personaEditar ? $personaEditar["PERFECHANACIMIENTO"] : "" ?>"></input>
+                                        <input type="date" class="form-control" placeholder="Nacimiento" id="nacimiento" name="nacimiento" value="<?= $personaEditar ? $personaEditar["PERFECHANACIMIENTO"] : "" ?>" autocomplete="nacimiento" required>
                                         <label for="nacimiento">Fecha de Nacimiento</label>
                                     </div>
                                 </div>
@@ -181,8 +179,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                <div class="form-floating">
-                                        <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>" autocomplete="correo" required>
                                         <label for="correo">Correo Electrónico</label>
                                     </div>
                                 </div>

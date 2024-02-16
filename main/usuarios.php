@@ -103,7 +103,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <form class="row g-3" method="POST" action="usuarios.php">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()">
+                                    <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()" autocomplete="cedula" required>
                                     <label for="cedula">Cédula</label>
                                     <datalist id="cedulaList">
                                         <?php foreach ($personas as $persona): ?>
@@ -124,13 +124,13 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
+                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario" autocomplete="usuario" required>
                                 <label for="usuario">Usuario</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating d-flex">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="password" autocomplete="password" required>
                                 <label for="password">Contraseña</label>
                                 <button id="show_password" class="btn btn-primary" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
                                 </div>

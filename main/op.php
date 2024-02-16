@@ -165,7 +165,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 <form class="row g-3" method="POST" action="op.php">
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="nombres" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()">
+                                            <input type="text" class="form-control" id="nombres" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()" autocomplete="vendedor" required>
                                             <label for="vendedor">Ingresar ambos nombres del vendedor</label>
                                             <datalist id="nombresList">
                                                 <?php foreach ($personas as $persona) : ?>
@@ -182,7 +182,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" id="planos" name="planos" placeholder="">
+                                            <input type="number" class="form-control" id="planos" name="planos" placeholder="" >
                                             <label for="planos"> Planos</label>
                                         </div>
                                     </div>
@@ -197,37 +197,37 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     <!-- Agregar otros campos según la estructura de la tabla OP -->
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente">
+                                            <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Cliente" autocomplete="cliente" required>
                                             <label for="cliente">Cliente</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad">
+                                            <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad" autocomplete="ciudad" required>
                                             <label for="ciudad">Ciudad de Entrega</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating datetimepicker">
-                                            <input type="text" class="form-control" id="detalle" name="detalle" placeholder="Detalle">
+                                            <input type="text" class="form-control" id="detalle" name="detalle" placeholder="Detalle" autocomplete="detalle" required>
                                             <label for="detalle">Detalles </label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion">
+                                            <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Direccion" autocomplete="direccion" required>
                                             <label for="direccion">Dirección del Local</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="contacto" name="contacto" placeholder="Contacto">
+                                            <input type="text" class="form-control" id="contacto" name="contacto" placeholder="Contacto" autocomplete="contacto" required>
                                             <label for="contacto">Persona de Contacto</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
+                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono" autocomplete="telefono" required>
                                             <label for="telefono">Teléfono</label>
                                         </div>
                                     </div>
@@ -404,7 +404,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                     <?php if ($op["TOTAL_PLANOS"] != 0) : ?>
                                                         <a href="./validaciones/notiOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Notificar</a>
                                                     <?php else : ?>
-                                                        <a href="planosAdd.php?id=<?= $op["IDOP"]?>" class="btn btn-secondary mb-2">Ingrese planos</a>
+                                                        <a href="planosAddtest.php?id=<?= $op["IDOP"]?>" class="btn btn-secondary mb-2">Ingrese planos</a>
                                                     <?php endif ?>
                                                     </td>
                                                     <td><?= $op["VENDEDOR_NOMBRES"] . " " . $op["VENDEDOR_APELLIDOS"] ?></td>

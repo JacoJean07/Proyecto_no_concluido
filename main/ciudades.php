@@ -94,7 +94,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <form class="row g-3" method="POST" action="ciudades.php">
                             <div class="col-md-12">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad">
+                                    <input type="text" class="form-control" id="ciudad" name="ciudad" placeholder="Ciudad" autocomplete="ciudad" required>
                                     <label for="ciudad">Ciudad</label>
                                 </div>
                             </div>

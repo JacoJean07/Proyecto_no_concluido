@@ -57,15 +57,12 @@
         </a>
       </li>
       <li>
-        <a href="planos.php">
-          <i class="bi bi-circle"></i><span>Planos</span>
+        <a href="planosAdd.php">
+          <i class="bi bi-circle"></i><span>Añadir Planos</span>
         </a>
       </li>
-      <li>
-        <a href="planosError.php">
-          <i class="bi bi-circle"></i><span>Planos Con errores</span>
-        </a>
-      </li>
+      
+      
       
     </ul>
   </li>
@@ -75,8 +72,18 @@
     </a>
     <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
       <li>
+        <a href="planos.php">
+          <i class="bi bi-circle"></i><span>Planos</span>
+        </a>
+      </li>
+      <li>
         <a href="produccion.php">
           <i class="bi bi-circle"></i><span>Producción</span>
+        </a>
+      </li>
+      <li>
+        <a href="planosError.php">
+          <i class="bi bi-circle"></i><span>Planos Con errores</span>
         </a>
       </li>
       <!-- <li>
