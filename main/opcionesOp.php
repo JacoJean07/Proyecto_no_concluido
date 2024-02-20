@@ -35,65 +35,81 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 <section class="section">
     <div class="row">
         <div class="">
-            <!-- Código para buscar OP por IDOP -->
             <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Bucar Op por el numero de la Op</h5>
-                    <?php if ($error) : ?>
-                        <p class="text-danger">
-                            <?= $error ?>
-                        </p>
-                    <?php endif ?>
-                    <form class="row g-3" method="POST" action="opcionesOp.php">
-                        <div class="col-md-12">
-                            <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="idop" name="idop" placeholder="IDOP">
-                                <label for="idop">Número de OP</label>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                            <button type="reset" class="btn btn-secondary">Limpiar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!-- Mostrar información de la OP y sus planos -->
-            <?php if ($opInfo) : ?>
-                <section class="section">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Datos de la OP</h5>
-                                    <p>Número de OP: <?= $opInfo["IDOP"] ?></p>
-                                    <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <section class="section">
-                        <div class="row">
-                            <div class="">
-                                <div class="card">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="na-item" role="presentation">
-                                            <button class="na-link active" id="estados-tab" data-bs-toggle="tab" data-bs-target="#estados" type="button" role="tab" aria-controls="estados" aria-selected="true">Cambio de Etados de la Op</button>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-pane fade show active" id="estado" role="tabpanel1" aria-labelledby="estado-tab">
-                                        <section class="section">
-                                            <div class="row">
-
+                <h5 class="card-title">Litas de lo tipos de Op</h5>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="estado-tab" data-bs-toggle="tab" data-bs-target="#estado" type="button" role="tab" aria-controls="estado" aria-selected="true">Cambio de los etados de las OP</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="finalizada-tab" data-bs-toggle="tab" data-bs-target="#finalizado" type="button" role="tab" aria-controls="finalizado" aria-selected="false" tabindex="-1">Op's Finalizadas</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="anulado-tab" data-bs-toggle="tab" data-bs-target="#anulado" type="button" role="tab" aria-controls="anulado" aria-selected="false" tabindex="-2">Op's Anuladas</button>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2" id="myTabContent">
+                    <div class="tab-pane fade show active" id="estado" role="tabpanel" aria-labelledby="estado-tab">
+                        <section class="section">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-header">
+                                                <h5 class="card-title">cambios Op</h5>
                                             </div>
-                                        </section>
+                                            <table class="table datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Op</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
-                </section>
-            <?php endif ?>
+                        </section>
+                    </div>
+                    <div class="tab-pane fade" id="finalizado" role="tabpanel" aria-labelledby="finalizado-tab">
+                        <section class="section">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-header">
+                                                <h5 class="card-title">Op's Finalizadas</h5>
+                                            </div>
+                                            <table>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-pane fade" id="anulado" role="tabpanel" aria-labelledby="anulado-tab">
+                        <section class="section">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-header">
+                                                <h5 class="card-title">Op's Anulados</h5>
+                                            </div>
+                                            <table>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </section>

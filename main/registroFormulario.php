@@ -89,7 +89,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     
                 </ul>
                 <div class="tab-content pt-2" id="myTabContent">
-                    <div class="tab-pane fade " id="sinFinalizar" role="tabpanel1" aria-labelledby="sinFinalizar-tab">
+                    <div class="tab-pane fade " id="sinFinalizar" role="tabpanel" aria-labelledby="sinFinalizar-tab">
                         <section class="section">
                             <div class="row">
                                 <div class="col-lg-12">

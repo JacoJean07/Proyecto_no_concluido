@@ -19,6 +19,7 @@ create table PERSONAS
    PERESTADO            bool not null,
    PERAREATRABAJO       char(25) not null,
    PERCORREO            varchar(150) not null,
+   PERFECHAREGISTRO     DATETIME DEFAULT CURRENT_TIMESTAMP,
    constraint PK_PERSONAS primary key (CEDULA)
 );
 INSERT INTO PERSONAS (CEDULA, PERNOMBRES, PERAPELLIDOS, PERFECHANACIMIENTO, PERESTADO, PERAREATRABAJO,PERCORREO)
@@ -141,8 +142,9 @@ create table OP
    OPPERESONACONTACTO   varchar(100),
    TELEFONO             char(10),
    OPOBSERAVACIONES     varchar(255),
-   OPESTADO             char(25),
+    OPESTADO             int,
    OPREPROSESO          bool,
+   OPFECHAFINAL         datetime,
    primary key (IDOP)
 )AUTO_INCREMENT = 11353;
 
@@ -193,6 +195,8 @@ create table AREAS
    IDAREA               int AUTO_INCREMENT not null,
    IDPRODUCION          int,
    AREDETALLE           int not null,
+   AREAFECHAINICIO      DATETIME DEFAULT CURRENT_TIMESTAMP,
+   AREFECHAFINAL        datetime,
    primary key (IDAREA)
 );
 
@@ -237,7 +241,7 @@ create table LOGISTICA
    LOGHORAFINAL         datetime,
    LOGOBSERVACIONES     varchar(255),
    LOGCEDULA            char(10) not null,
-   LOGESTADO            char(25),
+    LOGESTADO            int,
    primary key (IDLOGISTICA)
 );
 
