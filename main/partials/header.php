@@ -147,13 +147,21 @@ date_default_timezone_set('America/Lima');
             <li class="dropdown-header">
               <h6><?= $data["PERAPELLIDOS"] . " " . $data["PERNOMBRES"] ?></h6>
               <span>
-                <?php if($_SESSION["user"]["ROL"] == 1) : ?>
-                  Administrador
-                <?php elseif($_SESSION["user"]["ROL"] == 2) : ?>
-                  Trabajador
-                <?php elseif($_SESSION["user"]["ROL"] == 3) : ?>
-                  Jefe de Area
-                <?php endif ?>
+              <?php if( $_SESSION ["user"]["ROL"] == 1): ?>
+                                        Super Administrador
+                                    <?php elseif( $_SESSION ["user"]["ROL"] == 2): ?>
+                                        Admi Diseño
+                                    <?php elseif( $_SESSION ["user"]["ROL"] == 3): ?>
+                                        Diseñadores
+                                    <?php elseif( $_SESSION ["user"]["ROL"] == 4): ?>
+                                        Admi Producción
+                                    <?php elseif( $_SESSION ["user"]["ROL"] == 5): ?>
+                                        Producción
+                                    <?php elseif( $_SESSION ["user"]["ROL"] == 6): ?>
+                                        Personal
+                                    <?php elseif( $_SESSION ["user"]["ROL"] == 7): ?>
+                                        Presentacion
+                                    <?php endif ?>
               </span>
               <span><?= "| " . $data["PERAREATRABAJO"] ?></span>
             </li> 

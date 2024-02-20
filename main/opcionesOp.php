@@ -14,19 +14,18 @@ $error = null;
 $idop = isset($_GET["idop"]) ? $_GET["idop"] : null;
 $opInfo = null;
 $opPlanos = null;
-if($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] ==1){
+if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     //VERIFICAMOS EL METODO QUE SE USA CON EL IF
-    if($_SERVER["REQUEST_METHOD"] =="POST"){
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //VALIDAMOS QUE LOS DATOS NO ESTEN VACIOS
-        if(empty($_POST["idop"])){
+        if (empty($_POST["idop"])) {
             $error = "POR FAVOR DEBE RELLENAR EL CAMPO DE LA OP";
-        }else{
+        } else {
             //OBTENER LA INFOREMACION DE LA OP
             $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop AND OPNOTIFICACIONCORREO ");
             $opInfoStatement->bindParam(":idop", $_POST['idop']);
             $opInfoStatement->execute();
             $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
-            
         }
     }
 }
@@ -60,14 +59,14 @@ if($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] ==1){
                 </div>
             </div>
             <!-- Mostrar información de la OP y sus planos -->
-            <?php if($opInfo): ?>
+            <?php if ($opInfo) : ?>
                 <section class="section">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Datos de la OP</h5>
-                                    <p>Número de OP:  <?= $opInfo["IDOP"] ?></p>
+                                    <p>Número de OP: <?= $opInfo["IDOP"] ?></p>
                                     <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
                                 </div>
                             </div>
@@ -75,12 +74,21 @@ if($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] ==1){
                     </div>
                     <section class="section">
                         <div class="row">
-                            <div class="card">
-                                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                    <li class="na-item" role ="presentation">
-                                        <button class="na-link active" id="" data-bs-toggle="tab" data-bs-target=""></button>
-                                    </li>
-                                </ul>
+                            <div class="">
+                                <div class="card">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="na-item" role="presentation">
+                                            <button class="na-link active" id="estados-tab" data-bs-toggle="tab" data-bs-target="#estados" type="button" role="tab" aria-controls="estados" aria-selected="true">Cambio de Etados de la Op</button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-pane fade show active" id="estado" role="tabpanel1" aria-labelledby="estado-tab">
+                                        <section class="section">
+                                            <div class="row">
+
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>

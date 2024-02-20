@@ -13,7 +13,7 @@ $error = null;
 $state = "OP CREADA";
 //$state = 1;
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
-$opEditar=null;
+$opEditar = null;
 if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
     //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     $op = $conn->query("SELECT OP.*, 
@@ -22,19 +22,19 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                    FROM OP
                    LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
                    LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
-                   WHERE OP.OPESTADO = 'EN PRODUCCION'");
+                   WHERE OP.OPESTADO = '2'");
 
     // Obtener opciones para IDAREA desde la base de datos
     $lugarproduccion = $conn->query("SELECT * FROM LUGARPRODUCCION");
-    
-    $personas=$conn->query("SELECT*FROM PERSONAS");
+
+    $personas = $conn->query("SELECT*FROM PERSONAS");
     //VERFIFICAMOS EL METODOD QUE SE USA EL FORM CON UN IF 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        
+
 
         //VALIDFAMOS QUE NO SE MANDEN DATOS VASIOS
-        if (empty($_POST["cedula"])|| empty($_POST["cliente"])||empty($_POST["ciudad"])|| empty($_POST["vendedor"])||empty($_POST["direccion"])||empty($_POST["contacto"])||empty($_POST["telefono"]) ) {
-            $error="POR FAVOR LLENAR TODOS LOS CAMPOS";
+        if (empty($_POST["cedula"]) || empty($_POST["cliente"]) || empty($_POST["ciudad"]) || empty($_POST["vendedor"]) || empty($_POST["direccion"]) || empty($_POST["contacto"]) || empty($_POST["telefono"])) {
+            $error = "POR FAVOR LLENAR TODOS LOS CAMPOS";
         } elseif (!preg_match('/^[0-9]{10}$/', $_POST["cedula"])) {
             $error = "La cédula debe contener 10 dígitos numéricos.";
         } elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $_POST["cliente"])) {
@@ -49,13 +49,13 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             $error = "El telefono debe contener 10 dígitos numéricos.";
         } else {
             //VERIFICAMOS SI YA EXISTE UN REGISTRO PARA  OP ACTUAL
-            $existingStament=$conn->prepare("SELECT * FROM OP  WHERE IDOP=:id");
-            $existingStament->execute([":id"=> $id]);
-            $existingDiseniador=$existingStament->fetch(PDO::FETCH_ASSOC);
+            $existingStament = $conn->prepare("SELECT * FROM OP  WHERE IDOP=:id");
+            $existingStament->execute([":id" => $id]);
+            $existingDiseniador = $existingStament->fetch(PDO::FETCH_ASSOC);
 
-            if($existingDiseniador){
+            if ($existingDiseniador) {
                 //SI EXITE, SE ACTUALIZA LA OP
-                $stament =$conn->prepare("UPDATE OP SET
+                $stament = $conn->prepare("UPDATE OP SET
                 OPCIUDAD=:ciudad,
                 OPDETALLE=:detalle,
                 OPNOTIFICACIONCORREO=:notificacion,
@@ -64,18 +64,17 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 TELEFONO=:telefono,
                 OPOBSERAVACIONES=:observaciones");
                 $stament->execute([
-                    ":ciudad"=>$_POST["ciudad"],
-                    ":detalle"=>$_POST["detalle"],
-                    "notificacion"=>$_POST["notificacion"],
-                    ":dirrecion"=>$_POST["direccion"],
-                    ":contacto"=>$_POST["contacto"],
-                    ":telefono"=>$_POST["telefono"],
-                    ":observaciones"=>$_POST["observaciones"]
+                    ":ciudad" => $_POST["ciudad"],
+                    ":detalle" => $_POST["detalle"],
+                    "notificacion" => $_POST["notificacion"],
+                    ":dirrecion" => $_POST["direccion"],
+                    ":contacto" => $_POST["contacto"],
+                    ":telefono" => $_POST["telefono"],
+                    ":observaciones" => $_POST["observaciones"]
                 ]);
                 // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'OP', $id);
-
-            }else{
+            } else {
                 //SINO AY UN REGISTRO ACTUALIZARME
                 $stament = $conn->prepare("INSERT INTO OP (CEDULA, IDLUGAR, OPCLIENTE, OPCIUDAD, OPDETALLE, OPNOTIFICACIONCORREO, OPVENDEDOR, OPDIRECCIONLOCAL, OPPERESONACONTACTO, TELEFONO, OPOBSERAVACIONES, OPESTADO)
                 VALUES (:cedula, :idlugar, :cliente, :ciudad, :detalle, :notificacion, :vendedor, :direccion, :contacto, :telefono, :observaciones, :estado)");
@@ -105,7 +104,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
 
                 // Verificamos si la cantidad de planos es válida (mayor que cero)
                 if ($cantidadPlanos > 0) {
-                    
+
 
                     // Iteramos sobre la cantidad de planos e insertamos un registro en la tabla PLANOS por cada uno
                     for ($i = 1; $i <= $cantidadPlanos; $i++) {
@@ -123,7 +122,6 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             //REDIRIGIREMOS AHOME.PHP
             header("Location: op.php");
             return;
-        
         }
     }
 } else {
@@ -141,9 +139,11 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             <section class="section">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="card"> 
+                        <div class="card">
                             <div class="card-body">
-                                <div class="card-header"><h5 class="card-tittle">OP's en producción</h5></div>
+                                <div class="card-header">
+                                    <h5 class="card-tittle">OP's en producción</h5>
+                                </div>
                                 <h5 class="col-md-4 mx-auto mb-3"></h5>
 
                                 <?php if ($op->rowCount() == 0) : ?>
@@ -170,6 +170,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                 <th>Teléfono</th>
                                                 <th>Observaciones</th>
                                                 <th>Estado</th>
+                                                <th>Reproseso</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -188,7 +189,28 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                     <td><?= $op["OPPERESONACONTACTO"] ?></td>
                                                     <td><?= $op["TELEFONO"] ?></td>
                                                     <td><?= $op["OPOBSERAVACIONES"] ?></td>
-                                                    <td><?= $op["OPESTADO"] ?></td>
+                                                    <td><?php
+                                                        if ($op["OPESTADO"] == 2) {
+                                                            echo "Op en Produccion";
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $reprosoo = $op["OPREPROSESO"];
+                                                        switch ($reprosoo) {
+                                                            case 0:
+                                                                echo "NO HAY REPROCESO";
+                                                                break;
+                                                            case 1:
+                                                                echo "ES UN REPROCESO";
+                                                                break;
+                                                                // Agrega más casos según tus necesidades
+                                                            default:
+                                                                echo "Estado desconocido";
+                                                        }
+                                                        ?>
+                                                    </td>
                                                 </tr>
                                             <?php endforeach ?>
                                         </tbody>

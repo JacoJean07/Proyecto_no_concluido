@@ -257,11 +257,19 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                 <td><?= $usu["USER"]?></td>
                                 <td>
                                     <?php if( $usu["ROL"] == 1): ?>
-                                        Administrador
+                                        Super Administrador
                                     <?php elseif( $usu["ROL"] == 2): ?>
-                                        Empleado
+                                        Admi Diseño
                                     <?php elseif( $usu["ROL"] == 3): ?>
-                                        Diseño Gráfico
+                                        Diseñadores
+                                    <?php elseif( $usu["ROL"] == 4): ?>
+                                        Admi Producción
+                                    <?php elseif( $usu["ROL"] == 5): ?>
+                                        Producción
+                                    <?php elseif( $usu["ROL"] == 6): ?>
+                                        Personal
+                                    <?php elseif( $usu["ROL"] == 7): ?>
+                                        Presentacion
                                     <?php endif ?>
                                 </td>
                                 <td><?= $usu["REGISTRO"]?></td>
