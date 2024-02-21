@@ -22,7 +22,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                    FROM OP
                    LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
                    LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
-                   WHERE OP.OPESTADO NOT IN ('5', '6')");
+                   WHERE OP.OPESTADO NOT IN ('5', '4')");
 
     // Obtener opciones para IDAREA desde la base de datos
     $lugarproduccion = $conn->query("SELECT * FROM LUGARPRODUCCION");
@@ -120,23 +120,42 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                 <?php if ($op["OPESTADO"] != 3) : ?>
                                                                     <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#pausar">Pausar</button>
                                                                     <div class="modal fade" id="pausar" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
-                                                                    <div class="modal-dialog modal-dialog-centered">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
+                                                                        <div class="modal-dialog modal-dialog-centered">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title">Pausar OP</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    "pausar op."
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                    <a href="./cambiosEstadoOp/pausarOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-success mb-2">Pausar</a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                <?php else : ?>
+                                                                    <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#activar">Activar</button>
+                                                                    <div class="modal fade" id="activar" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                                        <div class="modal-dialog modal-dialog-centered">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title">Activar OP</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <p >activarOp</p>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                    <a href="./cambiosEstadoOp/activarOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Activar</a>
+                                                                                </div>
 
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <?php else : ?>
-                                                                    <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#activar">Activar</button>
-                                                                    <div class="modal fade" id="activar" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
-                                                                    <div class="modal-dialog modal-dialog-centered">
-                                                                        <div class="modal-content">
-                                                                            
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                                 <?php endif ?>
                                                             </td>
                                                             <td>
@@ -152,7 +171,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                                 "kjsadfkasjdfasjalsfpdklafjsdfjosdtivgdfj"
                                                                             </div>
                                                                             <div class="modal-footer">
-                                                                                <button type="button" href class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                                                                                 <a href="./cambiosEstadoOp/anularOP.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary">Anular</a>
                                                                             </div>
                                                                         </div>
