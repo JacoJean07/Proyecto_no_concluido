@@ -38,6 +38,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     }
 }
 ?>
+
 <?php require "./partials/header.php"; ?>
 <?php require "./partials/dashboard.php"; ?>
 <section class="section">
@@ -138,7 +139,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                     </div>
                                                                 <?php else : ?>
                                                                     <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#activar">Activar</button>
-                                                                    <div class="modal fade" id="activar" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                                    <div class="modal fade" id="anular-<?= $op["IDOP"] ?>" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                                         <div class="modal-dialog modal-dialog-centered">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
@@ -146,7 +147,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
-                                                                                    <p >activarOp</p>
+                                                                                    <p>activarOp</p>
                                                                                 </div>
                                                                                 <div class="modal-footer">
                                                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -159,9 +160,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                 <?php endif ?>
                                                             </td>
                                                             <td>
-                                                                <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#anular">Anular</button>
-                                                                <div class="modal fade" id="anular" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
-                                                                    <div class="modal-dialog  modal-dialog-centered">
+                                                                <button type="button" class="btn btn-danger mb-2" onclick="openAnularModal(<?= $op["IDOP"] ?>)">Anular</button>
+                                                                <div class="modal fade" id="anular-<?= $op["IDOP"] ?>" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                                    <div class="modal-dialog modal-dialog-centered">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
                                                                                 <h5 class="modal-title">Anular Op</h5>
@@ -176,6 +177,14 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                    <script>
+                                                                        function openAnularModal(idop) {
+                                                                            // Construye el ID del modal específico basado en el ID de la OP
+                                                                            var modalId = "anular-" + idop;
+                                                                            // Abre el modal correspondiente
+                                                                            $("#" + modalId).modal("show");
+                                                                        }
+                                                                    </script>
                                                                 </div>
                                                             </td>
                                                         </tr>
