@@ -67,7 +67,6 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 $stament = $conn->prepare("UPDATE OP SET
                 OPCIUDAD=:ciudad,
                 OPDETALLE=:detalle,
-                OPNOTIFICACIONCORREO=:notificacion,
                 OPDIRECCIONLOCAL=:dirrecion,
                 OPPERESONACONTACTO=:contacto,
                 TELEFONO=:telefono,
@@ -75,7 +74,6 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 $stament->execute([
                     ":ciudad" => $_POST["ciudad"],
                     ":detalle" => $_POST["detalle"],
-                    "notificacion" => $_POST["notificacion"],
                     ":dirrecion" => $_POST["direccion"],
                     ":contacto" => $_POST["contacto"],
                     ":telefono" => $_POST["telefono"],
@@ -85,8 +83,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'OP', $id);
             } else {
                 //SINO AY UN REGISTRO ACTUALIZARME
-                $stament = $conn->prepare("INSERT INTO OP (CEDULA, IDLUGAR, OPCLIENTE, OPCIUDAD, OPDETALLE, OPNOTIFICACIONCORREO, OPVENDEDOR, OPDIRECCIONLOCAL, OPPERESONACONTACTO, TELEFONO, OPOBSERAVACIONES, OPESTADO, OPREPROSESO)
-                VALUES (:cedula, :idlugar, :cliente, :ciudad, :detalle, :notificacion, :vendedor, :direccion, :contacto, :telefono, :observaciones, :estado, :reproseso)");
+                $stament = $conn->prepare("INSERT INTO OP (CEDULA, IDLUGAR, OPCLIENTE, OPCIUDAD, OPDETALLE, OPVENDEDOR, OPDIRECCIONLOCAL, OPPERESONACONTACTO, TELEFONO, OPOBSERAVACIONES, OPESTADO, OPREPROSESO)
+                VALUES (:cedula, :idlugar, :cliente, :ciudad, :detalle, :vendedor, :direccion, :contacto, :telefono, :observaciones, :estado, :reproseso)");
 
                 $stament->execute([
                     ":cedula" => $_SESSION["user"]["CEDULA"],
@@ -94,7 +92,6 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                     ":cliente" => $_POST["cliente"],
                     ":ciudad" => $_POST["ciudad"],
                     ":detalle" => $_POST["detalle"],
-                    ":notificacion" => $_POST["notificacion"],
                     ":vendedor" => $_POST["cedula"],
                     ":direccion" => $_POST["direccion"],
                     ":contacto" => $_POST["contacto"],
@@ -265,8 +262,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                         <form class="row g-3" method="POST" action="op.php">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input value="<?= $opEditar['PERNOMBRES'] ?>" type="text" class="form-control" id="vendedor" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()">
-                                    <label for="vendedor">Vendedor</label>
+                                    <input value="<?= $opEditar['PERNOMBRES'] ?>" type="text" class="form-control" id="vendedor" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()" readonly>
+                                    <label for="vendedor">Diseñador</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
