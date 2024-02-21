@@ -16,7 +16,10 @@ $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $ordenEditar = null;
 $state = 2;
 
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
+// Obtener el diseñador de la sesión activa
+$diseniador = $_SESSION["user"]["CEDULA"];
+
+if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user"]["ROL"] == 3) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
@@ -65,7 +68,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     }
 
     // Llamamos las órdenes de diseño de la base de datos
-    $ordenes = $conn->query("SELECT * FROM ORDENDISENIO WHERE");
+    $ordenes = $conn->query("SELECT * FROM ORDENDISENIO WHERE RESPONSABLE_CEDULA = $diseniador AND ESTADO = 2");
 
     // Obtenemos la información de la orden a editar
     if (!empty($id)) {

@@ -24,10 +24,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
-        if (empty($_POST["cedula"]) || empty($_POST["usuario"]) || empty($_POST["password"]) || empty($_POST["rol"])) {
+        if (empty($_POST["cedula"]) || empty($_POST["usuario"]) || empty($_POST["rol"])) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
-        } elseif (!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()-_+=])[A-Za-z0-9!@#$%^&*()-_+=]{6,}$/', $_POST["password"])) {
-            $error = "La contraseña debe tener al menos 6 caracteres y contener al menos una letra mayúscula, un número y un carácter especial.";
         } else {
             // Verificamos si ya existe un registro para el usuario actual
             $existingStatement = $conn->prepare("SELECT ID_USER FROM USUARIOS WHERE CEDULA = :cedula");
@@ -49,22 +47,28 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                 // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'USUARIOS', $_POST["usuario"]);
             } else {
-                // Si no existe, insertamos un nuevo registro
-                $statement = $conn->prepare("INSERT INTO USUARIOS (CEDULA, USER, PASSWORD, ROL, REGISTRO) 
-                                              VALUES (:cedula, :usuario, :password, :rol, CURRENT_TIMESTAMP)");
-        
-                $statement->execute([
+                // Validamos la contraseña si es un nuevo registro
+                if (empty($_POST["password"])) {
+                    $error = "POR FAVOR RELLENA EL CAMPO DE CONTRASEÑA";
+                } elseif (!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()-_+=])[A-Za-z0-9!@#$%^&*()-_+=]{6,}$/', $_POST["password"])) {
+                    $error = "La contraseña debe tener al menos 6 caracteres y contener al menos una letra mayúscula, un número y un carácter especial."; 
+                } else {
+                    // Si no existe, insertamos un nuevo registro
+                    $statement = $conn->prepare("INSERT INTO USUARIOS (CEDULA, USER, PASSWORD, ROL, REGISTRO) 
+                    VALUES (:cedula, :usuario, :password, :rol, CURRENT_TIMESTAMP)");
+
+                    $statement->execute([
                     ":cedula" => $_POST["cedula"],
                     ":usuario" => $_POST["usuario"],
                     ":password" => password_hash($_POST["password"], PASSWORD_BCRYPT),
                     ":rol" => $_POST["rol"],
-                ]);
-                // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'USUARIOS', $_POST["usuario"]);
+                    ]);
+                    // Registramos el movimiento en el kardex
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'USUARIOS', $_POST["usuario"]);
+
+                }
             }
         
-        
-
             // Redirigimos a home.php
             header("Location: usuarios.php");
             return;
@@ -75,6 +79,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     return;
 }
 ?>
+
+
 
 
 
@@ -210,10 +216,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
                             <select class="form-select" id="rol" aria-label="State" name="rol">
-                                <option value="1" <?= ($usuarioEditar['ROL'] == 1) ? 'selected' : '' ?>>Administrador</option>
-                                <option value="2" <?= ($usuarioEditar['ROL'] == 2) ? 'selected' : '' ?>>Empleado</option>
-                                <option value="3" <?= ($usuarioEditar['ROL'] == 3) ? 'selected' : '' ?>>Diseño Gráfico</option>
+                                <option value="1" <?= ($usuarioEditar['ROL'] == 1) ? 'selected' : '' ?>>Super Administrador</option>
+                                <option value="2" <?= ($usuarioEditar['ROL'] == 2) ? 'selected' : '' ?>>Admi Diseño</option>
+                                <option value="3" <?= ($usuarioEditar['ROL'] == 3) ? 'selected' : '' ?>>Diseñador</option>
+                                <option value="4" <?= ($usuarioEditar['ROL'] == 4) ? 'selected' : '' ?>>Admi Producción</option>
+                                <option value="5" <?= ($usuarioEditar['ROL'] == 5) ? 'selected' : '' ?>>Producción</option>
+                                <option value="6" <?= ($usuarioEditar['ROL'] == 6) ? 'selected' : '' ?>>Personal</option>
+                                <option value="7" <?= ($usuarioEditar['ROL'] == 7) ? 'selected' : '' ?>>Presentación</option>
                             </select>
+
                             <label for="rol">Rol de Usuario</label>
                         </div>
                     </div>

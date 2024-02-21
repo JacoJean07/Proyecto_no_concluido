@@ -1,4 +1,4 @@
-<?php
+<?php 
 require "../sql/database.php";
 session_start();
 
@@ -7,33 +7,54 @@ if (!isset($_SESSION["user"])) {
     header("Location: ../login-form/login.php");
     return;
 }
+//validacion para el usuario tipo diseniador 
+if ($_SESSION["user"]["ROL"] == 3) {
+    // Obtener el diseñador de la sesión activa
+    $diseniador = $_SESSION["user"]["CEDULA"];
+
+    // Buscar productos existentes
+    $productosQuery = $conn->prepare("SELECT PRODUCTO, MARCA, CAMPANIA FROM ORDENDISENIO WHERE ESTADO = 2");
+    $productosQuery->execute();
+    $productos = $productosQuery->fetchAll(PDO::FETCH_ASSOC);
+
+    // Verificar si ya hay un registro activo para el diseñador actual
+    $registroQuery = $conn->prepare("SELECT * FROM REGISTROS WHERE DISENIADOR = :diseniador AND HORA_FINAL IS NULL LIMIT 1");
+    $registroQuery->execute(array(':diseniador' => $diseniador));
+
+    if ($registroQuery->rowCount() > 0) {
+        header("Location: registroOdFinal.php");
+        return;
+    } else {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Validamos que no se manden datos vacíos
+            if (empty($_POST["producto"])) {
+                $error = "POR FAVOR SELECCIONA UN PRODUCTO";
+            } else {
+                // Insertamos un nuevo registro
+                $statement = $conn->prepare("INSERT INTO REGISTROS (PRODUCTO, DISENIADOR, HORA_INICIO, HORA_FINAL) 
+                                            VALUES (:producto, :diseniador, CURRENT_TIMESTAMP, NULL)");
+        
+                $statement->execute([
+                    ":producto" => $_POST["producto"],
+                    ":diseniador" => $diseniador
+                ]);
+        
+                // Redirigimos a la página principal o a donde desees
+                header("Location: registroOd.php");
+                return;
+            }
+        }
+    }
+} else {
+    // Redirigimos a la página principal o a donde desees
+    header("Location: pages-error-404.html");
+    return;
+}
 
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
 
-// Verificamos el método que usa el formulario con un if
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validamos que no se manden datos vacíos
-    if (empty($_POST["producto"]) || empty($_POST["diseniador"]) || empty($_POST["hora_inicio"]) || empty($_POST["hora_final"])) {
-        $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
-    } else {
-        // Insertamos un nuevo registro
-        $statement = $conn->prepare("INSERT INTO REGISTROS (PRODUCTO, DISENIADOR, HORA_INICIO, HORA_FINAL, OBSERVACIONES) 
-                                      VALUES (:producto, :diseniador, :hora_inicio, :hora_final, :observaciones)");
 
-        $statement->execute([
-            ":producto" => $_POST["producto"],
-            ":diseniador" => $_POST["diseniador"],
-            ":hora_inicio" => $_POST["hora_inicio"],
-            ":hora_final" => $_POST["hora_final"],
-            ":observaciones" => $_POST["observaciones"]
-        ]);
-
-        // Redirigimos a la página principal o a donde desees
-        header("Location: index.php");
-        return;
-    }
-}
 ?>
 
 <?php require "./partials/header.php"; ?>
@@ -54,32 +75,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <form class="row g-3" method="POST" action="registroOd.php">
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="producto" name="producto" placeholder="Producto" autocomplete="producto" required>
+                                <select class="form-select" id="producto" name="producto" required>
+                                    <option selected disabled value="">Selecciona un producto</option>
+                                    <?php foreach ($productos as $producto): ?>
+                                        <option value="<?= $producto["PRODUCTO"] ?>" data-marca="<?= $producto["MARCA"] ?>" data-compania="<?= $producto["CAMPANIA"] ?>"><?= $producto["PRODUCTO"] ?></option>
+                                    <?php endforeach ?>
+                                </select>
                                 <label for="producto">Producto</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="diseniador" name="diseniador" placeholder="Diseñador" autocomplete="diseniador" required>
-                                <label for="diseniador">Diseñador</label>
+                                <input class="form-control" id="marca" name="marca" placeholder="marca" required readonly></input>
+                                <label for="marca">Marca</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="datetime-local" class="form-control" id="hora_inicio" name="hora_inicio" placeholder="Hora de Inicio" autocomplete="hora_inicio" required>
-                                <label for="hora_inicio">Hora de Inicio</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                <input type="datetime-local" class="form-control" id="hora_final" name="hora_final" placeholder="Hora Final" autocomplete="hora_final" required>
-                                <label for="hora_final">Hora Final</label>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Observaciones"></textarea>
-                                <label for="observaciones">Observaciones</label>
+                                <input class="form-control" id="compania" name="compania" placeholder="compania" required readonly></input>
+                                <label for="compania">Compañía</label>
                             </div>
                         </div>
                         <div class="text-center">
@@ -94,3 +108,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </section>
 
 <?php require "./partials/footer.php"; ?>
+
+<script>
+    document.getElementById('producto').addEventListener('change', function() {
+        var producto = this.value;
+        var marca = this.options[this.selectedIndex].getAttribute('data-marca');
+        var compania = this.options[this.selectedIndex].getAttribute('data-compania');
+        
+        document.getElementById('marca').value = marca;
+        document.getElementById('compania').value = compania;
+    });
+</script>

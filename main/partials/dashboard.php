@@ -38,7 +38,7 @@
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-journal-text"></i><span>OP's</span><i class="bi bi-chevron-down ms-auto"></i>
+            <i class="bi bi-box-seam"></i><span>OP's</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
@@ -129,34 +129,8 @@
           </a>
           <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="registro.php">
-                <i class="bi bi-circle"></i><span>Ingresar Registro</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i class="bi bi-circle"></i><span>Historial de mis registros</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php elseif ($_SESSION["user"]["ROL"] == 2) : ?>
-
-        <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-journal-text"></i><span>Registros</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-            <li>
-              <a href="registro.php">
-                <i class="bi bi-circle"></i><span>Ingresar Registro</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i class="bi bi-circle"></i><span>Historial de mis registros</span>
+              <a href="historialRegistros.php">
+                <i class="bi bi-circle"></i><span>Historial de registros</span>
               </a>
             </li>
           </ul>
@@ -171,13 +145,35 @@
           </a>
           <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="registro.php">
-                <i class="bi bi-circle"></i><span>Ingresar Registro</span>
+              <a href="registroOd.php">
+                <i class="bi bi-circle"></i><span>Nuevo Registro</span>
               </a>
             </li>
             <li>
-              <a href="#">
-                <i class="bi bi-circle"></i><span>Historial de mis registros</span>
+              <a href="historialRegistros.php">
+                <i class="bi bi-circle"></i><span>Historial de mis Registros</span>
+              </a>
+            </li>
+            <li>
+              <a href="od.php">
+                <i class="bi bi-circle"></i><span>Crear una nueva Orden de Diseño</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-ORDEN" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-box-seam"></i><span>Ordenes de Producción</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-ORDEN" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="op.php">
+                <i class="bi bi-circle"></i><span>Registro de OP</span>
+              </a>
+            </li>
+            <li>
+              <a href="planosAdd.php">
+                <i class="bi bi-circle"></i><span>Añadir Planos</span>
               </a>
             </li>
           </ul>
