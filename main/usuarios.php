@@ -138,9 +138,13 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
                                 <select class="form-select" id="rol" aria-label="State" name="rol">
-                                    <option value="1">Administrador</option>
-                                    <option value="2">Empleado</option>
-                                    <option value="3">Diseño Gráfico</option>
+                                    <option value="1">Super Administrador</option>
+                                    <option value="2">Admi Diseño</option>
+                                    <option value="3">Diseñador</option>
+                                    <option value="4">Admi Producción</option>
+                                    <option value="5">Producción</option>
+                                    <option value="6">Personal</option>
+                                    <option value="7">Presentación</option>
                                 </select>
                                 <label for="rol">Rol de Usuario</label>
                                 </div>

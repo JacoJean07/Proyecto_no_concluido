@@ -85,9 +85,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                             <td><?= $op["OPCLIENTE"] ?></td>
                                                             <td><?= $op["CEDULA_NOMBRES"] . " " . $op["CEDULA_APELLIDOS"] ?></td>
                                                             <td>
-                                                                <?php 
+                                                                <?php
                                                                 $estado = $op["OPESTADO"];
-                                                                switch($estado){
+                                                                switch ($estado) {
                                                                     case 1:
                                                                         echo "OP CREADA";
                                                                         break;
@@ -117,19 +117,53 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                 ?>
                                                             </td>
                                                             <td>
-                                                                <?php if ($op["OPESTADO"] !=3) : ?>
-                                                                    <a href="./cambiosEstadoOp/pausarOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-success mb-2">Pausar</a>
+                                                                <?php if ($op["OPESTADO"] != 3) : ?>
+                                                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#pausar">Pausar</button>
+                                                                    <div class="modal fade" id="pausar" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                                 <?php else : ?>
-                                                                    <a href="./cambiosEstadoOp/activarOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary mb-2">Activar</a>
+                                                                    <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#activar">Activar</button>
+                                                                    <div class="modal fade" id="activar" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                                 <?php endif ?>
                                                             </td>
                                                             <td>
-                                                                <a href="./cambiosEstadoOp/anularOp.php?id=<?= $op["IDOP"] ?>" class="btn btn-danger mb-2">Anular</a>
+                                                                <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#anular">Anular</button>
+                                                                <div class="modal fade" id="anular" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
+                                                                    <div class="modal-dialog  modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Anular Op</h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                "kjsadfkasjdfasjalsfpdklafjsdfjosdtivgdfj"
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" href class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                                                <a href="./cambiosEstadoOp/anularOP.php?id=<?= $op["IDOP"] ?>" class="btn btn-primary">Anular</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
                                             </table>
+
                                         </div>
                                     </div>
                                 </div>
