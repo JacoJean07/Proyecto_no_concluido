@@ -125,12 +125,22 @@
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-journal-text"></i><span>Registros</span><i class="bi bi-chevron-down ms-auto"></i>
+            <i class="bi bi-journal-text"></i><span>Diseño</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
               <a href="historialRegistros.php">
                 <i class="bi bi-circle"></i><span>Historial de registros</span>
+              </a>
+            </li>
+            <li>
+              <a href="historialOd.php">
+                <i class="bi bi-circle"></i><span>Ordenes de Diseño</span>
+              </a>
+            </li>
+            <li>
+              <a href="validarOd.php">
+                <i class="bi bi-circle"></i><span>Aprobar ordenes de diseño</span>
               </a>
             </li>
           </ul>

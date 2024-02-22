@@ -211,6 +211,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                                 <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
                                                 <th></th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -222,6 +223,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                                     <td><?= $orden["MARCA"] ?></td>
                                                     <td><?= date('d-m-Y H:i', strtotime($orden["FECHAENTREGA"])) ?></td>
                                                     <td><?= $orden["ESTADO"] == 1 ? "Aprobada" : "En Diseño" ?></td>
+                                                    <td>
+                                                        <a href="validaciones/odRevisar.php?id=<?= $orden["PRODUCTO"] ?>" class="btn btn-primary mb-2">Enviar para Aprobar</a>
+                                                    </td>
                                                     <td>
                                                         <a href="od.php?id=<?= $orden["PRODUCTO"] ?>" class="btn btn-secondary mb-2">Editar</a>
                                                     </td>
