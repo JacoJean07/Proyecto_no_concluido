@@ -89,7 +89,14 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
-                                                <h5 class="card-title">cambios Op</h5>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5 class="card-title">cambios Op</h5>
+                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+                                                    <a href="reporte_excel.php" class="btn btn-success btn-xs">
+                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+                                                        Exportar a Excel
+                                                    </a>
+                                                </div>
                                             </div>
                                             <table class="table datatable">
                                                 <thead>
@@ -344,7 +351,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
-                                                <h5 class="card-title">Op's Finalizadas</h5>
+
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5 class="card-title">Op's Finalizadas</h5>
+                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+                                                    <a href="reporte_excel.php" class="btn btn-success btn-xs">
+                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+                                                        Exportar a Excel
+                                                    </a>
+                                                </div>
                                             </div>
                                             <table class="table datatable">
                                                 <thead>
@@ -431,7 +446,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
-                                                <h5 class="card-title">Op's Anulados</h5>
+
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5 class="card-title">Op's Anulados</h5>
+                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+                                                    <a href="reporte_excel.php" class="btn btn-success btn-xs">
+                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+                                                        Exportar a Excel
+                                                    </a>
+                                                </div>
                                             </div>
                                             <table class="table datatable">
                                                 <thead>
@@ -518,7 +541,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
-                                                <h5 class="card-title">OP total</h5>
+
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5 class="card-title">OP total</h5>
+                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+                                                    <a href="./reporte_exel/exel_op.php" class="btn btn-success btn-xs">
+                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+                                                        Exportar a Excel
+                                                    </a>
+                                                </div>
                                             </div>
                                             <table class="table datatable">
                                                 <thead>

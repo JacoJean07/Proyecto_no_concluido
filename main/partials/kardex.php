@@ -1,6 +1,7 @@
 <?php
 
-require "../sql/database.php";  
+require __DIR__ . '/../../sql/database.php';
+
 
 function registrarEnKardex($idUser, $user, $accion, $tabla, $row) {
     global $conn;
