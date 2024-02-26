@@ -13,7 +13,7 @@ if ($_SESSION["user"]["ROL"] == 3) {
     $diseniador = $_SESSION["user"]["CEDULA"];
 
     // Buscar productos existentes
-    $productosQuery = $conn->prepare("SELECT PRODUCTO, MARCA, CAMPANIA FROM ORDENDISENIO WHERE ESTADO = 2");
+    $productosQuery = $conn->prepare("SELECT PRODUCTO, MARCA FROM ORDENDISENIO WHERE ESTADO = 2");
     $productosQuery->execute();
     $productos = $productosQuery->fetchAll(PDO::FETCH_ASSOC);
 
@@ -78,7 +78,7 @@ $error = null;
                                 <select class="form-select" id="producto" name="producto" required>
                                     <option selected disabled value="">Selecciona un producto</option>
                                     <?php foreach ($productos as $producto): ?>
-                                        <option value="<?= $producto["PRODUCTO"] ?>" data-marca="<?= $producto["MARCA"] ?>" data-compania="<?= $producto["CAMPANIA"] ?>"><?= $producto["PRODUCTO"] ?></option>
+                                        <option value="<?= $producto["PRODUCTO"] ?>" data-marca="<?= $producto["MARCA"] ?>"><?= $producto["PRODUCTO"] ?></option>
                                     <?php endforeach ?>
                                 </select>
                                 <label for="producto">Producto</label>
@@ -88,12 +88,6 @@ $error = null;
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="marca" name="marca" placeholder="marca" required readonly></input>
                                 <label for="marca">Marca</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="compania" name="compania" placeholder="compania" required readonly></input>
-                                <label for="compania">Compañía</label>
                             </div>
                         </div>
                         <div class="text-center">

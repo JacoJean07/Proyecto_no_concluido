@@ -22,7 +22,7 @@ if ($_SESSION["user"]["ROL"] == 2) {
     $dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
     // Si el rol es 2 (Diseñador ADMIN), seleccionamos los registros donde el diseñador es el usuario actual, con información adicional de ORDENDISENIO
-    $registros = $conn->prepare("SELECT R.*, O.CAMPANIA, O.MARCA, P.PERNOMBRES, P.PERAPELLIDOS 
+    $registros = $conn->prepare("SELECT R.*, O.MARCA, P.PERNOMBRES, P.PERAPELLIDOS 
     FROM REGISTROS R 
     JOIN ORDENDISENIO O ON R.PRODUCTO = O.PRODUCTO 
     JOIN PERSONAS P ON R.DISENIADOR = P.CEDULA
@@ -88,7 +88,7 @@ if ($_SESSION["user"]["ROL"] == 2) {
 
 } elseif ($_SESSION["user"]["ROL"] == 3) {
     // Si el rol es 3 (Diseñador), seleccionamos los registros donde el diseñador es el usuario actual, con información adicional de ORDENDISENIO
-    $registros = $conn->prepare("SELECT R.*, O.CAMPANIA, O.MARCA, P.PERNOMBRES, P.PERAPELLIDOS 
+    $registros = $conn->prepare("SELECT R.*, O.MARCA, P.PERNOMBRES, P.PERAPELLIDOS 
                                     FROM REGISTROS R 
                                     JOIN ORDENDISENIO O ON R.PRODUCTO = O.PRODUCTO 
                                     JOIN PERSONAS P ON R.DISENIADOR = P.CEDULA
@@ -135,7 +135,6 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                                 <tr>
                                                     <th>#</th>
                                                     <th>PRODUCTO</th>
-                                                    <th>CAMPAÑA</th>
                                                     <th>MARCA</th>
                                                     <th>HORA INICIO</th>
                                                     <th>HORA FINAL</th>
@@ -148,7 +147,6 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                                     <tr>
                                                         <td><?= $contador-- ?></td>
                                                         <th><?= $registros["PRODUCTO"] ?></th>
-                                                        <th><?= $registros["CAMPANIA"] ?></th>
                                                         <th><?= $registros["MARCA"] ?></th>
                                                         <td><?= $registros["HORA_INICIO"] ?></td>
                                                         <td><?= $registros["HORA_FINAL"] ?></td>
@@ -188,7 +186,6 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                                     <th>#</th>
                                                     <th>DISEÑADOR</th>
                                                     <th>PRODUCTO</th>
-                                                    <th>CAMPAÑA</th>
                                                     <th>MARCA</th>
                                                     <th>HORA INICIO</th>
                                                     <th>HORA FINAL</th>
@@ -202,7 +199,6 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                                         <th><?= $registros["ID"] ?></th>
                                                         <th><?= $registros["PERNOMBRES"] . " " . $registros["PERAPELLIDOS"] ?></th>
                                                         <th><?= $registros["PRODUCTO"] ?></th>
-                                                        <th><?= $registros["CAMPANIA"] ?></th>
                                                         <th><?= $registros["MARCA"] ?></th>
                                                         <td><?= $registros["HORA_INICIO"] ?></td>
                                                         <td><?= $registros["HORA_FINAL"] ?></td>

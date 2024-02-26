@@ -142,7 +142,7 @@ create table OP
    OPPERESONACONTACTO   varchar(100),
    TELEFONO             char(10),
    OPOBSERAVACIONES     varchar(255),
-    OPESTADO             int,
+    OPESTADO             int, -- 1= OP CREADA  2= OP EN PRODUCCION  3= OP PAUSADA  4= OP ANULADA  5= OP FINALIZADA
    OPREPROSESO          bool,
    OPFECHAFINAL         datetime,
    primary key (IDOP)

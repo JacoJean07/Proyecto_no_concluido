@@ -23,7 +23,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
-        if ( empty($_POST["producto"]) || empty($_POST["campania"]) || empty($_POST["marca"]) || empty($_POST["fecha_entrega"])) {
+        if ( empty($_POST["producto"]) || empty($_POST["marca"]) || empty($_POST["fecha_entrega"])) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
         } else {
             // Verificamos si ya existe una orden de diseño para el producto actual
@@ -33,10 +33,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
 
             if ($existingOrden) {
                 // Si existe, actualizamos la orden existente
-                $statement = $conn->prepare("UPDATE ORDENDISENIO SET CAMPANIA = :campania, MARCA = :marca, FECHAENTREGA = :fecha_entrega WHERE PRODUCTO = :producto");
+                $statement = $conn->prepare("UPDATE ORDENDISENIO SET MARCA = :marca, FECHAENTREGA = :fecha_entrega WHERE PRODUCTO = :producto");
                 $statement->execute([
                     ":producto" => $_POST["producto"],
-                    ":campania" => $_POST["campania"],
                     ":marca" => $_POST["marca"],
                     ":fecha_entrega" => $_POST["fecha_entrega"]
                 ]);
@@ -45,13 +44,12 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                 registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'ORDENES DE DISEÑO', $_POST["producto"]);
             } else {
                 // Si no existe, insertamos una nueva orden
-                $statement = $conn->prepare("INSERT INTO ORDENDISENIO (RESPONSABLE_CEDULA, PRODUCTO, CAMPANIA, MARCA, FECHAENTREGA, ESTADO) 
-                                              VALUES (:responsable, :producto, :campania, :marca, :fecha_entrega, :estado)");
+                $statement = $conn->prepare("INSERT INTO ORDENDISENIO (RESPONSABLE_CEDULA, PRODUCTO, MARCA, FECHAENTREGA, ESTADO) 
+                                              VALUES (:responsable, :producto, :marca, :fecha_entrega, :estado)");
 
                 $statement->execute([
                     ":responsable" => $_SESSION["user"]["CEDULA"],
                     ":producto" => $_POST["producto"],
-                    ":campania" => $_POST["campania"],
                     ":marca" => $_POST["marca"],
                     ":fecha_entrega" => $_POST["fecha_entrega"],
                     ":estado" => $state
@@ -115,12 +113,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="campania" name="campania" placeholder="Campaña" autocomplete="campania" required>
-                                            <label for="campania">Campaña</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
                                             <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca" autocomplete="marca" required>
                                             <label for="marca">Marca</label>
                                         </div>
@@ -157,12 +149,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="producto" name="producto" placeholder="Producto" autocomplete="producto" value="<?= $ordenEditar["PRODUCTO"] ?>">
                                     <label for="producto">Producto</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="campania" name="campania" placeholder="Campaña" autocomplete="campania" value="<?= $ordenEditar["CAMPANIA"] ?>">
-                                    <label for="campania">Campaña</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -219,7 +205,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                                 <tr>
                                                     <td><?= $orden["RESPONSABLE_CEDULA"] ?></td>
                                                     <td><?= $orden["PRODUCTO"] ?></td>
-                                                    <td><?= $orden["CAMPANIA"] ?></td>
                                                     <td><?= $orden["MARCA"] ?></td>
                                                     <td><?= date('d-m-Y H:i', strtotime($orden["FECHAENTREGA"])) ?></td>
                                                     <td><?= $orden["ESTADO"] == 1 ? "Aprobada" : "En Diseño" ?></td>
