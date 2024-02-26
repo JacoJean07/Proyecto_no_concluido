@@ -41,9 +41,9 @@ if ($_SESSION["user"]["ROL"] == 2) {
     // Creamos un array para almacenar los nombres de los usuarios con rol 3
     $nombres_usuarios_rol_3 = [];
     while ($row = $usuarios_rol_3->fetch(PDO::FETCH_ASSOC)) {
-    $nombres_usuarios_rol_3[] = $row["PERNOMBRES"] . " " . $row["PERAPELLIDOS"];
+        $nombres_usuarios_rol_3[] = $row["PERNOMBRES"] . " " . $row["PERAPELLIDOS"];
     }
-    
+
 
     // Consulta SQL para obtener las horas trabajadas por día
     $sql = "SELECT 
@@ -171,6 +171,11 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                 <div class="card-body">
                                     <div class="card-header">
                                         <h5 class="card-tittle">REGISTROS</h5>
+                                        <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+                                        <a href="./reporte_exel/exel_disenio.php" class="btn btn-success btn-xs">
+                                            <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+                                            Exportar a Excel
+                                        </a>
                                     </div>
                                     <h5 class="col-md-4 mx-auto mb-3"></h5>
 
@@ -227,8 +232,7 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                         document.addEventListener("DOMContentLoaded", () => {
                                             new ApexCharts(document.querySelector("#columnChart"), {
                                                 series: [
-                                                    <?php foreach ($horas_trabajadas_por_dia as $dia => $segundos) : ?>
-                                                        {
+                                                    <?php foreach ($horas_trabajadas_por_dia as $dia => $segundos) : ?> {
                                                             name: '<?php echo $dias_semana[$dia - 1]; ?>',
                                                             data: [
                                                                 <?php foreach ($segundos as $hora) : ?>

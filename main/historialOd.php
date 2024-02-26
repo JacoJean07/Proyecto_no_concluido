@@ -54,6 +54,11 @@ $ordenes_disenio->execute();
                             <div class="card-body">
                                 <div class="card-header">
                                     <h5 class="card-tittle">ORDENES DE DISEÑO</h5>
+                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+                                    <a href="./reporte_exel/exel_op.php" class="btn btn-success btn-xs">
+                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+                                                        Exportar a Excel
+                                                    </a>
                                 </div>
 
                                 <!-- Filtro de estado -->

@@ -14,18 +14,14 @@ if (!isset($_SESSION["user"])) {
 use PhpOffice\PhpSpreadsheet\Spreadsheet; // Importar la clase Spreadsheet
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx; // Importar la clase Xlsx para escribir en formato Excel
 use PhpOffice\PhpSpreadsheet\IOFactory; // Importar la clase IOFactory para manejar la entrada y salida
-
 if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2)) {
     //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     // Consulta SQL para obtener datos de la base de datos
-    $sql = "SELECT OP.*, 
-CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
-CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
-VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, 
-VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS
-FROM OP
-LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
-LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA";
+    $sql = "SELECT REGISTROS.*,
+    CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
+    CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS
+    FROM REGISTROS 
+    LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA";
 
     // Ejecutar la consulta y obtener el resultado
     $resultado = $conn->query($sql);
@@ -51,7 +47,7 @@ LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA";
 
     // Seleccionar la hoja activa y establecer su título
     $hojaActiva = $excel->getActiveSheet();
-    $hojaActiva->setTitle("Reporte de las Op");
+    $hojaActiva->setTitle("REGISTROS");
     $hojaActiva->setCellValue('C3', 'FECHA DEL REPORTE');
     $hojaActiva->setCellValue('C2', 'REPORTE GENERADO POR');
     $hojaActiva->getStyle('C2:C3')->getFont()->setBold(true)->setSize(13);
@@ -83,93 +79,33 @@ LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA";
     // Añadir la fecha y hora actual en la celda D4
     $hojaActiva->setCellValue('D3', $fechaHoraActual);
     $hojaActiva->getStyle('D2:D3')->getFont()->setBold(true)->setSize(13);
+
     // Establecer encabezados de columnas
-    $hojaActiva->setCellValue('A6', 'OP');
-    $hojaActiva->setCellValue('B6', 'CLIENTE');
-    $hojaActiva->setCellValue('C6', 'CIUDAD');
-    $hojaActiva->setCellValue('D6', 'DETALLE');
-    $hojaActiva->setCellValue('E6', 'FECHA REGISTRO');
-    $hojaActiva->setCellValue('F6', 'FECHA NOTIFICACION POR CORREO');
-    $hojaActiva->setCellValue('G6', 'DISEÑADOR');
-    $hojaActiva->setCellValue('H6', 'VENDEDOR');
-    $hojaActiva->setCellValue('I6', 'DIRRECION DEL LOCAL');
-    $hojaActiva->setCellValue('J6', 'PERSONA DE CONTACTO');
-    $hojaActiva->setCellValue('K6', 'TELEFONO');
-    $hojaActiva->setCellValue('L6', 'REPROSESO');
-    $hojaActiva->setCellValue('M6', 'ESTADO');
+    $hojaActiva->setCellValue('A6', 'N0.');
+    $hojaActiva->setCellValue('B6', 'DISEÑADOR.');
+    $hojaActiva->setCellValue('C6', 'MARCA.');
+    $hojaActiva->setCellValue('D6', 'PRODUCTO.');
+    $hojaActiva->setCellValue('E6', 'FECHA HORA INICIO.');
+    $hojaActiva->setCellValue('F6', 'FECHA  HORA FINAL.');
+    $hojaActiva->setCellValue('G6', 'TIEMPO.');
+    $hojaActiva->setCellValue('H6', 'OBSERVACION.');
 
     // Obtener el número de filas inicial para los datos
     $fila = 7;
 
     // Iterar sobre los resultados de la consulta y agregar datos a la hoja de cálculo
     while ($rows = $resultado->fetch(PDO::FETCH_ASSOC)) {
-        // Convertir el número del estado a texto según diferentes casos
-        switch ($rows['OPESTADO']) {
-            case 1:
-                $estado = 'OP CREADA';
-                break;
-            case 2:
-                $estado = 'OP EN PRODUCCIÓN';
-                break;
-            case 3:
-                $estado = 'OP EN PAUSA';
-                break;
-            case 4:
-                $estado = 'OP ANULADA';
-                $estado = 'OTRA PALABRA';
-                // Establecer el color de relleno de la fila en la columna M como rojo y color de fuente blanco
-                $hojaActiva->getStyle('A' . $fila . ':M' . $fila)->applyFromArray([
-                    'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => 'FF0000'], // Color rojo
-                    ],
-                    'font' => [
-                        'color' => ['rgb' => 'FFFFFF'], // Color de fuente blanco
-                    ],
-                ]);
-                break;
-            case 5:
-                $estado = 'OP FINALIZADA';
-                break;
-            default:
-                $estado = 'ESTADO DESCONOCIDO';
-        }
-        //CONVERTIR DE NUMERO A LETRAS EN REPROSESO
-        switch ($rows['OPREPROSESO']) {
-            case 0:
-                $reproseso = '';
-                break;
-            case 1:
-                $reproseso = 'ES UN REPROSESO';
-                break;
-            default:
-                $reproseso = 'REPROSEOS DESCONOCIDO';
-        }
 
-        // Agregar datos a las celdas
-        $hojaActiva->setCellValue('A' . $fila, $rows['IDOP']);
-        $hojaActiva->setCellValue('B' . $fila, $rows['OPCLIENTE']);
-        $hojaActiva->setCellValue('C' . $fila, $rows['OPCIUDAD']);
-        $hojaActiva->setCellValue('D' . $fila, $rows['OPDETALLE']);
-        $hojaActiva->setCellValue('E' . $fila, $rows['OPREGISTRO']);
-        $hojaActiva->setCellValue('F' . $fila, $rows['OPNOTIFICACIONCORREO']);
-        $hojaActiva->setCellValue('G' . $fila, $rows['CEDULA_NOMBRES'] . ' ' . $rows['CEDULA_APELLIDOS']);
-        $hojaActiva->setCellValue('H' . $fila, $rows['VENDEDOR_NOMBRES'] . ' ' . $rows['VENDEDOR_APELLIDOS']);
-        $hojaActiva->setCellValue('I' . $fila, $rows['OPDIRECCIONLOCAL']);
-        $hojaActiva->setCellValue('J' . $fila, $rows['OPPERESONACONTACTO']);
-        $hojaActiva->setCellValue('K' . $fila, $rows['TELEFONO']);
-        $hojaActiva->setCellValue('L' . $fila, $reproseso);
-        $hojaActiva->setCellValue('M' . $fila, $estado); // Usar el estado convertido en lugar del número
-        // Establecer el estilo de negrita y tamaño de letra en la columna 'OP' con tamaño de letra 16
-        $hojaActiva->getStyle('A' . $fila)->applyFromArray([
-            'font' => [
-                'bold' => true, // Establecer como negrita
-                'size' => 16,   // Establecer tamaño de letra
-            ],
-        ]);
+        $hojaActiva->setCellValue('A' . $fila, $rows['ID']);
+        $hojaActiva->setCellValue('B' . $fila, $rows['CEDULA_NOMBRES'] . ' ' . $rows['CEDULA_APELLIDOS']);
+        $hojaActiva->setCellValue('C' . $fila, $rows['PRODUCTO']);
+        $hojaActiva->setCellValue('D' . $fila, $rows['PRODUCTO']);
+        $hojaActiva->setCellValue('E' . $fila, $rows['HORA_INICIO']);
+        $hojaActiva->setCellValue('F' . $fila, $rows['HORA_FINAL']);
+        $hojaActiva->setCellValue('H' . $fila, $rows['OBSERVACIONES']);
 
         // Establecer estilos de la fila 6
-        $hojaActiva->getStyle('A6:M6')->applyFromArray([
+        $hojaActiva->getStyle('A6:H6')->applyFromArray([
             'font' => [
                 'bold' => true, // Negrita
                 'size' => 14,   // Tamaño de letra 14
@@ -190,13 +126,12 @@ LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA";
 
         $fila++;
     }
-
     // Establecer estilos y ajustes de tamaño de celdas
-    $hojaActiva->getStyle('A6:M' . $fila)->getAlignment()->setWrapText(true); // Activar el ajuste de texto en las celdas
-    $hojaActiva->getStyle('A6:M' . $fila)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER); // Centrar verticalmente el texto en las celdas
+    $hojaActiva->getStyle('A6:H' . $fila)->getAlignment()->setWrapText(true); // Activar el ajuste de texto en las celdas
+    $hojaActiva->getStyle('A6:H' . $fila)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER); // Centrar verticalmente el texto en las celdas
 
     // Ajustar automáticamente el tamaño de las columnas y filas
-    foreach (range('A', 'M') as $columnID) {
+    foreach (range('A', 'H') as $columnID) {
         $hojaActiva->getColumnDimension($columnID)->setAutoSize(true);
     }
 
@@ -210,24 +145,32 @@ LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA";
         ],
     ];
 
-    $hojaActiva->getStyle('A5:M' . $fila)->applyFromArray($styleArray);
+    $hojaActiva->getStyle('A5:H' . $fila)->applyFromArray($styleArray);
 
 
-    // Crear un objeto Writer para Xlsx
+    // Crear una nueva hoja en el archivo de Excel y establecer su título como "Reporte"
+    $nuevaHoja = $excel->createSheet()->setTitle('REPORTE');
+
+    // Finalmente, ajusta el índice de la hoja activa
+    $excel->setActiveSheetIndex(0); // Puedes ajustar el índice según sea necesario
+
+    // Guardar el archivo de Excel
     $writer = new Xlsx($excel);
 
     // Establecer las cabeceras para forzar la descarga del archivo
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="reporteOP.xlsx"');
+    header('Content-Disposition: attachment;filename="REPORTE_DE_LOS_REGISTROS_DE_DISEÑADOR.xlsx"');
     header('Cache-Control: max-age=0');
 
     // Guardar el archivo en la salida (output)
     $writer->save('php://output');
+
     // Registrar el movimiento en el kardex
-    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Se a generado un reporte", 'OP', "Reporte");
+    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Se a generado un reporte", 'REGISTROS DISEÑO', "Reporte");
 
     exit;
 } else {
     header("Location:./index.php");
     return;
 }
+?>
