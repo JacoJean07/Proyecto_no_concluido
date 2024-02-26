@@ -15,7 +15,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet; // Importar la clase Spreadsheet
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx; // Importar la clase Xlsx para escribir en formato Excel
 use PhpOffice\PhpSpreadsheet\IOFactory; // Importar la clase IOFactory para manejar la entrada y salida
 
-if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
+if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2)) {
      //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
 // Consulta SQL para obtener datos de la base de datos
 $sql = "SELECT OP.*, 

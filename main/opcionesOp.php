@@ -14,11 +14,11 @@ $error = null;
 $idop = isset($_GET["idop"]) ? $_GET["idop"] : null;
 $opInfo = null;
 $opPlanos = null;
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
+if ($_SESSION["user"]["ROL"] || $_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2) {
     //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     $op = $conn->query("SELECT OP.*, 
-                          CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
-                          VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS
+                        CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
+                        VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS
                     FROM OP
                     LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
                     LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
@@ -57,6 +57,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
         } else {
         }
     }
+} else {
+    header("Location:./index.php");
+    return;
 }
 ?>
 
@@ -91,11 +94,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                             <div class="card-header">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title">cambios Op</h5>
-                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
-                                                    <a href="reporte_excel.php" class="btn btn-success btn-xs">
-                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
-                                                        Exportar a Excel
-                                                    </a>
                                                 </div>
                                             </div>
                                             <table class="table datatable">
@@ -135,7 +133,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                             <td>
                                                                 <?php if ($op["OPREPROSESO"] != 0) : ?>
                                                                     Es un reproceso
-                                                                <?php else : ?>
+                                                                <?php elseif ($_SESSION["user"]["ROL"] == 1) : ?>
                                                                     <button type="button" class="btn btn-warning mb-2" onclick="openReprosesoModal(<?= $op["IDOP"] ?>)">Reproseso</button>
                                                                     <div class="modal fade" id="reproseso-<?= $op["IDOP"] ?>" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                                         <div class="modal-dialog modal-dialog-centered">
@@ -183,6 +181,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                                             </script>
                                                                         </div>
                                                                     </div>
+                                                                <?php elseif ($_SESSION["user"]["ROL"] == 2) : ?>
+                                                                    <p>No hay reproceso en la Op.</p>
                                                                 <?php endif  ?>
                                                             </td>
                                                             <td>
@@ -351,14 +351,8 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
-
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title">Op's Finalizadas</h5>
-                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
-                                                    <a href="reporte_excel.php" class="btn btn-success btn-xs">
-                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
-                                                        Exportar a Excel
-                                                    </a>
                                                 </div>
                                             </div>
                                             <table class="table datatable">
@@ -449,11 +443,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title">Op's Anulados</h5>
-                                                    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
-                                                    <a href="reporte_excel.php" class="btn btn-success btn-xs">
-                                                        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
-                                                        Exportar a Excel
-                                                    </a>
                                                 </div>
                                             </div>
                                             <table class="table datatable">
@@ -541,7 +530,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
-
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title">OP total</h5>
                                                     <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->

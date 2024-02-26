@@ -44,7 +44,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
             } else {
                 // Si no existe, insertamos una nueva orden
                 $statement = $conn->prepare("INSERT INTO ORDENDISENIO (RESPONSABLE_CEDULA, PRODUCTO, CAMPANIA, MARCA, FECHAENTREGA, ESTADO) 
-                                              VALUES (:responsable, :producto, :campania, :marca, :fecha_entrega, :estado)");
+                                            VALUES (:responsable, :producto, :campania, :marca, :fecha_entrega, :estado)");
 
                 $statement->execute([
                     ":responsable" => $_POST["responsable"],

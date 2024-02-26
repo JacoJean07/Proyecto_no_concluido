@@ -143,9 +143,45 @@
                 <i class="bi bi-circle"></i><span>Aprobar ordenes de diseño</span>
               </a>
             </li>
+            <li>
+            <a href="opcionesOP.php">
+              <i class="bi bi-circle"></i><span>Estados de OP</span>
+            </a>
+          </li>
           </ul>
         </li>
-
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-box-seam"></i><span>OP's</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="ciudades.php">
+                <i class="bi bi-circle"></i><span>Ciudad de Producción</span>
+              </a>
+            </li>
+            <li>
+              <a href="op.php">
+                <i class="bi bi-circle"></i><span>Registro de OP</span>
+              </a>
+            </li>
+            <li>
+              <a href="opProduccion.php">
+                <i class="bi bi-circle"></i><span>Lista de OP's en Producción</span>
+              </a>
+            </li>
+            <li>
+              <a href="planosAdd.php">
+                <i class="bi bi-circle"></i><span>Añadir Planos</span>
+              </a>
+            </li>
+            <li>
+              <a href="opcionesOp.php">
+                <i class="bi bi-circle"></i><span>Estados de las Op</span>
+              </a>
+            </li>
+          </ul>
+        </li>
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
       <?php elseif ($_SESSION["user"]["ROL"] == 3) : ?>
 

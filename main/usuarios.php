@@ -109,7 +109,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <form class="row g-3" method="POST" action="usuarios.php">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()" autocomplete="cedula" required>
+                                    <input type="number" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()" autocomplete="cedula" required>
                                     <label for="cedula">Cédula</label>
                                     <datalist id="cedulaList">
                                         <?php foreach ($personas as $persona): ?>
