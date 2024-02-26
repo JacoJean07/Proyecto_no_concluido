@@ -15,7 +15,7 @@ $state = "1";
 //$state = 1;
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $opEditar = null;
-if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
+if (($_SESSION["user"]["ROL"]) || ($_SESSION["user"]["ROL"] == 1) || ($_SESSION["user"]["ROL"] == 2) || ($_SESSION["user"]["ROL"] == 3)) {
     //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     $op = $conn->query("SELECT OP.*, 
                         CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
@@ -63,24 +63,32 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             $existingDiseniador = $existingStament->fetch(PDO::FETCH_ASSOC);
 
             if ($existingDiseniador) {
-                //SI EXITE, SE ACTUALIZA LA OP
-                $stament = $conn->prepare("UPDATE OP SET
-                OPCIUDAD=:ciudad,
-                OPDETALLE=:detalle,
-                OPDIRECCIONLOCAL=:dirrecion,
-                OPPERESONACONTACTO=:contacto,
-                TELEFONO=:telefono,
-                OPOBSERAVACIONES=:observaciones");
-                $stament->execute([
-                    ":ciudad" => $_POST["ciudad"],
-                    ":detalle" => $_POST["detalle"],
-                    ":dirrecion" => $_POST["direccion"],
-                    ":contacto" => $_POST["contacto"],
-                    ":telefono" => $_POST["telefono"],
-                    ":observaciones" => $_POST["observaciones"]
-                ]);
-                // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'OP', $id);
+                // Verifica que el usuario tenga el rol necesario para actualizar
+                if ($_SESSION["user"]["ROL"] == 1) {
+                    // Actualiza la OP
+                    $stament = $conn->prepare("UPDATE OP SET
+                        OPCIUDAD=:ciudad,
+                        OPDETALLE=:detalle,
+                        OPDIRECCIONLOCAL=:dirrecion,
+                        OPPERESONACONTACTO=:contacto,
+                        TELEFONO=:telefono,
+                        OPOBSERAVACIONES=:observaciones
+                        WHERE IDOP=:id");
+                    $stament->execute([
+                        ":ciudad" => $_POST["ciudad"],
+                        ":detalle" => strtoupper($_POST["detalle"]),
+                        ":dirrecion" => strtoupper($_POST["direccion"]),
+                        ":contacto" => strtoupper($_POST["contacto"]),
+                        ":telefono" => $_POST["telefono"],
+                        ":observaciones" => $_POST["observaciones"],
+                        ":id" => $id
+                    ]);
+                    // Registra el movimiento en el kardex
+                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'OP', $id);
+                } else {
+                    // Usuario no autorizado para actualizar
+                    $error = "No tienes permisos para actualizar esta OP.";
+                }
             } else {
                 //SINO AY UN REGISTRO ACTUALIZARME
                 $stament = $conn->prepare("INSERT INTO OP (CEDULA, IDLUGAR, OPCLIENTE, OPCIUDAD, OPDETALLE, OPVENDEDOR, OPDIRECCIONLOCAL, OPPERESONACONTACTO, TELEFONO, OPOBSERAVACIONES, OPESTADO, OPREPROSESO)
@@ -89,12 +97,12 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                 $stament->execute([
                     ":cedula" => $_SESSION["user"]["CEDULA"],
                     ":idlugar" => $_POST["idlugarproduccion"],
-                    ":cliente" => $_POST["cliente"],
-                    ":ciudad" => $_POST["ciudad"],
-                    ":detalle" => $_POST["detalle"],
+                    ":cliente" => strtoupper($_POST["cliente"]),
+                    ":ciudad" => strtoupper($_POST["ciudad"]),
+                    ":detalle" => strtoupper($_POST["detalle"]),
                     ":vendedor" => $_POST["cedula"],
-                    ":direccion" => $_POST["direccion"],
-                    ":contacto" => $_POST["contacto"],
+                    ":direccion" => strtoupper($_POST["direccion"]),
+                    ":contacto" => strtoupper($_POST["contacto"]),
                     ":telefono" => $_POST["telefono"],
                     ":observaciones" => $_POST["observaciones"],
                     ":estado" => $state,
@@ -223,7 +231,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono" autocomplete="telefono" required>
+                                            <input type="number" class="form-control" id="telefono" name="telefono" placeholder="Telefono" autocomplete="telefono" required>
                                             <label for="telefono">Teléfono</label>
                                         </div>
                                     </div>
@@ -321,7 +329,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input value="<?= $opEditar["TELEFONO"] ?>" type="text" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
+                                    <input value="<?= $opEditar["TELEFONO"] ?>" type="number" class="form-control" id="telefono" name="telefono" placeholder="Telefono">
                                     <label for="telefono">Teléfono</label>
                                 </div>
                             </div>
@@ -415,9 +423,11 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                                             echo "Op Creada";
                                                         }
                                                         ?></td>
-                                                    <td>
-                                                        <a href="op.php?id=<?= $op["IDOP"] ?>" class="btn btn-secondary mb-2">Editar</a>
-                                                    </td>
+                                                    <?php if ($_SESSION["user"]["ROL"] == 1) : ?>
+                                                        <td>
+                                                            <a href="op.php?id=<?= $op["IDOP"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                                        </td>
+                                                    <?php endif; ?>
                                                 </tr>
                                             <?php endforeach ?>
                                         </tbody>

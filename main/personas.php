@@ -51,8 +51,8 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
             } else {
                 // Sanitizamos los datos para evitar inyecciones SQL
                 $cedula = $_POST["cedula"];
-                $nombres = $_POST["nombres"];
-                $apellidos = $_POST["apellidos"];
+                $nombres = strtoupper($_POST["nombres"]);
+                $apellidos = strtoupper($_POST["apellidos"]);
                 $nacimiento = $_POST["nacimiento"];
                 $estado = $state;
                 $areatrabajo = $_POST["areatrabajo"];
@@ -142,7 +142,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                             <form class="row g-3" method="POST" action="personas.php<?= $id ? "?id=$id" : "" ?>">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>" autocomplete="cedula" required>
+                                        <input type="number" class="form-control" id="cedula" name="cedula" placeholder="Cedula" value="<?= $personaEditar ? $personaEditar["CEDULA"] : "" ?>" autocomplete="cedula" required>
                                         <label for="cedula">Cédula</label>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@ if (($_SESSION["user"]["ROL"]) && ($_SESSION["user"]["ROL"] == 1)) {
                                 </div>
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>" autocomplete="correo" required>
+                                        <input type="email" class="form-control" id="correo" name="correo" placeholder="Correo" value="<?= $personaEditar ? $personaEditar["PERCORREO"] : "" ?>" autocomplete="correo" required>
                                         <label for="correo">Correo Electrónico</label>
                                     </div>
                                 </div>
