@@ -169,11 +169,57 @@ if ($_SESSION["user"]["ROL"] == 2) {
                                 <div class="card-body">
                                     <div class="card-header">
                                         <h5 class="card-tittle">REGISTROS</h5>
-                                        <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
-                                        <a href="./reporte_exel/exel_disenio.php" class="btn btn-success btn-xs">
+                                        <button type="button" class="btn btn-success btn-xs" data-bs-toggle="modal" data-bs-target="#reporte">
                                             <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
                                             Exportar a Excel
-                                        </a>
+                                        </button>
+                                        <div class="modal fade" id="reporte" tabindex="-1" style="display: none;" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">REPORTE DE LAS ORDENES DE DISEÑO</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>ESTA SEGURA DE GENERAR EL REPORTE DE LAS ORDENES DE DISEÑO SI ES ASI POR FAVOR SELECCIONE EL AÑO Y EL MES DEL REPORTE QUE SE VA A GENERAR Y SELECCIONE GENERAR EL REPORTE</p>
+                                                        <form action="./reporte_exel/exel_disenio.php" method="post"> <!-- Modificado: Formulario que envía los datos mediante POST -->
+                                                            <div class="form-group">
+                                                                <label for="selectYear">Año:</label>
+                                                                <select class="form-control" id="selectYear" name="selectYear"> <!-- Agregado: name="selectYear" para identificar el campo en PHP -->
+                                                                    <option value="2024">2024</option>
+                                                                    <option value="2025">2025</option>
+                                                                    <option value="2026">2026</option>
+                                                                    <option value="2027">2027</option>
+                                                                    <!-- Agrega más opciones según sea necesario -->
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="selectMonth">Mes:</label>
+                                                                <select class="form-control" id="selectMonth" name="selectMonth"> <!-- Agregado: name="selectMonth" para identificar el campo en PHP -->
+                                                                    <option value="1">Enero</option>
+                                                                    <option value="2">Febrero</option>
+                                                                    <option value="3">Marzo</option>
+                                                                    <option value="4">Abril</option>
+                                                                    <option value="5">Mayo</option>
+                                                                    <option value="6">Junio</option>
+                                                                    <option value="7">Julio</option>
+                                                                    <option value="8">Agosto</option>
+                                                                    <option value="9">Septiembre</option>
+                                                                    <option value="10">Octubre</option>
+                                                                    <option value="11">Noviembre</option>
+                                                                    <option value="12">Diciembre</option>
+                                                                    <!-- Agrega más opciones según sea necesario -->
+                                                                </select>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                                <button type="submit" class="btn btn-success">Generar Reporte</button> <!-- Modificado: Botón submit para enviar el formulario -->
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <h5 class="col-md-4 mx-auto mb-3"></h5>
 
