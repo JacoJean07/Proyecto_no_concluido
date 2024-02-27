@@ -14,8 +14,8 @@ if (!isset($_SESSION["user"])) {
 use PhpOffice\PhpSpreadsheet\Spreadsheet; // Importar la clase Spreadsheet
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx; // Importar la clase Xlsx para escribir en formato Excel
 use PhpOffice\PhpSpreadsheet\IOFactory; // Importar la clase IOFactory para manejar la entrada y salida
+
 if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2)) {
-    //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     // Consulta SQL para obtener datos de la base de datos
     $sql = "SELECT REGISTROS.*,
     CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
@@ -47,7 +47,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
 
     // Seleccionar la hoja activa y establecer su título
     $hojaActiva = $excel->getActiveSheet();
-    $hojaActiva->setTitle("REGISTROS");
+    $hojaActiva->setTitle("Reporte de las Op");
     $hojaActiva->setCellValue('C3', 'FECHA DEL REPORTE');
     $hojaActiva->setCellValue('C2', 'REPORTE GENERADO POR');
     $hojaActiva->getStyle('C2:C3')->getFont()->setBold(true)->setSize(13);
@@ -95,13 +95,29 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
 
     // Iterar sobre los resultados de la consulta y agregar datos a la hoja de cálculo
     while ($rows = $resultado->fetch(PDO::FETCH_ASSOC)) {
-
         $hojaActiva->setCellValue('A' . $fila, $rows['ID']);
         $hojaActiva->setCellValue('B' . $fila, $rows['CEDULA_NOMBRES'] . ' ' . $rows['CEDULA_APELLIDOS']);
         $hojaActiva->setCellValue('C' . $fila, $rows['PRODUCTO']);
         $hojaActiva->setCellValue('D' . $fila, $rows['PRODUCTO']);
         $hojaActiva->setCellValue('E' . $fila, $rows['HORA_INICIO']);
         $hojaActiva->setCellValue('F' . $fila, $rows['HORA_FINAL']);
+
+        // Calcular la diferencia entre la hora inicial y la hora final
+        $horaInicio = strtotime($rows['HORA_INICIO']);
+        $horaFinal = strtotime($rows['HORA_FINAL']);
+        $diferencia = $horaFinal - $horaInicio;
+
+        // Formatear la diferencia en horas, minutos y segundos
+        $horas = floor($diferencia / 3600);
+        $minutos = floor(($diferencia % 3600) / 60);
+        $segundos = $diferencia % 60;
+
+        // Construir el tiempo en un formato legible
+        $tiempo = sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos);
+
+        // Asignar el tiempo a la columna correspondiente
+        $hojaActiva->setCellValue('G' . $fila, $tiempo);
+
         $hojaActiva->setCellValue('H' . $fila, $rows['OBSERVACIONES']);
 
         // Establecer estilos de la fila 6
@@ -126,6 +142,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
 
         $fila++;
     }
+
     // Establecer estilos y ajustes de tamaño de celdas
     $hojaActiva->getStyle('A6:H' . $fila)->getAlignment()->setWrapText(true); // Activar el ajuste de texto en las celdas
     $hojaActiva->getStyle('A6:H' . $fila)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER); // Centrar verticalmente el texto en las celdas
@@ -145,8 +162,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         ],
     ];
 
-    $hojaActiva->getStyle('A5:H' . $fila)->applyFromArray($styleArray);
-
+    $hojaActiva->getStyle('A6:H' . $fila)->applyFromArray($styleArray);
 
     // Crear una nueva hoja en el archivo de Excel y establecer su título como "Reporte"
     $nuevaHoja = $excel->createSheet()->setTitle('REPORTE');
@@ -173,4 +189,3 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
     header("Location:./index.php");
     return;
 }
-?>
