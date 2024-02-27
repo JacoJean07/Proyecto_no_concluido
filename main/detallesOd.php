@@ -26,7 +26,7 @@ $statement_od->execute([":id" => $id_orden_disenio]);
 $orden_disenio = $statement_od->fetch(PDO::FETCH_ASSOC);
 
 // Obtener los registros asociados a la orden de diseño
-$registros = $conn->prepare("SELECT R.*, O.CAMPANIA, O.MARCA, P.PERNOMBRES, P.PERAPELLIDOS
+$registros = $conn->prepare("SELECT R.*, O.MARCA, P.PERNOMBRES, P.PERAPELLIDOS
                                 FROM REGISTROS R 
                                 JOIN ORDENDISENIO O ON R.PRODUCTO = O.PRODUCTO 
                                 JOIN PERSONAS P ON R.DISENIADOR = P.CEDULA
@@ -54,7 +54,6 @@ $registros->execute([":id" => $id_orden_disenio]);
                                 <div class="card-body">
                                     <p><strong>Producto:</strong> <?php echo $orden_disenio["PRODUCTO"]; ?></p>
                                     <p><strong>Responsable:</strong> <?php echo $orden_disenio["PERNOMBRES"] . " ". $orden_disenio["PERAPELLIDOS"]; ?></p>
-                                    <p><strong>Campania:</strong> <?php echo $orden_disenio["CAMPANIA"]; ?></p>
                                     <p><strong>Marca:</strong> <?php echo $orden_disenio["MARCA"]; ?></p>
                                     <p><strong>Fecha de Entrega:</strong> <?php echo $orden_disenio["FECHAENTREGA"]; ?></p>
                                     <p><strong>Estado:</strong> <?php echo ($orden_disenio["ESTADO"] == 1) ? 'Aprobada' : (($orden_disenio["ESTADO"] == 2) ? 'En Diseño' : (($orden_disenio["ESTADO"] == 3) ? 'Desaprobada' : 'Revisando')); ?></p>

@@ -93,7 +93,6 @@ $ordenes_disenio->execute();
                                             <tr>
                                                 <th>#</th>
                                                 <th>PRODUCTO</th>
-                                                <th>CAMPAÑA</th>
                                                 <th>MARCA</th>
                                                 <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
@@ -105,7 +104,6 @@ $ordenes_disenio->execute();
                                                 <tr>
                                                     <th><?= $orden["ID"] ?></th>
                                                     <th><?= $orden["PRODUCTO"] ?></th>
-                                                    <th><?= $orden["CAMPANIA"] ?></th>
                                                     <th><?= $orden["MARCA"] ?></th>
                                                     <th><?= $orden["FECHAENTREGA"] ?></th>
                                                     <td>
