@@ -30,7 +30,7 @@ CREATE TABLE orden_disenio(
     od_producto VARCHAR(255) NOT NULL,
     od_marca VARCHAR(255) NOT NULL,
     od_fechaEntrega DATETIME NOT NULL,
-    od_estado ENUM("PROPUESTA", "DESAPROBADA", "MATERIALIDAD", "OP") NOT NULL, 
+    od_estado ENUM("PROPUESTA", "DESAPROBADA", "MATERIALIDAD", "OP" , "OP CREADA") NOT NULL, 
     Foreign Key (od_responsable) REFERENCES personas(per_cedula)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
@@ -65,7 +65,7 @@ CREATE TABLE op (
     op_direccionLocal VARCHAR(255) NOT NULL,
     op_personaContacto VARCHAR(255) NOT NULL,
     op_telefono VARCHAR(255) NOT NULL,
-    op_estado ENUM("OP CREADA", "OP EN PRODUCCIÓN", "OP PAUSADA", "OP FINALIZADA") NOT NULL,
+    op_estado ENUM("OP CREADA", "OP EN PRODUCCIÓN", "OP PAUSADA", "OP FINALIZADA", "EN COBRANZA") NOT NULL,
     op_reproceso BOOLEAN NOT NULL,
     op_porcentaje DECIMAL(5, 2) UNSIGNED NOT NULL,
     op_fechaFinalizacion DATETIME NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE op (
     Foreign Key (lu_id) REFERENCES ciudad_produccion(lu_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    CHECK (proAre_porcentaje <= 100)
+    CHECK (op_porcentaje <= 100)
 );/*AUTO_INCREMENT = 11353   antes del ;*/
 
     /*op_observaciones*/
@@ -99,7 +99,7 @@ CREATE TABLE planos (
     Foreign Key (op_id) REFERENCES op(op_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    CHECK (proAre_porcentaje <= 100)
+    CHECK (pla_porcentaje <= 100)
 );
 
     /* observaciones */
@@ -156,7 +156,7 @@ CREATE TABLE registro_produccion (
     Foreign Key (reg_id) REFERENCES registro(reg_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT,
-    CHECK (proAre_porcentaje <= 100)
+    CHECK (reg_porcentaje <= 100)
 );
 CREATE TABLE registro_reproceso (
     reg_id INT UNSIGNED NOT NULL,
