@@ -178,6 +178,42 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
 
         // Crear una nueva hoja en el archivo de Excel y establecer su título como "Reporte"
         $nuevaHoja = $excel->createSheet()->setTitle('REPORTE');
+        // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno
+        $sqlNuevaHoja = "SELECT 
+                            CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
+                            CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
+                            COUNT(*) AS REGISTROS
+                        FROM 
+                            REGISTROS 
+                            LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA
+                        WHERE 
+                            YEAR(REGISTROS.HORA_INICIO) = :year 
+                            AND MONTH(REGISTROS.HORA_INICIO) = :month
+                        GROUP BY 
+                            REGISTROS.DISENIADOR";
+          
+
+        // Preparar y ejecutar la consulta con parámetros para la nueva hoja
+        $stmtNuevaHoja = $conn->prepare($sqlNuevaHoja);
+        $stmtNuevaHoja->bindParam(':year', $year);
+        $stmtNuevaHoja->bindParam(':month', $month);
+        $stmtNuevaHoja->execute();
+        //ESTABLECER ENCABEZADOS DE COLUMNAS
+        $nuevaHoja->setCellValue('A1', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('B1', 'CANTIDAD DE REGISTROS');
+
+        // Obtener el número de filas inicial para los datos de la hoja nueva
+        $filaNuevaHoja = 2;
+
+        // Iterar sobre los resultados de la consulta y agregar datos a la hoja de cálculo
+        while ($row = $stmtNuevaHoja->fetch(PDO::FETCH_ASSOC)) {
+            // Mostrar el diseñador y la cantidad de registros en la hoja nueva
+            $nuevaHoja->setCellValue('A' . $filaNuevaHoja, $row['CEDULA_NOMBRES'] . ' ' . $row['CEDULA_APELLIDOS']);
+            $nuevaHoja->setCellValue('B' . $filaNuevaHoja, $row['REGISTROS']);
+
+            // Incrementar el contador de filas para la hoja nueva
+            $filaNuevaHoja++;
+        }
 
         // Finalmente, ajusta el índice de la hoja activa
         $excel->setActiveSheetIndex(0); // Puedes ajustar el índice según sea necesario
