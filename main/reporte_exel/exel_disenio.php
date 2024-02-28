@@ -176,13 +176,20 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
 
         $hojaActiva->getStyle('A6:H' . $fila)->applyFromArray($styleArray);
 
-        // Crear una nueva hoja en el archivo de Excel y establecer su título como "Reporte"
+        // Crear una nueva hoja en el archivo de Excel y establecer su título
         $nuevaHoja = $excel->createSheet()->setTitle('REPORTE');
-        // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno
+
+        // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana
         $sqlNuevaHoja = "SELECT 
                             CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
                             CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
-                            COUNT(*) AS REGISTROS
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 2 THEN 1 ELSE 0 END) AS LUNES,
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 3 THEN 1 ELSE 0 END) AS MARTES,
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 4 THEN 1 ELSE 0 END) AS MIERCOLES,
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 5 THEN 1 ELSE 0 END) AS JUEVES,
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 6 THEN 1 ELSE 0 END) AS VIERNES,
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 7 THEN 1 ELSE 0 END) AS SABADO,
+                            SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 1 THEN 1 ELSE 0 END) AS DOMINGO
                         FROM 
                             REGISTROS 
                             LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA
@@ -191,25 +198,39 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
                             AND MONTH(REGISTROS.HORA_INICIO) = :month
                         GROUP BY 
                             REGISTROS.DISENIADOR";
-          
 
         // Preparar y ejecutar la consulta con parámetros para la nueva hoja
         $stmtNuevaHoja = $conn->prepare($sqlNuevaHoja);
         $stmtNuevaHoja->bindParam(':year', $year);
         $stmtNuevaHoja->bindParam(':month', $month);
         $stmtNuevaHoja->execute();
-        //ESTABLECER ENCABEZADOS DE COLUMNAS
+        
+        // Establecer encabezados de columnas en la nueva hoja
         $nuevaHoja->setCellValue('A1', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('B1', 'CANTIDAD DE REGISTROS');
+        $nuevaHoja->setCellValue('B1', 'LUNES');
+        $nuevaHoja->setCellValue('C1', 'MARTES');
+        $nuevaHoja->setCellValue('D1', 'MIERCOLES');
+        $nuevaHoja->setCellValue('E1', 'JUEVES');
+        $nuevaHoja->setCellValue('F1', 'VIERNES');
+        $nuevaHoja->setCellValue('G1', 'SABADO');
+        $nuevaHoja->setCellValue('H1', 'DOMINGO');
 
         // Obtener el número de filas inicial para los datos de la hoja nueva
         $filaNuevaHoja = 2;
 
         // Iterar sobre los resultados de la consulta y agregar datos a la hoja de cálculo
         while ($row = $stmtNuevaHoja->fetch(PDO::FETCH_ASSOC)) {
-            // Mostrar el diseñador y la cantidad de registros en la hoja nueva
+            // Mostrar el diseñador en la columna A
             $nuevaHoja->setCellValue('A' . $filaNuevaHoja, $row['CEDULA_NOMBRES'] . ' ' . $row['CEDULA_APELLIDOS']);
-            $nuevaHoja->setCellValue('B' . $filaNuevaHoja, $row['REGISTROS']);
+            
+            // Mostrar la cantidad de registros por día de la semana
+            $nuevaHoja->setCellValue('B' . $filaNuevaHoja, $row['LUNES']);
+            $nuevaHoja->setCellValue('C' . $filaNuevaHoja, $row['MARTES']);
+            $nuevaHoja->setCellValue('D' . $filaNuevaHoja, $row['MIERCOLES']);
+            $nuevaHoja->setCellValue('E' . $filaNuevaHoja, $row['JUEVES']);
+            $nuevaHoja->setCellValue('F' . $filaNuevaHoja, $row['VIERNES']);
+            $nuevaHoja->setCellValue('G' . $filaNuevaHoja, $row['SABADO']);
+            $nuevaHoja->setCellValue('H' . $filaNuevaHoja, $row['DOMINGO']);
 
             // Incrementar el contador de filas para la hoja nueva
             $filaNuevaHoja++;
