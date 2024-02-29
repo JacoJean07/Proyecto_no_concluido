@@ -17,13 +17,13 @@ use PhpOffice\PhpSpreadsheet\IOFactory; // Importar la clase IOFactory para mane
 
 if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2)) {
     // Verificar si se enviaron los parámetros del año y el mes
-    if(isset($_POST['selectYear']) && isset($_POST['selectMonth'])) {
+    if (isset($_POST['selectYear']) && isset($_POST['selectMonth'])) {
         $year = $_POST['selectYear'];
         $month = $_POST['selectMonth'];
 
         // Consulta SQL para obtener datos de la base de datos con filtro por año y mes
-       
-$sql = "SELECT REGISTROS.*,
+
+        $sql = "SELECT REGISTROS.*,
 CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
 CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS
 FROM REGISTROS 
@@ -178,6 +178,49 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
 
         // Crear una nueva hoja en el archivo de Excel y establecer su título
         $nuevaHoja = $excel->createSheet()->setTitle('REPORTE');
+        // Definir la fecha límite para la primera semana del mes
+        $fecha_limite = date('Y-m-01', strtotime($year . '-' . $month));
+        $fecha_limite1 = date('Y-m-08', strtotime($year . '-' . $month));
+        $fecha_limite2 = date('Y-m-15', strtotime($year . '-' . $month));
+        $fecha_limite3 = date('Y-m-22', strtotime($year . '-' . $month));
+
+    $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
+
+
+        // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana en la primera semana del mes
+        $sqlFecha1 = "SELECT 
+                    CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
+                    CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 2 THEN 1 ELSE 0 END) AS LUNES,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 3 THEN 1 ELSE 0 END) AS MARTES,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 4 THEN 1 ELSE 0 END) AS MIERCOLES,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 5 THEN 1 ELSE 0 END) AS JUEVES,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 6 THEN 1 ELSE 0 END) AS VIERNES,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 7 THEN 1 ELSE 0 END) AS SABADO,
+                    SUM(CASE WHEN DAYOFWEEK(REGISTROS.HORA_INICIO) = 1 THEN 1 ELSE 0 END) AS DOMINGO
+                FROM 
+                    REGISTROS 
+                    LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA
+                WHERE 
+                    REGISTROS.HORA_INICIO >= :fecha_limite AND REGISTROS.HORA_INICIO < DATE_ADD(:fecha_limite, INTERVAL 7 DAY)
+                GROUP BY 
+                    REGISTROS.DISENIADOR";
+        // Preparar y ejecutar la consulta con parámetros para la primera semana
+        $stmPrimeraSemana = $conn->prepare($sqlFecha1);
+        $stmPrimeraSemana->bindParam(':fecha_limite', $fecha_limite);
+        $stmPrimeraSemana->execute();
+        $stmPrimeraSemana1 = $conn->prepare($sqlFecha1);
+        $stmPrimeraSemana1->bindParam(':fecha_limite', $fecha_limite1);
+        $stmPrimeraSemana1->execute();
+        $stmPrimeraSemana2 = $conn->prepare($sqlFecha1);
+        $stmPrimeraSemana2->bindParam(':fecha_limite', $fecha_limite2);
+        $stmPrimeraSemana2->execute();
+        $stmPrimeraSemana3 = $conn->prepare($sqlFecha1);
+        $stmPrimeraSemana3->bindParam(':fecha_limite', $fecha_limite3);
+        $stmPrimeraSemana3->execute();
+        $stmPrimeraSemana4 = $conn->prepare($sqlFecha1);
+        $stmPrimeraSemana4->bindParam(':fecha_limite', $fecha_limite4);
+        $stmPrimeraSemana4->execute();
 
         // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana
         $sqlNuevaHoja = "SELECT 
@@ -204,37 +247,236 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         $stmtNuevaHoja->bindParam(':year', $year);
         $stmtNuevaHoja->bindParam(':month', $month);
         $stmtNuevaHoja->execute();
-        
+
+
+
         // Establecer encabezados de columnas en la nueva hoja
-        $nuevaHoja->setCellValue('A1', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('B1', 'LUNES');
-        $nuevaHoja->setCellValue('C1', 'MARTES');
-        $nuevaHoja->setCellValue('D1', 'MIERCOLES');
-        $nuevaHoja->setCellValue('E1', 'JUEVES');
-        $nuevaHoja->setCellValue('F1', 'VIERNES');
-        $nuevaHoja->setCellValue('G1', 'SABADO');
-        $nuevaHoja->setCellValue('H1', 'DOMINGO');
+        $nuevaHoja->setCellValue('A6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('B6', 'LUNES');
+        $nuevaHoja->setCellValue('C6', 'MARTES');
+        $nuevaHoja->setCellValue('D6', 'MIERCOLES');
+        $nuevaHoja->setCellValue('E6', 'JUEVES');
+        $nuevaHoja->setCellValue('F6', 'VIERNES');
+        $nuevaHoja->setCellValue('G6', 'SABADO');
+        $nuevaHoja->setCellValue('H6', 'DOMINGO');
+
+        // de la primera semana
+        $nuevaHoja->setCellValue('K6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('L6', 'LUNES');
+        $nuevaHoja->setCellValue('M6', 'MARTES');
+        $nuevaHoja->setCellValue('N6', 'MIERCOLES');
+        $nuevaHoja->setCellValue('O6', 'JUEVES');
+        $nuevaHoja->setCellValue('P6', 'VIERNES');
+        $nuevaHoja->setCellValue('Q6', 'SABADO');
+        $nuevaHoja->setCellValue('R6', 'DOMINGO');
+        //SEGUNDA SEMANA
+        $nuevaHoja->setCellValue('U6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('V6', 'LUNES');
+        $nuevaHoja->setCellValue('W6', 'MARTES');
+        $nuevaHoja->setCellValue('X6', 'MIERCOLES');
+        $nuevaHoja->setCellValue('Y6', 'JUEVES');
+        $nuevaHoja->setCellValue('Z6', 'VIERNES');
+        $nuevaHoja->setCellValue('AA6', 'SABADO');
+        $nuevaHoja->setCellValue('AB6', 'DOMINGO');
+        //TERCERA semana
+        $nuevaHoja->setCellValue('AE6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('AF6', 'LUNES');
+        $nuevaHoja->setCellValue('AG6', 'MARTES');
+        $nuevaHoja->setCellValue('AH6', 'MIERCOLES');
+        $nuevaHoja->setCellValue('AI6', 'JUEVES');
+        $nuevaHoja->setCellValue('AJ6', 'VIERNES');
+        $nuevaHoja->setCellValue('AK6', 'SABADO');
+        $nuevaHoja->setCellValue('AL6', 'DOMINGO');
+        //CUARTA semana
+        $nuevaHoja->setCellValue('AO6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('AP6', 'LUNES');
+        $nuevaHoja->setCellValue('AQ6', 'MARTES');
+        $nuevaHoja->setCellValue('AR6', 'MIERCOLES');
+        $nuevaHoja->setCellValue('AS6', 'JUEVES');
+        $nuevaHoja->setCellValue('AT6', 'VIERNES');
+        $nuevaHoja->setCellValue('AU6', 'SABADO');
+        $nuevaHoja->setCellValue('AV6', 'DOMINGO');
+        //QUINTA semna
+        $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('BA6', 'LUNES');
+        $nuevaHoja->setCellValue('BB6', 'MARTES');
+        $nuevaHoja->setCellValue('BC6', 'MIERCOLES');
+        $nuevaHoja->setCellValue('BD6', 'JUEVES');
+        $nuevaHoja->setCellValue('BE6', 'VIERNES');
+        $nuevaHoja->setCellValue('BF6', 'SABADO');
+        $nuevaHoja->setCellValue('BG6', 'DOMINGO');
 
         // Obtener el número de filas inicial para los datos de la hoja nueva
-        $filaNuevaHoja = 2;
+        $filaNuevaHoja = 7;
+        // Obtener el número de filas necesario para ambas consultas
+        $totalFilas = max($stmPrimeraSemana->rowCount(), $stmPrimeraSemana1->rowCount(), $stmPrimeraSemana2->rowCount(), $stmPrimeraSemana3->rowCount(),  $stmPrimeraSemana4->rowCount(), $stmtNuevaHoja->rowCount());
 
-        // Iterar sobre los resultados de la consulta y agregar datos a la hoja de cálculo
-        while ($row = $stmtNuevaHoja->fetch(PDO::FETCH_ASSOC)) {
-            // Mostrar el diseñador en la columna A
-            $nuevaHoja->setCellValue('A' . $filaNuevaHoja, $row['CEDULA_NOMBRES'] . ' ' . $row['CEDULA_APELLIDOS']);
-            
-            // Mostrar la cantidad de registros por día de la semana
-            $nuevaHoja->setCellValue('B' . $filaNuevaHoja, $row['LUNES']);
-            $nuevaHoja->setCellValue('C' . $filaNuevaHoja, $row['MARTES']);
-            $nuevaHoja->setCellValue('D' . $filaNuevaHoja, $row['MIERCOLES']);
-            $nuevaHoja->setCellValue('E' . $filaNuevaHoja, $row['JUEVES']);
-            $nuevaHoja->setCellValue('F' . $filaNuevaHoja, $row['VIERNES']);
-            $nuevaHoja->setCellValue('G' . $filaNuevaHoja, $row['SABADO']);
-            $nuevaHoja->setCellValue('H' . $filaNuevaHoja, $row['DOMINGO']);
+        // Iterar sobre las filas y escribir los datos en la hoja de Excel
+        for ($i = 0; $i < $totalFilas; $i++) {
+            // Obtener los datos de la primera consulta
+            $rowPrimeraSemana = $stmPrimeraSemana->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemana1 = $stmPrimeraSemana1->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemana2 = $stmPrimeraSemana2->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemana3 = $stmPrimeraSemana3->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemana4 = $stmPrimeraSemana4->fetch(PDO::FETCH_ASSOC);
+            // Obtener los datos de la segunda consulta
+            $rowNuevaHoja = $stmtNuevaHoja->fetch(PDO::FETCH_ASSOC);   // Mostrar los datos de la primera consulta si están disponibles
+            if ($rowNuevaHoja) {
+                // Mostrar el diseñador en la columna A
+                $nuevaHoja->setCellValue('A' . $filaNuevaHoja, $rowNuevaHoja['CEDULA_NOMBRES'] . ' ' . $rowNuevaHoja['CEDULA_APELLIDOS']);
 
-            // Incrementar el contador de filas para la hoja nueva
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue('B' . $filaNuevaHoja, $rowNuevaHoja['LUNES']);
+                $nuevaHoja->setCellValue('C' . $filaNuevaHoja, $rowNuevaHoja['MARTES']);
+                $nuevaHoja->setCellValue('D' . $filaNuevaHoja, $rowNuevaHoja['MIERCOLES']);
+                $nuevaHoja->setCellValue('E' . $filaNuevaHoja, $rowNuevaHoja['JUEVES']);
+                $nuevaHoja->setCellValue('F' . $filaNuevaHoja, $rowNuevaHoja['VIERNES']);
+                $nuevaHoja->setCellValue('G' . $filaNuevaHoja, $rowNuevaHoja['SABADO']);
+                $nuevaHoja->setCellValue('H' . $filaNuevaHoja, $rowNuevaHoja['DOMINGO']);
+            }
+
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemana) {
+                // Mostrar el diseñador en la columna K
+                $nuevaHoja->setCellValue('K' . $filaNuevaHoja, $rowPrimeraSemana['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue('L' . $filaNuevaHoja, $rowPrimeraSemana['LUNES']);
+                $nuevaHoja->setCellValue('M' . $filaNuevaHoja, $rowPrimeraSemana['MARTES']);
+                $nuevaHoja->setCellValue('N' . $filaNuevaHoja, $rowPrimeraSemana['MIERCOLES']);
+                $nuevaHoja->setCellValue('O' . $filaNuevaHoja, $rowPrimeraSemana['JUEVES']);
+                $nuevaHoja->setCellValue('P' . $filaNuevaHoja, $rowPrimeraSemana['VIERNES']);
+                $nuevaHoja->setCellValue('Q' . $filaNuevaHoja, $rowPrimeraSemana['SABADO']);
+                $nuevaHoja->setCellValue('R' . $filaNuevaHoja, $rowPrimeraSemana['DOMINGO']);
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemana1) {
+                // Mostrar el diseñador en la columna U
+                $nuevaHoja->setCellValue('U' . $filaNuevaHoja, $rowPrimeraSemana1['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana1['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue('V' . $filaNuevaHoja, $rowPrimeraSemana1['LUNES']);
+                $nuevaHoja->setCellValue('W' . $filaNuevaHoja, $rowPrimeraSemana1['MARTES']);
+                $nuevaHoja->setCellValue('X' . $filaNuevaHoja, $rowPrimeraSemana1['MIERCOLES']);
+                $nuevaHoja->setCellValue('Y' . $filaNuevaHoja, $rowPrimeraSemana1['JUEVES']);
+                $nuevaHoja->setCellValue('Z' . $filaNuevaHoja, $rowPrimeraSemana1['VIERNES']);
+                $nuevaHoja->setCellValue('AA' . $filaNuevaHoja, $rowPrimeraSemana1['SABADO']);
+                $nuevaHoja->setCellValue('AB' . $filaNuevaHoja, $rowPrimeraSemana1['DOMINGO']);
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemana2) {
+                // Mostrar el diseñador en la columna AE
+                $nuevaHoja->setCellValue('AE' . $filaNuevaHoja, $rowPrimeraSemana2['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana2['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue('AF' . $filaNuevaHoja, $rowPrimeraSemana2['LUNES']);
+                $nuevaHoja->setCellValue('AG' . $filaNuevaHoja, $rowPrimeraSemana2['MARTES']);
+                $nuevaHoja->setCellValue('AH' . $filaNuevaHoja, $rowPrimeraSemana2['MIERCOLES']);
+                $nuevaHoja->setCellValue('AI' . $filaNuevaHoja, $rowPrimeraSemana2['JUEVES']);
+                $nuevaHoja->setCellValue('AJ' . $filaNuevaHoja, $rowPrimeraSemana2['VIERNES']);
+                $nuevaHoja->setCellValue('AK' . $filaNuevaHoja, $rowPrimeraSemana2['SABADO']);
+                $nuevaHoja->setCellValue('AL' . $filaNuevaHoja, $rowPrimeraSemana2['DOMINGO']);
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemana3) {
+                // Mostrar el diseñador en la columna AO
+                $nuevaHoja->setCellValue('AO' . $filaNuevaHoja, $rowPrimeraSemana3['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana3['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue('AP' . $filaNuevaHoja, $rowPrimeraSemana3['LUNES']);
+                $nuevaHoja->setCellValue('AQ' . $filaNuevaHoja, $rowPrimeraSemana3['MARTES']);
+                $nuevaHoja->setCellValue('AR' . $filaNuevaHoja, $rowPrimeraSemana3['MIERCOLES']);
+                $nuevaHoja->setCellValue('AS' . $filaNuevaHoja, $rowPrimeraSemana3['JUEVES']);
+                $nuevaHoja->setCellValue('AT' . $filaNuevaHoja, $rowPrimeraSemana3['VIERNES']);
+                $nuevaHoja->setCellValue('AU' . $filaNuevaHoja, $rowPrimeraSemana3['SABADO']);
+                $nuevaHoja->setCellValue('AV' . $filaNuevaHoja, $rowPrimeraSemana3['DOMINGO']);
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemana4) {
+                // Mostrar el diseñador en la columna AZ
+                $nuevaHoja->setCellValue('AZ' . $filaNuevaHoja, $rowPrimeraSemana4['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana4['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue('BA' . $filaNuevaHoja, $rowPrimeraSemana4['LUNES']);
+                $nuevaHoja->setCellValue('BB' . $filaNuevaHoja, $rowPrimeraSemana4['MARTES']);
+                $nuevaHoja->setCellValue('BC' . $filaNuevaHoja, $rowPrimeraSemana4['MIERCOLES']);
+                $nuevaHoja->setCellValue('BD' . $filaNuevaHoja, $rowPrimeraSemana4['JUEVES']);
+                $nuevaHoja->setCellValue('BE' . $filaNuevaHoja, $rowPrimeraSemana4['VIERNES']);
+                $nuevaHoja->setCellValue('BF' . $filaNuevaHoja, $rowPrimeraSemana4['SABADO']);
+                $nuevaHoja->setCellValue('BG' . $filaNuevaHoja, $rowPrimeraSemana4['DOMINGO']);
+            }
             $filaNuevaHoja++;
         }
+
+        foreach (range('A', 'Z') as $columnID) {
+            $nuevaHoja->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        
+
+        // Establecer un ancho específico para las columnas AE, AO y AZ
+        $nuevaHoja->getColumnDimension('AE')->setWidth(40);
+        $nuevaHoja->getColumnDimension('AO')->setWidth(40);
+        $nuevaHoja->getColumnDimension('AZ')->setWidth(40);
+
+        $nuevaHoja->getColumnDimension('AA')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AB')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AF')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AG')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AH')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AI')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AJ')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AK')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AL')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AP')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AQ')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AR')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AS')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AT')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AU')->setWidth(15);
+        $nuevaHoja->getColumnDimension('AV')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BA')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BB')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BA')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BC')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BD')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BE')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BF')->setWidth(15);
+        $nuevaHoja->getColumnDimension('BG')->setWidth(15);
+        // Función para aplicar estilos comunes a la fila 6 en un rango de columnas específico
+        function applyCommonStylesToRow6($sheet, $startColumn, $endColumn)
+        {
+            $columnRange = $startColumn . '6:' . $endColumn . '6';
+
+            $sheet->getStyle($columnRange)->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 14,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '0000FF'],
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+        }
+
+
+        // Llamar a la función para cada rango de columnas
+        applyCommonStylesToRow6($nuevaHoja, 'A', 'H');
+        applyCommonStylesToRow6($nuevaHoja, 'K', 'R');
+        applyCommonStylesToRow6($nuevaHoja, 'AE', 'AL');
+        applyCommonStylesToRow6($nuevaHoja, 'U', 'AB');
+        applyCommonStylesToRow6($nuevaHoja, 'AO', 'AV');
+        applyCommonStylesToRow6($nuevaHoja, 'AZ', 'BG');
+
+
+        // Establecer el alto de la fila 6
+        $nuevaHoja->getRowDimension('6')->setRowHeight(70);
 
         // Finalmente, ajusta el índice de la hoja activa
         $excel->setActiveSheetIndex(0); // Puedes ajustar el índice según sea necesario
@@ -264,4 +506,3 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
     header("Location:../index.php");
     return;
 }
-?>
