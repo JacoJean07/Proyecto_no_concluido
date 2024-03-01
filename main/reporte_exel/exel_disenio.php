@@ -184,7 +184,7 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         $fecha_limite2 = date('Y-m-15', strtotime($year . '-' . $month));
         $fecha_limite3 = date('Y-m-22', strtotime($year . '-' . $month));
 
-        // $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
+         $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
 
 
         // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana en la primera semana del mes
@@ -309,55 +309,158 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         $nuevaHoja->setCellValue('G6', 'SABADO');
         $nuevaHoja->setCellValue('H6', 'DOMINGO');
 
+
+
+        // Crear un array para almacenar las fechas de la primera semana
+        $fechas_primera_semana = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la primera semana
+            $fecha = date('Y-m-d', strtotime($fecha_limite . " +$i days"));
+            // Agregar la fecha al array
+            $fechas_primera_semana[] = $fecha;
+        }
+
+        // Array de los nombres de los días de la semana en español
+        $dias_semana_espanol = array(
+            'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
+        );
+
+        // Crear un array para almacenar los encabezados de la primera semana
+        $encabezados_primera_semana = array();
+        foreach ($fechas_primera_semana as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
+            // Agregar el encabezado al array
+            $encabezados_primera_semana[] = $encabezado;
+        }
+
         // de la primera semana
         $nuevaHoja->setCellValue('K6', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('L6', 'LUNES');
-        $nuevaHoja->setCellValue('M6', 'MARTES');
-        $nuevaHoja->setCellValue('N6', 'MIERCOLES');
-        $nuevaHoja->setCellValue('O6', 'JUEVES');
-        $nuevaHoja->setCellValue('P6', 'VIERNES');
-        $nuevaHoja->setCellValue('Q6', 'SABADO');
-        $nuevaHoja->setCellValue('R6', 'DOMINGO');
-        //SEGUNDA SEMANA
+        $columna = 'L';
+        foreach ($encabezados_primera_semana as $encabezado) {
+            $nuevaHoja->setCellValue($columna . '6', $encabezado);
+            $columna++;
+        }
+
+
+        // Crear un array para almacenar las fechas de la segunda semana
+        $fechas_segunda_semana = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la segunda semana
+            $fecha_segunda_semana = date('Y-m-d', strtotime($fecha_limite1 . " +$i days"));
+            // Agregar la fecha al array de la segunda semana
+            $fechas_segunda_semana[] = $fecha_segunda_semana;
+        }
+
+        // Crear un array para almacenar los encabezados de la segunda semana
+        $encabezados_segunda_semana = array();
+        foreach ($fechas_segunda_semana as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
+            // Agregar el encabezado al array
+            $encabezados_segunda_semana[] = $encabezado;
+        }
+
+        // SEGUNDA SEMANA
         $nuevaHoja->setCellValue('U6', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('V6', 'LUNES');
-        $nuevaHoja->setCellValue('W6', 'MARTES');
-        $nuevaHoja->setCellValue('X6', 'MIERCOLES');
-        $nuevaHoja->setCellValue('Y6', 'JUEVES');
-        $nuevaHoja->setCellValue('Z6', 'VIERNES');
-        $nuevaHoja->setCellValue('AA6', 'SABADO');
-        $nuevaHoja->setCellValue('AB6', 'DOMINGO');
+        $columna1 = 'V';
+        foreach ($encabezados_segunda_semana as $encabezado) {
+            $nuevaHoja->setCellValue($columna1 . '6', $encabezado);
+            $columna1++;
+        }
         //TERCERA semana
+
+        // Crear un array para almacenar las fechas de la tercera semana
+        $fechas_tercera_semana = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la tercera semana
+            $fecha_tercera_semana = date('Y-m-d', strtotime($fecha_limite2 . " +$i days"));
+            // Agregar la fecha al array de la tercera semana
+            $fechas_tercera_semana[] = $fecha_tercera_semana;
+        }
+
+        // Crear un array para almacenar los encabezados de la tercera semana
+        $encabezados_tercera_semana = array();
+        foreach ($fechas_tercera_semana as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
+            // Agregar el encabezado al array
+            $encabezados_tercera_semana[] = $encabezado;
+        }
+
+        // Mostrar los encabezados en la tercera semana
         $nuevaHoja->setCellValue('AE6', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('AF6', 'LUNES');
-        $nuevaHoja->setCellValue('AG6', 'MARTES');
-        $nuevaHoja->setCellValue('AH6', 'MIERCOLES');
-        $nuevaHoja->setCellValue('AI6', 'JUEVES');
-        $nuevaHoja->setCellValue('AJ6', 'VIERNES');
-        $nuevaHoja->setCellValue('AK6', 'SABADO');
-        $nuevaHoja->setCellValue('AL6', 'DOMINGO');
+        $columna1 = 'AF';
+        foreach ($encabezados_tercera_semana as $encabezado) {
+            $nuevaHoja->setCellValue($columna1 . '6', $encabezado);
+            $columna1++;
+        }
+
         //CUARTA semana
+        // Crear un array para almacenar las fechas de la tercera semana
+        $fechas_cuarta_semana = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la tercera semana
+            $fecha_cuarta_semana = date('Y-m-d', strtotime($fecha_limite3 . " +$i days"));
+            // Agregar la fecha al array de la tercera semana
+            $fechas_cuarta_semana[] = $fecha_cuarta_semana;
+        }
+
+        // Crear un array para almacenar los encabezados de la tercera semana
+        $encabezados_cuarta_semana = array();
+        foreach ($fechas_cuarta_semana as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
+            // Agregar el encabezado al array
+            $encabezados_cuarta_semana[] = $encabezado;
+        }
+
+        // Mostrar los encabezados en la tercera semana
         $nuevaHoja->setCellValue('AO6', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('AP6', 'LUNES');
-        $nuevaHoja->setCellValue('AQ6', 'MARTES');
-        $nuevaHoja->setCellValue('AR6', 'MIERCOLES');
-        $nuevaHoja->setCellValue('AS6', 'JUEVES');
-        $nuevaHoja->setCellValue('AT6', 'VIERNES');
-        $nuevaHoja->setCellValue('AU6', 'SABADO');
-        $nuevaHoja->setCellValue('AV6', 'DOMINGO');
+        $columna1 = 'AP';
+        foreach ($encabezados_cuarta_semana as $encabezado) {
+            $nuevaHoja->setCellValue($columna1 . '6', $encabezado);
+            $columna1++;
+        }
+
+
         //QUINTA semna
-        /* $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('BA6', 'LUNES');
-        $nuevaHoja->setCellValue('BB6', 'MARTES');
-        $nuevaHoja->setCellValue('BC6', 'MIERCOLES');
-        $nuevaHoja->setCellValue('BD6', 'JUEVES');
-        $nuevaHoja->setCellValue('BE6', 'VIERNES');
-        $nuevaHoja->setCellValue('BF6', 'SABADO');
-        $nuevaHoja->setCellValue('BG6', 'DOMINGO');*/
-        $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
-        $nuevaHoja->setCellValue('BA6', '29');
-        $nuevaHoja->setCellValue('BB6', '30');
-        $nuevaHoja->setCellValue('BC6', '31');
+         // Crear un array para almacenar las fechas de la tercera semana
+         $fechas_quinta_semana = array();
+         for ($i = 0; $i < 3; $i++) {
+             // Obtener la fecha para cada día de la tercera semana
+             $fecha_quinta_semana = date('Y-m-d', strtotime($fecha_limite4 . " +$i days"));
+             // Agregar la fecha al array de la tercera semana
+             $fechas_quinta_semana[] = $fecha_quinta_semana;
+         }
+ 
+         // Crear un array para almacenar los encabezados de la tercera semana
+         $encabezados_quinta_semana = array();
+         foreach ($fechas_quinta_semana as $fecha) {
+             // Obtener el nombre completo del día de la semana
+             $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+             // Formatear la fecha como "dd/mm" y añadir el nombre del día
+             $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
+             // Agregar el encabezado al array
+             $encabezados_quinta_semana[] = $encabezado;
+         }
+ 
+         // Mostrar los encabezados en la tercera semana
+         $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
+         $columna1 = 'BA';
+         foreach ($encabezados_quinta_semana as $encabezado) {
+             $nuevaHoja->setCellValue($columna1 . '6', $encabezado);
+             $columna1++;
+         }
+
 
         // Obtener el número de filas inicial para los datos de la hoja nueva
         $filaNuevaHoja = 7;
@@ -388,33 +491,93 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
                 $nuevaHoja->setCellValue('H' . $filaNuevaHoja, $rowNuevaHoja['DOMINGO']);
             }
 
-            // Mostrar los datos de la segunda consulta si están disponibles
+            // Mostrar los datos de la primera consulta si están disponibles
             if ($rowPrimeraSemana) {
                 // Mostrar el diseñador en la columna K
                 $nuevaHoja->setCellValue('K' . $filaNuevaHoja, $rowPrimeraSemana['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana['CEDULA_APELLIDOS']);
 
-                // Mostrar la cantidad de registros por día de la semana
-                $nuevaHoja->setCellValue('L' . $filaNuevaHoja, $rowPrimeraSemana['LUNES']);
-                $nuevaHoja->setCellValue('M' . $filaNuevaHoja, $rowPrimeraSemana['MARTES']);
-                $nuevaHoja->setCellValue('N' . $filaNuevaHoja, $rowPrimeraSemana['MIERCOLES']);
-                $nuevaHoja->setCellValue('O' . $filaNuevaHoja, $rowPrimeraSemana['JUEVES']);
-                $nuevaHoja->setCellValue('P' . $filaNuevaHoja, $rowPrimeraSemana['VIERNES']);
-                $nuevaHoja->setCellValue('Q' . $filaNuevaHoja, $rowPrimeraSemana['SABADO']);
-                $nuevaHoja->setCellValue('R' . $filaNuevaHoja, $rowPrimeraSemana['DOMINGO']);
+                $columna = 'L'; // Inicializar la primera columna donde se colocarán los valores de la consulta
+                foreach ($encabezados_primera_semana as $encabezado) {
+                    // Obtener el nombre del día de la semana desde el encabezado
+                    $nombre_dia = substr($encabezado, strpos($encabezado, ' ') + 1);
+
+                    // Asignar el valor correspondiente del array de la consulta al día correspondiente
+                    switch ($nombre_dia) {
+                        case 'Lunes':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['LUNES']);
+                            break;
+                        case 'Martes':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['MARTES']);
+                            break;
+                        case 'Miércoles':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['MIERCOLES']);
+                            break;
+                        case 'Jueves':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['JUEVES']);
+                            break;
+                        case 'Viernes':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['VIERNES']);
+                            break;
+                        case 'Sábado':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['SABADO']);
+                            break;
+                        case 'Domingo':
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, $rowPrimeraSemana['DOMINGO']);
+                            break;
+                        default:
+                            // En caso de que no se encuentre el nombre del día, asignar un valor vacío
+                            $nuevaHoja->setCellValue($columna . $filaNuevaHoja, '');
+                    }
+
+                    // Avanzar a la siguiente columna
+                    $columna++;
+                }
             }
+
             // Mostrar los datos de la segunda consulta si están disponibles
             if ($rowPrimeraSemana1) {
                 // Mostrar el diseñador en la columna U
                 $nuevaHoja->setCellValue('U' . $filaNuevaHoja, $rowPrimeraSemana1['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana1['CEDULA_APELLIDOS']);
 
-                // Mostrar la cantidad de registros por día de la semana
-                $nuevaHoja->setCellValue('V' . $filaNuevaHoja, $rowPrimeraSemana1['LUNES']);
-                $nuevaHoja->setCellValue('W' . $filaNuevaHoja, $rowPrimeraSemana1['MARTES']);
-                $nuevaHoja->setCellValue('X' . $filaNuevaHoja, $rowPrimeraSemana1['MIERCOLES']);
-                $nuevaHoja->setCellValue('Y' . $filaNuevaHoja, $rowPrimeraSemana1['JUEVES']);
-                $nuevaHoja->setCellValue('Z' . $filaNuevaHoja, $rowPrimeraSemana1['VIERNES']);
-                $nuevaHoja->setCellValue('AA' . $filaNuevaHoja, $rowPrimeraSemana1['SABADO']);
-                $nuevaHoja->setCellValue('AB' . $filaNuevaHoja, $rowPrimeraSemana1['DOMINGO']);
+                // Inicializar la primera columna donde se colocarán los valores de la consulta
+                $columna1 = 'V';
+
+                // Iterar sobre los encabezados de la segunda semana
+                foreach ($encabezados_segunda_semana as $encabezado) {
+                    // Obtener el nombre del día de la semana desde el encabezado
+                    $nombre_dia1 = substr($encabezado, strpos($encabezado, ' ') + 1);
+
+                    // Asignar el valor correspondiente del array de la consulta al día correspondiente
+                    switch ($nombre_dia1) {
+                        case 'Lunes':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['LUNES']);
+                            break;
+                        case 'Martes':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['MARTES']);
+                            break;
+                        case 'Miércoles':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['MIERCOLES']);
+                            break;
+                        case 'Jueves':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['JUEVES']);
+                            break;
+                        case 'Viernes':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['VIERNES']);
+                            break;
+                        case 'Sábado':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['SABADO']);
+                            break;
+                        case 'Domingo':
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, $rowPrimeraSemana1['DOMINGO']);
+                            break;
+                        default:
+                            // En caso de que no se encuentre el nombre del día, asignar un valor vacío
+                            $nuevaHoja->setCellValue($columna1 . $filaNuevaHoja, '');
+                    }
+
+                    // Avanzar a la siguiente columna
+                    $columna1++;
+                }
             }
             // Mostrar los datos de la segunda consulta si están disponibles
             if ($rowPrimeraSemana2) {
