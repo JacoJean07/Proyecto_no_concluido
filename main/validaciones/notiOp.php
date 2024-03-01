@@ -14,10 +14,10 @@ if (!isset($_SESSION["user"])) {
 $id = $_GET["id"];
 
 // Primero lo solicitamos a la base de datos
-$statement = $conn->prepare("SELECT OP.*, 
-                                    (SELECT COUNT(*) FROM PLANOS WHERE IDOP = :id) AS total_planos
-                             FROM OP 
-                             WHERE IDOP = :id");
+$statement = $conn->prepare("SELECT op.*, 
+                                    (SELECT COUNT(*) FROM planos WHERE op_id = :id) AS total_planos
+                             FROM op 
+                             WHERE op_id = :id");
 $statement->execute([":id" => $id]);
 
 // Verificar si la consulta devolvió resultados
@@ -42,12 +42,12 @@ if ($row['total_planos'] == 0) {
 
 
 // Actualizamos el row con el ID de la cédula seleccionada
-$conn->prepare("UPDATE OP SET OPNOTIFICACIONCORREO = CURRENT_TIMESTAMP, OPESTADO = :estado WHERE IDOP = :id")->execute([
+$conn->prepare("UPDATE op SET op_estado = :estado, op_notiProFecha = CURRENT TIMESTAMP WHERE op_id = :id")->execute([
     ":id" => $id,
-    ":estado" => "2",
+    ":estado" => "OP EN PRODUCCIÓN",
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Notificó por Correo", 'OP', $id);
+registrarEnKardex($_SESSION["user"]["cedula"], "NOTIFICÓ POR CORREO A PRODUCCIÓN", 'OP', $id);
 
 
 // Redirigimos a personas.php

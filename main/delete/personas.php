@@ -14,7 +14,7 @@ if (!isset($_SESSION["user"])) {
 $id = $_GET["id"];
 
 // Primero lo solicitamos a la base de datos
-$statement = $conn->prepare("SELECT * FROM PERSONAS WHERE CEDULA = :id");
+$statement = $conn->prepare("SELECT * FROM personas WHERE cedula = :id");
 $statement->execute([":id" => $id]);
 
 // Comprobamos que el ID exista, en caso de que el usuario no sea un navegador
@@ -25,12 +25,12 @@ if ($statement->rowCount() == 0) {
 }
 
 // Actualizamos el row con el ID de la cédula seleccionada
-$conn->prepare("UPDATE PERSONAS SET PERESTADO = :estado WHERE CEDULA = :id")->execute([
+$conn->prepare("UPDATE personas SET per_estado = :estado WHERE cedula = :id")->execute([
     ":id" => $id,
     ":estado" => 0,
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "ELIMINÓ", 'PERSONAS', $id);
+registrarEnKardex($_SESSION["user"]["cedula"], "ELIMINÓ", 'PERSONAS', $id);
 
 
 // Redirigimos a personas.php

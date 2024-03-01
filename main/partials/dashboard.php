@@ -2,7 +2,7 @@
 <aside id="sidebar" class="sidebar">
 
   <!-- mostrar el siguiente nav para las secciones existentes-->
-  <?php if ($_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2 || $_SESSION["user"]["ROL"] == 3 || $_SESSION["user"]["ROL"] == 4 || $_SESSION["user"]["ROL"] == 5 || $_SESSION["user"]["ROL"] == 6) : ?>
+  <?php if ($_SESSION["user"]["usu_rol"] == 1 || $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3 || $_SESSION["user"]["usu_rol"] == 4 || $_SESSION["user"]["usu_rol"] == 5 || $_SESSION["user"]["usu_rol"] == 6) : ?>
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
@@ -12,7 +12,7 @@
         </a>
       </li><!-- End Dashboard Nav -->
       <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php if ($_SESSION["user"]["ROL"] == 1) : ?>
+      <?php if ($_SESSION["user"]["usu_rol"] == 1) : ?>
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
             <i class="bi bi-menu-button-wide"></i><span>Usuarios</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -121,7 +121,7 @@
         </li>
 
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php elseif ($_SESSION["user"]["ROL"] == 2) : ?>
+      <?php elseif ($_SESSION["user"]["usu_rol"] == 2) : ?>
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
@@ -183,7 +183,7 @@
           </ul>
         </li>
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php elseif ($_SESSION["user"]["ROL"] == 3) : ?>
+      <?php elseif ($_SESSION["user"]["usu_rol"] == 3) : ?>
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
@@ -225,7 +225,7 @@
           </ul>
         </li>
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php elseif ($_SESSION["user"]["ROL"] == 4) : ?>
+      <?php elseif ($_SESSION["user"]["usu_rol"] == 4) : ?>
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
@@ -245,7 +245,7 @@
           </ul>
         </li>
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php elseif ($_SESSION["user"]["ROL"] == 5) : ?>
+      <?php elseif ($_SESSION["user"]["usu_rol"] == 5) : ?>
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
@@ -266,7 +266,7 @@
         </li>
 
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
-      <?php elseif ($_SESSION["user"]["ROL"] == 6) : ?>
+      <?php elseif ($_SESSION["user"]["usu_rol"] == 6) : ?>
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">

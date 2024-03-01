@@ -4,7 +4,7 @@ require "../partials/kardex_delete.php";
 session_start();
 
 // Verificar si la sesión está iniciada correctamente y el rol es 1 o 2
-if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION["user"]["ROL"] == 1 || $_SESSION["user"]["ROL"] == 2)) {
+if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["usu_rol"]) || ($_SESSION["user"]["usu_rol"] == 1 || $_SESSION["user"]["usu_rol"] == 2)) {
     // Redirigir a index.php si la sesión no es válida o el rol no es correcto
     header("Location: ./index.php");
     return;
@@ -21,7 +21,7 @@ if ($id <= 0) {
 // Usaremos el método GET para buscar el row que vamos a Anular
 $id = $_GET["id"];
 //primero solicitamos a la based de datos
-$stament = $conn->prepare("SELECT * FROM OP WHERE IDOP = :id");
+$stament = $conn->prepare("SELECT * FROM op WHERE op_id = :id");
 $stament->execute([":id" => $id]);
 // Verificar si la consulta devolvió resultados
 if ($stament->rowCount() == 0) {
@@ -35,12 +35,12 @@ if ($stament->rowCount() == 0) {
 $row = $stament->fetch(PDO::FETCH_ASSOC);
 
 //ACTUALIZAMOS EL ESTADO DE LAS OP
-$conn->prepare("UPDATE OP SET OPESTADO = :estado WHERE IDOP = :id")->execute([
+$conn->prepare("UPDATE op SET op_estado = :estado WHERE IDOP = :id")->execute([
     ":id" => $id,
-    ":estado" => "4"
+    ":estado" => "OP ANULADA"
 ]);
 //REGISTRA EL MOVIEMIENTO EN EL KARDEX
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Se a Anulado una Op", 'OP', $id);
+registrarEnKardex($_SESSION["user"]["cedula"], "SE HA ANULADO LA OP", 'OP', $id);
 
 //RERIDIRIGIR A OPCIONESOP.PHP
 header("Location: ../opcionesOp.php");

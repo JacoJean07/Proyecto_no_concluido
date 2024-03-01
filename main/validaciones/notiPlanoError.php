@@ -14,7 +14,7 @@ if (!isset($_SESSION["user"])) {
 $id = $_GET["id"];
 
 // Primero lo solicitamos a la base de datos
-$statement = $conn->prepare("SELECT * FROM PLANOS WHERE IDPLANO = :id");
+$statement = $conn->prepare("SELECT * FROM planos WHERE pla_id = :id");
 $statement->execute([":id" => $id]);
 
 $plano = $statement->fetch(PDO::FETCH_ASSOC);
@@ -29,12 +29,12 @@ if ($statement->rowCount() == 0) {
 
 
 // Actualizamos el row con el ID de la cédula seleccionada
-$conn->prepare("UPDATE PLANOS SET PLANOTIFICACION = :estado, PLAFECHANOTI = CURRENT_TIMESTAMP WHERE IDPLANO = :id")->execute([
+$conn->prepare("UPDATE planos SET pla_estado = :estado WHERE pla_id = :id")->execute([
     ":id" => $id,
-    ":estado" => 0,
+    ":estado" => "ACTIVO",
 ]);
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "APROBÓ", 'PLANOS', "<br>OP: " . $plano["IDOP"] . "<br>Plano: " . $plano["PLANNUMERO"]);
+registrarEnKardex($_SESSION["user"]["cedula"], "APROBÓ ERROR", 'PLANOS', "<br>OP: " . $plano["op_id"] . "<br>Plano: " . $plano["PLANNUMERO"]);
 
 
 // Redirigimos a personas.php

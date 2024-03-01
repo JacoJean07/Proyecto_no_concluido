@@ -16,23 +16,23 @@ $idop = isset($_GET["idop"]) ? $_GET["idop"] : null;
 $opInfo = null;
 $opPlanos = null;
 
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
+if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1) {
     
     // Llamamos las áreas de la base de datos
-    $produccionRegistros = $conn->query("SELECT OP.IDOP, PLANOS.PLANNUMERO, PRODUCCION.*
-    FROM OP
-    INNER JOIN PLANOS ON OP.IDOP = PLANOS.IDOP
-    INNER JOIN PRODUCCION ON PLANOS.IDPLANO = PRODUCCION.IDPLANO;
+    $produccionRegistros = $conn->query("SELECT op.op_id, planos.pla_numero, produccion.*
+    FROM op
+    INNER JOIN planos ON op.op_id = planos.op_id
+    INNER JOIN produccion ON planos.pla_id = produccion.pla_id;
     ");
     $produccionRegistro = $produccionRegistros->fetch(PDO::FETCH_ASSOC);
 
     // Verificamos si se encontró un registro
     if ($produccionRegistro) {
         // Obtenemos el ID de producción
-        $idProduccion = $produccionRegistro["IDPRODUCION"];
+        $idProduccion = $produccionRegistro["pro_id"];
         
         // Consultamos las áreas asociadas a la producción
-        $areasAsociadasStatement = $conn->prepare("SELECT * FROM AREAS where IDPRODUCION = :idProduccion");
+        $areasAsociadasStatement = $conn->prepare("SELECT * FROM pro_areas where pro_id = :idProduccion");
         $areasAsociadasStatement->execute([":idProduccion" => $idProduccion]);
         
         // Obtenemos las áreas asociadas
@@ -45,45 +45,44 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         
-        // Obtener la información de la OP y sus planos
-        $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop");
+        // Obtener la información de la op y sus planos
+        $opInfoStatement = $conn->prepare("SELECT * FROM op WHERE op_id = :idop");
         $opInfoStatement->bindParam(":idop", $_POST["idop"]);
         $opInfoStatement->execute();
         $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
         
 
-        // Obtener los planos asociados a la OP
-        $opPlanosStatement = $conn->prepare("SELECT * FROM PLANOS WHERE IDOP = :idop");
+        // Obtener los planos asociados a la op
+        $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop");
         $opPlanosStatement->bindParam(":idop", $_POST["idop"]);
         $opPlanosStatement->execute();
         $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
         
         if (isset($_POST["idplano"])) {
-            // Verificar si ya existe un registro con el mismo IDPLANO
-            $existingRecordStatement = $conn->prepare("SELECT COUNT(*) AS count FROM PRODUCCION WHERE IDPLANO = :idplano");
+            // Verificar si ya existe un registro con el mismo pla_id
+            $existingRecordStatement = $conn->prepare("SELECT COUNT(*) AS count FROM produccion WHERE pla_id = :idplano");
             $existingRecordStatement->execute([":idplano" => $_POST["idplano"]]);
             $existingRecord = $existingRecordStatement->fetch(PDO::FETCH_ASSOC);
             
             if ($existingRecord["count"] > 0) {
-                $error = "El registro ya existe para el Plano " . $_POST["idplano"] . " de la OP " . $_POST["IDOP"] . " proporcionado. EDITELO O REVISE LA INFORMACION";
+                $error = "EL REGISTRO YA EXISTE PARA ESTE PLANO" . $_POST["idplano"] . " DE LA OP " . $_POST["op_id"] . " PROPORCIONADA. EDITELO O REVISE LA INFORMACION";
             } else {
-                // Insertar datos de producción en la tabla PRODUCCION
-                $insertStatement = $conn->prepare("INSERT INTO PRODUCCION (IDPLANO, PROOBSERVACIONES, PROFECHA) VALUES (:idplano, :proobservaciones, CURRENT_TIMESTAMP)");
+                // Insertar datos de producción en la tabla produccion
+                $insertStatement = $conn->prepare("INSERT INTO produccion (pla_id, pro_fecha) VALUES (:idplano, :proobservaciones, CURRENT_TIMESTAMP)");
                 $insertStatement->execute([
                     ":idplano" => $_POST["idplano"],
-                    ":proobservaciones" => $_POST["proobservaciones"]
                 ]);
                 // Registramos el movimiento en el kardex
                 $lastInsertId = $conn->lastInsertId();
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'PRODUCCIÓN', $lastInsertId);
+                registrarEnKardex($_SESSION["user"]["cedula"], "CREÓ", 'PRODUCCIÓN', $lastInsertId);
                 
                 // Obtenemos la cantidad de áreas de trabajo seleccionadas
                 $areasSeleccionadas = isset($_POST["areatrabajo"]) ? $_POST["areatrabajo"] : [];
                 if (!empty($areasSeleccionadas)) {
                     foreach ($areasSeleccionadas as $area) {
-                        // Insertar áreas de trabajo seleccionadas en la tabla AREAS
+                        // Insertar áreas de trabajo seleccionadas en la tabla pro_areas
                         
-                        $insertStatement = $conn->prepare("INSERT INTO AREAS (IDPRODUCION, AREDETALLE) VALUES (:idproduccion, :aredetalle)");
+                        $insertStatement = $conn->prepare("INSERT INTO pro_areas (pro_id, proAre_detalle) VALUES (:idproduccion, :aredetalle)");
                         $insertStatement->execute([
                             ":idproduccion" => $lastInsertId,
                             ":aredetalle" => $area
@@ -105,10 +104,10 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 <section class="section">
     <div class="row">
         <div class="">
-            <!-- Código para buscar OP por IDOP -->
+            <!-- Código para buscar op por op_id -->
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Buscar OP por Número de OP</h5>
+                    <h5 class="card-title">BUSCAR OP POR NÚMERO</h5>
 
                     <!-- si hay un error mandar un danger -->
                     <?php if ($error): ?> 
@@ -119,19 +118,19 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <form class="row g-3" method="POST" action="produccion.php">
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="idop" name="idop" placeholder="IDOP">
-                                <label for="idop">Número de OP</label>
+                                <input type="text" class="form-control" id="idop" name="idop" placeholder="op_id">
+                                <label for="idop">NÚMERO DE OP</label>
                             </div>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                            <button type="reset" class="btn btn-secondary">Limpiar</button>
+                            <button type="submit" class="btn btn-primary">BUSCAR</button>
+                            <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Mostrar información de la OP y sus planos -->
+            <!-- Mostrar información de la op y sus planos -->
             <?php if ($opInfo): ?>
 
                 <?php if ($opPlanos): ?>
@@ -140,41 +139,35 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Datos de la OP</h5>
-                                        <p>Número de OP: <?= $opInfo["IDOP"] ?></p>
-                                        <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
+                                        <h5 class="card-title">DATOS DE LA OP</h5>
+                                        <p>NÚMERO DE OP: <?= $opInfo["op_id"] ?></p>
+                                        <p>CLIENTE: <?= $opInfo["OPCLIENTE"] ?></p>
                                         <hr>
-                                        <h5 class="card-title">Planos de la OP</h5>
+                                        <h5 class="card-title">PLANOS DE LA OP</h5>
                                         <!-- si el array asociativo $opPlanos no tiene nada dentro, entonces imprimir el siguiente div -->
                                         <?php if (empty($opPlanos)): ?>
                                             <div class="col-md-4 mx-auto mb-3">
                                                 <div class="card card-body text-center">
-                                                    <p>No hay planos asociados a esta OP.</p>
+                                                    <p>NO HAY PLANOS ASOCIADOS A ESTA OP.</p>
                                                 </div>
                                             </div>
                                         <?php else: ?>
                                             <!-- Formulario para ingresar datos de producción -->
                                             <form class="row g-3" method="POST" action="produccion.php">
-                                                <input type="hidden" value="<?= $opInfo["IDOP"]?>"  name="IDOP">
-                                                <input type="hidden" name="idproduccion" value="<?= $produccionRegistro["IDPRODUCION"] ?>">
+                                                <input type="hidden" value="<?= $opInfo["op_id"]?>"  name="op_id">
+                                                <input type="hidden" name="idproduccion" value="<?= $produccionRegistro["pro_id"] ?>">
                                                 <div class="col-md-6">
                                                     <div class="form-floating mb-3">
                                                         <select class="form-select" id="idplano" name="idplano">
                                                             <?php foreach ($opPlanos as $opPlano): ?>
-                                                                <option value="<?= $opPlano["IDPLANO"] ?>"><?= $opPlano["PLANNUMERO"] ?></option>
+                                                                <option value="<?= $opPlano["pla_id"] ?>"><?= $opPlano["pla_numero"] ?></option>
                                                             <?php endforeach ?>
                                                         </select>
-                                                        <label for="idplano">Seleccionar Plano</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-floating mb-3">
-                                                        <input type="text" class="form-control" id="proobservaciones" name="proobservaciones" placeholder="Observaciones">
-                                                        <label for="proobservaciones">Observaciones</label>
+                                                        <label for="idplano">SELECCIONAR PLANOS</label>
                                                     </div>
                                                 </div>
 
-                                                <h5 class="card-title">Vincular Áreas</h5>
+                                                <h5 class="card-title">VINCULAR ÁREAS</h5>
 
                                                 <div class="col-md-12">
                                                     <div class="form-floating mb-3">
@@ -202,7 +195,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 
                                                 <div class="text-center">
                                                     <button type="submit" class="btn btn-primary">GUARDAR</button>
-                                                    <button type="reset" class="btn btn-secondary">Limpiar Campos</button>
+                                                    <button type="reset" class="btn btn-secondary">LIMPIAR CAMPOS</button>
                                                 </div>
                                             </form>
                                         <?php endif ?>
@@ -220,16 +213,15 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h5 class="card-title">Registros de Producción</h5>
+                                    <h5 class="card-title">REGISTROS DE PRODUCCIÓN</h5>
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
-                                                <th scope="col">Número de OP</th>
-                                                <th scope="col">Número de Plano</th>
-                                                <th scope="col">Observaciones</th>
-                                                <th scope="col">Fecha</th>
-                                                <th scope="col">Áreas Asociadas</th>
+                                                <th scope="col">NÚMERO DE OP</th>
+                                                <th scope="col">NÚMERO DE PLANO</th>
+                                                <th scope="col">FECHA</th>
+                                                <th scope="col">ÁREAS ASOCIADAS</th>
                                                 <th></th>
                                                 <th></th>
                                             </tr>
@@ -237,22 +229,21 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                         <tbody>
                                         <?php foreach ($produccionRegistros as $registro): ?>
                                             <tr>
-                                                <th scope="row"><?= $registro["IDPRODUCION"] ?></th>
-                                                <td><?= $registro["IDOP"] ?></td>
-                                                <td><?= $registro["PLANNUMERO"] ?></td>
-                                                <td><?= $registro["PROOBSERVACIONES"] ?></td>
-                                                <td><?= $registro["PROFECHA"] ?></td>
+                                                <th scope="row"><?= $registro["pro_id"] ?></th>
+                                                <td><?= $registro["op_id"] ?></td>
+                                                <td><?= $registro["pla_numero"] ?></td>
+                                                <td><?= $registro["pro_fecha"] ?></td>
                                                 <td>
                                                     <?php
                                                     // Consultamos las áreas asociadas para el registro actual
-                                                    $idProduccion = $registro["IDPRODUCION"];
-                                                    $areasAsociadasStatement = $conn->prepare("SELECT AREDETALLE FROM AREAS WHERE IDPRODUCION = :idProduccion");
+                                                    $idProduccion = $registro["pro_id"];
+                                                    $areasAsociadasStatement = $conn->prepare("SELECT proAre_detalle FROM pro_areas WHERE pro_id = :idProduccion");
                                                     $areasAsociadasStatement->execute([":idProduccion" => $idProduccion]);
                                                     $areasAsociadas = $areasAsociadasStatement->fetchAll(PDO::FETCH_ASSOC);
 
                                                     // Mostramos las áreas asociadas
                                                     foreach ($areasAsociadas as $area) {
-                                                        switch ($area["AREDETALLE"]) {
+                                                        switch ($area["proAre_detalle"]) {
                                                             case 1:
                                                                 echo "Carpintería<br>";
                                                                 break;
@@ -279,7 +270,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                                     ?>
                                                 </td>
                                                 <td>
-                                                    <a href="produccionEdit.php?id=<?= $registro["IDPRODUCION"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                                    <a href="produccionEdit.php?id=<?= $registro["pro_id"] ?>" class="btn btn-secondary mb-2">EDITAR</a>
                                                 </td>
                                                 <td></td>
                                             </tr>

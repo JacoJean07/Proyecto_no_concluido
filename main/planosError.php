@@ -10,8 +10,8 @@ if (!isset($_SESSION["user"])) {
     return;
 }
 
-// Obtener todos los planos con PLANOTIFICACION = 1 y la información de la OP asociada
-$opPlanosStatement = $conn->query("SELECT P.*, O.OPCLIENTE, O.OPDETALLE FROM PLANOS P JOIN OP O ON P.IDOP = O.IDOP WHERE P.PLANOTIFICACION = 1");
+// Obtener todos los planos con PLANOTIFICACION = 1 y la información de la op asociada
+$opPlanosStatement = $conn->query("SELECT P.*, O.op_cliente, O.op_detalle FROM planos P JOIN op O ON P.op_id = O.op_id WHERE P.PLANOTIFICACION = 1");
 $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -36,9 +36,9 @@ $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
                             <thead>
                                 <tr>
                                     <th>Número de Plano</th>
-                                    <th>OP</th>
+                                    <th>op</th>
                                     <th>Cliente</th>
-                                    <th>Detalle de la OP</th>
+                                    <th>Detalle de la op</th>
                                     <th>Estado</th>
                                     <th></th>
                                 </tr>
@@ -47,9 +47,9 @@ $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
                                 <?php foreach ($opPlanos as $opPlano): ?>
                                     <tr>
                                         <td><?= $opPlano["PLANNUMERO"] ?></td>
-                                        <td><?= $opPlano["IDOP"] ?></td>
-                                        <td><?= $opPlano["OPCLIENTE"] ?></td>
-                                        <td><?= $opPlano["OPDETALLE"] ?></td>
+                                        <td><?= $opPlano["op_id"] ?></td>
+                                        <td><?= $opPlano["op_cliente"] ?></td>
+                                        <td><?= $opPlano["op_detalle"] ?></td>
                                         <td>
                                             <?php
                                                 if ($opPlano["PLAESTADO"] == 1 ) {

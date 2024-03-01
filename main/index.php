@@ -1,4 +1,4 @@
-
+ 
 <?php 
 
 require "../sql/database.php";
@@ -10,17 +10,24 @@ if (!isset($_SESSION["user"])) {
   return;
 }
 
-$totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM PERSONAS WHERE PERESTADO = 1")->fetchColumn();
-$kardex = $conn->query("SELECT * FROM KARDEX ORDER BY IDKARDEX DESC LIMIT 10");
-$op = $conn->query("SELECT OP.*, 
-                          CEDULA.PERNOMBRES AS CEDULA_NOMBRES, CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
-                          VENDEDOR.PERNOMBRES AS VENDEDOR_NOMBRES, VENDEDOR.PERAPELLIDOS AS VENDEDOR_APELLIDOS,
-                          COUNT(PLANOS.IDPLANO) AS NUMERO_PLANOS
-                   FROM OP
-                   LEFT JOIN PERSONAS AS CEDULA ON OP.CEDULA = CEDULA.CEDULA
-                   LEFT JOIN PERSONAS AS VENDEDOR ON OP.OPVENDEDOR = VENDEDOR.CEDULA
-                   LEFT JOIN PLANOS ON OP.IDOP = PLANOS.IDOP
-                   GROUP BY OP.IDOP ORDER BY IDOP DESC");
+$totalFilas = $conn->query("SELECT COUNT(*) AS total_filas FROM personas WHERE per_estado = 1")->fetchColumn();
+$kardex = $conn->query("SELECT * FROM kardex ORDER BY kar_id DESC LIMIT 10");
+$op = $conn->query("SELECT op.*, 
+                  od.od_comercial AS vendedor, 
+                  od.od_detalle AS detalle,
+                  od.od_cliente AS cliente,
+                  cedula.per_nombres AS cedula_nombres, 
+                  cedula.per_apellidos AS cedula_apellidos,
+                  COUNT(planos.pla_id) AS numero_planos
+                  FROM op
+                  LEFT JOIN orden_disenio AS od ON op.od_id = od.od_id
+                  LEFT JOIN personas AS cedula ON od.od_responsable = cedula.cedula
+                  LEFT JOIN personas AS op_vendedor ON od.od_comercial = op_vendedor.cedula
+                  LEFT JOIN planos ON op.op_id = planos.op_id
+                  GROUP BY op.op_id 
+                  ORDER BY op.op_id DESC;
+                  "
+);
 
 date_default_timezone_set('America/Lima'); 
 
@@ -35,11 +42,11 @@ date_default_timezone_set('America/Lima');
 
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
+      <h1>DASHBOARD</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item"><a href="index.php">HOME</a></li>
+          <li class="breadcrumb-item active">DASHBOARD</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -60,7 +67,7 @@ date_default_timezone_set('America/Lima');
                 
 
                 <div class="card-body">
-                  <h5 class="card-title">Trabajadores <span>|</span></h5>
+                  <h5 class="card-title">TRABAJADORES <span>|</span></h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -68,7 +75,7 @@ date_default_timezone_set('America/Lima');
                     </div>
                     <div class="ps-3">
                       <h6><?= $totalFilas ?></h6>
-                      <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 ps-1">Personas</span>
+                      <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 ps-1">PERSONAS</span>
 
                     </div>
                   </div>
@@ -88,44 +95,36 @@ date_default_timezone_set('America/Lima');
                   <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                   <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                     <li class="dropdown-header text-start">
-                      <h6>Filter</h6>
+                      <h6>FILTER</h6>
                     </li>
 
-                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">TODAY</a></li>
                     <li><a class="dropdown-item" href="#">This Month</a></li>
                     <li><a class="dropdown-item" href="#">This Year</a></li>
                   </ul>
                 </div>
 
                 <div class="card-body">
-                  <h5 class="card-title">Ordenes de produccion recientes <span>| </span></h5>
+                  <h5 class="card-title">ÓRDENES DE PRODUCCIÓN RECIENTES. <span>| </span></h5>
 
                   <table class="table table-borderless datatable">
                     <thead>
                       <tr>
-                        <th scope="col">ID OP</th>
-                        <th scope="col">Cliente</th>
-                        <th scope="col">Descripción</th>
-                        <th scope="col">Planos</th>
-                        <th scope="col">Estado</th>
+                        <th scope="col"># OP</th>
+                        <th scope="col">CLIENTE</th>
+                        <th scope="col">DETALLE</th>
+                        <th scope="col">PLANOS</th>
+                        <th scope="col">ESTADO</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php foreach($op as $op) : ?>
                         <tr>
-                          <th scope="row"><a href="#"><?= $op["IDOP"] ?> </a></th>
-                          <td><?= $op["OPCLIENTE"] ?></td>
-                          <td><a href="#" class="text-primary"><?= $op["OPDETALLE"] ?></a></td>
-                          <td><?= $op["NUMERO_PLANOS"] ?></td>
-                          <td><span class="badge 
-                            <?php if ($op["OPESTADO"] == 'OP CREADA') : ?>
-                              bg-secondary
-                            <?php elseif ($op["OPESTADO"] == 'EN PRODUCCION') : ?>
-                              bg-primary
-                            <?php elseif ($op["OPESTADO"] == 'FINALIZADA') : ?>
-                              bg-success
-                            <?php endif ?>
-                          "><?= $op["OPESTADO"] ?></span></td>
+                          <th scope="row"><a href="#"><?= $op["op_id"] ?> </a></th>
+                          <td><?= $op["op_cliente"] ?></td>
+                          <td><a href="#" class="text-primary"><?= $op["op_detalle"] ?></a></td>
+                          <td><?= $op["numero_planos"] ?></td>
+                          <td><?= $op["op_estado"] ?></td>
                         </tr>
                       <?php endforeach ?>
                     </tbody>
@@ -160,14 +159,14 @@ date_default_timezone_set('America/Lima');
             </div>
 
             <div class="card-body">
-              <h5 class="card-title">Actividad Reciente <span>| Today</span></h5>
+              <h5 class="card-title">ACTIVIDAD RECIENTE <span>| TODAY</span></h5>
 
               <div class="activity">
                 
                 <?php foreach($kardex as $kar) : ?>
                   <?php
                   // PARA CALCULAR EL TIEMPO DE CADA ACCION
-                  $fechaMovimiento = new DateTime($kar["KARFECHA"]);
+                  $fechaMovimiento = new DateTime($kar["kar_fecha"]);
                   $fechaActual = new DateTime();
 
                   // Calcula la diferencia entre las dos fechas
@@ -187,22 +186,22 @@ date_default_timezone_set('America/Lima');
                 <div class="activity-item d-flex">
                   <div class="activite-label"><?= $tiempoTranscurrido ?></div>
                   <i class='bi bi-circle-fill activity-badge align-self-start 
-                  <?php if ($kar["KARACCION"] == "ELIMINO") :?>
+                  <?php if ($kar["kar_accion"] == "ELIMINÓ") :?>
                     text-danger
-                  <?php elseif ($kar["KARACCION"] == "CREO") : ?>
+                  <?php elseif ($kar["kar_accion"] == "CREÓ") : ?>
                     text-success
-                  <?php elseif ($kar["KARACCION"] == "EDITO") : ?>
+                  <?php elseif ($kar["kar_accion"] == "EDITÓ") : ?>
                     text-warning
-                  <?php elseif ($kar["KARACCION"] == "RESTAURO") : ?>
+                  <?php elseif ($kar["kar_accion"] == "RESTAURÓ") : ?>
                     text-primary
                   <?php else : ?>
                     text-muted
                   <?php endif ?>
                     '></i>
                   <div class="activity-content">
-                    <?= $kar["KARUSER"]?> <b><?= $kar["KARACCION"]?></b> un registro en la tabla <b><?= $kar["KARTABLA"]?></b><br>
-                    Dato : <?= $kar["KARROW"]?><br>
-                    Fecha: <?= $kar["KARFECHA"]?>
+                    <?= $kar["kar_cedula"]?> <b><?= $kar["kar_accion"]?></b> UN REGISTRO DE LA TABLA <b><?= $kar["kar_tabla"]?></b><br>
+                    DATO : <?= $kar["kar_idRow"]?><br>
+                    FECHA: <?= $kar["kar_fecha"]?>
                   </div>
                 </div><!-- End activity item-->
 

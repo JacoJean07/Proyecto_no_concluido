@@ -18,7 +18,7 @@ $produccionInfo = null;
 // Verificamos si se ha proporcionado un ID de producción válido
 if ($idproduccion) {
     // Consultamos la información de producción
-    $produccionInfoStatement = $conn->prepare("SELECT * FROM PRODUCCION WHERE IDPRODUCION = :idproduccion");
+    $produccionInfoStatement = $conn->prepare("SELECT * FROM produccion WHERE pro_id = :idproduccion");
     $produccionInfoStatement->bindParam(":idproduccion", $idproduccion);
     $produccionInfoStatement->execute();
     $produccionInfo = $produccionInfoStatement->fetch(PDO::FETCH_ASSOC);
@@ -34,22 +34,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $proobservaciones = $_POST["proobservaciones"];
         $areatrabajo = $_POST["areatrabajo"];
 
-        // Actualizar datos de producción en la tabla PRODUCCION
-        $updateStatement = $conn->prepare("UPDATE PRODUCCION SET IDPLANO = :idplano, PROOBSERVACIONES = :proobservaciones WHERE IDPRODUCION = :idproduccion");
+        // Actualizar datos de producción en la tabla produccion
+        $updateStatement = $conn->prepare("UPDATE produccion SET pla_id = :idplano WHERE pro_id = :idproduccion");
         $updateStatement->execute([
             ":idplano" => $idplano,
-            ":proobservaciones" => $proobservaciones,
             ":idproduccion" => $idproduccion
         ]);
 
         // Eliminar las áreas asociadas actuales
-        $deleteAreasStatement = $conn->prepare("DELETE FROM AREAS WHERE IDPRODUCION = :idproduccion");
+        $deleteAreasStatement = $conn->prepare("DELETE FROM pro_areas WHERE pro_id = :idproduccion");
         $deleteAreasStatement->bindParam(":idproduccion", $idproduccion);
         $deleteAreasStatement->execute();
 
         // Insertar las nuevas áreas asociadas
         foreach ($areatrabajo as $area) {
-            $insertAreaStatement = $conn->prepare("INSERT INTO AREAS (IDPRODUCION, AREDETALLE) VALUES (:idproduccion, :areadetalle)");
+            $insertAreaStatement = $conn->prepare("INSERT INTO pro_areas (pro_id, proAre_detalle) VALUES (:idproduccion, :areadetalle)");
             $insertAreaStatement->execute([
                 ":idproduccion" => $idproduccion,
                 ":areadetalle" => $area
@@ -57,13 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Registramos el movimiento en el kardex
-        registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'PRODUCCIÓN', $idproduccion);
+        registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'PRODUCCIÓN', $idproduccion);
 
         // Redirigir a alguna página de éxito o a donde desees
         header("Location: produccion.php");
         exit(); // Detener la ejecución del script
     } else {
-        $error = "Por favor, complete todos los campos requeridos.";
+        $error = "POR FAVOR, COMPLETE TODOS LOS CAMPOS REQUERIDOS.";
     }
 }
 ?>
@@ -75,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Editar Registro de Producción</h5>
+                    <h5 class="card-title">EDITAR REGISTRO DE PRODUCCIÓN</h5>
 
                     <!-- si hay un error, mostrar mensaje de error -->
                     <?php if ($error): ?> 
@@ -86,40 +85,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <!-- Formulario para editar registro de producción -->
                     <form class="row g-3" method="POST" action="produccionEdit.php">
-                        <input type="hidden" name="idproduccion" value="<?= $produccionInfo["IDPRODUCION"] ?>">
+                        <input type="hidden" name="idproduccion" value="<?= $produccionInfo["pro_id"] ?>">
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="idplano" name="idplano" placeholder="ID Plano" value="<?= $produccionInfo["IDPLANO"] ?>" autocomplete="off">
-                                <label for="idplano">ID Plano</label>
+                                <input type="text" class="form-control" id="idplano" name="idplano" placeholder="ID Plano" value="<?= $produccionInfo["pla_id"] ?>" autocomplete="off">
+                                <label for="idplano">NÚMERO DE PLANO</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="proobservaciones" name="proobservaciones" placeholder="Observaciones" value="<?= $produccionInfo["PROOBSERVACIONES"] ?>" autocomplete="off">
-                                <label for="proobservaciones">Observaciones</label>
+                                <label for="proobservaciones">OBSERVACIONES</label>
                             </div>
                         </div>
 
-                        <h5 class="card-title">Vincular Áreas</h5>
+                        <h5 class="card-title">VINCULAR ÁREAS</h5>
 
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
                                 <?php
                                 // Definir las áreas de trabajo
                                 $areas = array(
-                                    "Carpinteria",
+                                    "CARPINTERÍA",
                                     "ACM",
-                                    "Pintura",
-                                    "Acrilicos",
-                                    "Maquinas",
-                                    "Metal Mecánica"
+                                    "PINTURA",
+                                    "ACÍLICOS Y ACABADOS",
+                                    "MÁQUINAS",
+                                    "METAL MECANICA"
                                 );
                                 // Consultamos las áreas asociadas a la producción actual
                                 $areasAsociadas = [];
                                 if ($produccionInfo) {
                                     // Consultamos las áreas asociadas a la producción actual
-                                    $areasAsociadasStatement = $conn->prepare("SELECT AREDETALLE FROM AREAS WHERE IDPRODUCION = :idproduccion");
-                                    $areasAsociadasStatement->execute([":idproduccion" => $produccionInfo["IDPRODUCION"]]);
+                                    $areasAsociadasStatement = $conn->prepare("SELECT proAre_detalle FROM pro_areas WHERE pro_id = :idproduccion");
+                                    $areasAsociadasStatement->execute([":idproduccion" => $produccionInfo["pro_id"]]);
                                     $areasAsociadasResult = $areasAsociadasStatement->fetchAll(PDO::FETCH_COLUMN);
                                     // Almacenamos las áreas asociadas en el array
                                     $areasAsociadas = array_map('intval', $areasAsociadasResult);
@@ -127,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 // Ahora, cuando imprimimos los checkboxes, verificamos si el área está asociada y marcamos el checkbox correspondiente
                                 foreach ($areas as $index => $area) {
-                                    if ($area != "Diseno Grafico") {
+                                    if ($area != "DISEÑO") {
                                         echo "<div class='form-check'>";
                                         $checked = in_array($index + 1, $areasAsociadas) ? "checked" : ""; // Verificar si el área está asociada
                                         echo "<input class='form-check-input' type='checkbox' name='areatrabajo[]' value='" . ($index + 1) . "' id='areatrabajo" . ($index + 1) . "' $checked>";
@@ -140,8 +139,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Actualizar</button>
-                            <button type="reset" class="btn btn-secondary">Limpiar Campos</button>
+                            <button type="submit" class="btn btn-primary">ACTUALIZAR</button>
+                            <button type="reset" class="btn btn-secondary">LIMPIAR CAMPOS</button>
                         </div>
                     </form>
                 </div>

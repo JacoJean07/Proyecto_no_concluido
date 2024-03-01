@@ -3,16 +3,15 @@
 require __DIR__ . '/../../sql/database.php';
 
 
-function registrarEnKardex($idUser, $user, $accion, $tabla, $row) {
+function registrarEnKardex($idUser, $accion, $tabla, $row) {
     global $conn;
 
     try {
-        $statement = $conn->prepare("INSERT INTO KARDEX (ID_USERKARDEX, KARUSER, KARACCION, KARTABLA, KARROW) 
-                                     VALUES (:idUser, :user, :accion, :tabla, :row)");
+        $statement = $conn->prepare("INSERT INTO kardex (kar_cedula, kar_accion, kar_tabla, kar_idRow, kar_fecha) 
+                                     VALUES (:idUser, :accion, :tabla, :row, CURRENT TIMESTAMP)");
 
         $statement->execute([
             ":idUser" => $idUser,
-            ":user" => $user,
             ":accion" => $accion,
             ":tabla" => $tabla,
             ":row" => $row

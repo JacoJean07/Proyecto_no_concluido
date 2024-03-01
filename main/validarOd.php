@@ -11,7 +11,7 @@ if (!isset($_SESSION["user"])) {
 }
 
 // Validamos los perfiles
-if ($_SESSION["user"]["ROL"] != 2) {
+if ($_SESSION["user"]["usu_rol"] != 2) {
     // Si el rol no es 2 (Diseñador ADMIN), redirigimos al usuario a la página de inicio
     header("Location:./index.php");
     return;
@@ -21,12 +21,18 @@ if ($_SESSION["user"]["ROL"] != 2) {
 $estado_filter = isset($_GET['estado']) ? intval($_GET['estado']) : null;
 
 // Preparar la consulta base
-$query = "SELECT * FROM ORDENDISENIO WHERE ESTADO = 4";
+$query = "SELECT od.*, 
+                 persona_responsable.per_nombres AS responsable_nombres, 
+                 persona_responsable.per_apellidos AS responsable_apellidos, 
+                 persona_comercial.per_nombres AS comercial_nombres, 
+                 persona_comercial.per_apellidos AS comercial_apellidos
+          FROM orden_disenio od
+          LEFT JOIN personas AS persona_responsable ON od.od_responsable = persona_responsable.cedula
+          LEFT JOIN personas AS persona_comercial ON od.od_comercial = persona_comercial.cedula
+          WHERE od.od_estado = 'MATERIALIDAD'";
 
 // Preparar y ejecutar la consulta
-$ordenes_disenio = $conn->prepare($query);
-
-$ordenes_disenio->execute();
+$ordenes_disenio = $conn->query($query);
 
 ?>
 
@@ -48,7 +54,7 @@ $ordenes_disenio->execute();
                                 <?php if ($ordenes_disenio->rowCount() == 0) : ?>
                                     <div class="col-md-4 mx-auto mb-3">
                                         <div class="card card-body text-center">
-                                            <p>No hay órdenes de diseño</p>
+                                            <p>NO HAY ÓRDENES DE DISEÑO AÚN.</p>
                                         </div>
                                     </div>
                                 <?php else : ?>
@@ -58,8 +64,8 @@ $ordenes_disenio->execute();
                                             <tr>
                                                 <th>#</th>
                                                 <th>PRODUCTO</th>
-                                                <th>CAMPAÑA</th>
-                                                <th>MARCA</th>
+                                                <th>RESPONSABLE</th>
+                                                <th>CLIENTE</th>
                                                 <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
                                                 <th></th>
@@ -68,33 +74,14 @@ $ordenes_disenio->execute();
                                         <tbody>
                                             <?php foreach ($ordenes_disenio as $orden) : ?>
                                                 <tr>
-                                                    <th><?= $orden["ID"] ?></th>
-                                                    <th><?= $orden["PRODUCTO"] ?></th>
-                                                    <th><?= $orden["CAMPANIA"] ?></th>
-                                                    <th><?= $orden["MARCA"] ?></th>
-                                                    <th><?= $orden["FECHAENTREGA"] ?></th>
+                                                    <th><?= $orden["od_id"] ?></th>
+                                                    <th><?= $orden["od_detalle"] ?></th>
+                                                    <th><?= $orden["responsable_nombres"] ?> <?= $orden["responsable_apellidos"] ?></th>
+                                                    <th><?= $orden["od_cliente"] ?></th>
+                                                    <th><?= $orden["od_fechaEntrega"] ?></th>
+                                                    <th><?= $orden["od_estado"] ?></th>
                                                     <td>
-                                                        <?php
-                                                        switch ($orden["ESTADO"]) {
-                                                            case 1:
-                                                                echo 'Aprobada';
-                                                                break;
-                                                            case 2:
-                                                                echo 'En Diseño';
-                                                                break;
-                                                            case 3:
-                                                                echo 'Desaprobada';
-                                                                break;
-                                                            case 4:
-                                                                echo 'Revisando';
-                                                                break;
-                                                            default:
-                                                                echo 'Desconocido';
-                                                        }
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <a href="validaciones/odAprovar.php?id=<?= $orden["PRODUCTO"] ?>" class="btn btn-primary mb-2">Aprovar OD</a>
+                                                        <a href="validaciones/odAprovar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">Aprovar OD</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>

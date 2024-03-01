@@ -15,53 +15,53 @@ $error = null;
 $id = isset($_GET["id"]) ? $_GET["id"] : null; 
 $areaEditar = null;
 
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
-    $produccionRegistros = $conn->query("SELECT * FROM PRODUCCION");
-    $areasAsociadas = $conn->query("SELECT * FROM AREAS where IDPRODUCION = {$produccionRegistros['IDPRODUCION']}");
+if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1) {
+    $produccionRegistros = $conn->query("SELECT * FROM produccion");
+    $pro_areasAsociadas = $conn->query("SELECT * FROM pro_areas where pro_id = {$produccionRegistros['pro_id']}");
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
         if (empty($_POST["area"])) {
-            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
+            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
             // Verificamos si ya existe un registro para el área actual
-            $existingStatement = $conn->prepare("SELECT IDAREA FROM AREAS WHERE IDAREA = :id");
+            $existingStatement = $conn->prepare("SELECT pro_id FROM pro_areas WHERE pro_id = :id");
             $existingStatement->execute([":id" => $id]);
             $existingArea = $existingStatement->fetch(PDO::FETCH_ASSOC);
         
             if ($existingArea) {
                 // Si existe, actualizamos el registro existente
-                $statement = $conn->prepare("UPDATE AREAS SET AREDETALLE = :area WHERE IDAREA = :id");
+                $statement = $conn->prepare("UPDATE pro_areas SET proAre_detalle = :area WHERE pro_id = :id");
                 $statement->execute([
                     ":id" => $id,
                     ":area" => $_POST["area"],
                 ]);
 
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'AREAS', $_POST["area"]);
+                registrarEnKardex($_SESSION["user"]["cedula"], "EDITO", 'AREAS ASOCIODAS', $_POST["area"]);
 
             } else {
                 // Si no existe, insertamos un nuevo registro
-                $statement = $conn->prepare("INSERT INTO AREAS (AREDETALLE) VALUES (:area)");
+                $statement = $conn->prepare("INSERT INTO pro_areas (proAre_detalle) VALUES (:area)");
         
                 $statement->execute([
                     ":area" => $_POST["area"],
                 ]);
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "", 'AREAS', $_POST["area"]);
+                registrarEnKardex($_SESSION["user"]["ID_USER"], "ASIGNÓ.", 'AREAS ASOCIODAS', $_POST["area"]);
             }
         
-            // Redirigimos a areas.php
+            // Redirigimos a pro_areas.php
             header("Location: areas.php");
             return;
         }
     }
 
     // Llamamos las áreas de la base de datos
-    $areas = $conn->query("SELECT * FROM AREAS");
+    $pro_areas = $conn->query("SELECT * FROM pro_areas");
 
     // Obtenemos la información del área a editar
-    $statement = $conn->prepare("SELECT * FROM AREAS WHERE IDAREA = :id");
+    $statement = $conn->prepare("SELECT * FROM pro_areas WHERE pro_id = :id");
     $statement->bindParam(":id", $id);
     $statement->execute();
     $areaEditar = $statement->fetch(PDO::FETCH_ASSOC);
@@ -84,7 +84,6 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">ID Plano</th>
-                            <th scope="col">Observaciones</th>
                             <th scope="col">Fecha</th>
                             <th scope="col">Áreas Asociadas</th>
                         </tr>
@@ -92,25 +91,24 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <tbody>
                         <?php foreach ($produccionRegistros as $registro): ?>
                             <tr>
-                                <th scope="row"><?= $registro["IDPRODUCION"] ?></th>
-                                <td><?= $registro["IDPLANO"] ?></td>
-                                <td><?= $registro["PROOBSERVACIONES"] ?></td>
-                                <td><?= $registro["PROFECHA"] ?></td>
+                                <th scope="row"><?= $registro["pro_id"] ?></th>
+                                <td><?= $registro["pla_id"] ?></td>
+                                <td><?= $registro["pro_fecha"] ?></td>
                                 <td>
-                                    <?php foreach($areasAsociadas as $area) : ?>  
+                                    <?php foreach($pro_areasAsociadas as $area) : ?>  
                                         <?php 
-                                            if ($area["AREDETALLE"] == 1  ) {
-                                                echo("Carpinteria");
-                                            } elseif ($area["AREDETALLE"] == 2  ) {
+                                            if ($area["proAre_detalle"] == 1  ) {
+                                                echo("CARPINTERÍA");
+                                            } elseif ($area["proAre_detalle"] == 2  ) {
                                                 echo("ACM");
                                             } 
                                         ?>
                                         "",
                                                             "",
-                                                            "Pintura",
-                                                            "Acrilicos y Acabados",
-                                                            "Maquinas",
-                                                            "Impresiones"
+                                                            "PINTURA",
+                                                            "ACRÍLICOS Y ACABADOS",
+                                                            "MÁQUINAS",
+                                                            "IMPRESIONES"
                                     <?php endforeach ?>    
                                 </td>
                             </tr>

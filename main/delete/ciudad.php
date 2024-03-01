@@ -12,7 +12,7 @@ if (!isset($_SESSION["user"])) {
 // USAREMOS EL METODO GET PARA BUSCAR EL ROW QUE VAMOS A ELIMINAR
 $id = $_GET["id"];
 //PRIMERO LO SOLICITAMOS A LA BASE DE DATOS
-$statement = $conn->prepare("SELECT * FROM LUGARPRODUCCION WHERE IDLUGAR = :id LIMIT 1");
+$statement = $conn->prepare("SELECT * FROM ciudad_produccion WHERE lu_id = :id LIMIT 1");
 $statement->execute([":id" => $id]);
 
 $ciudad = $statement->fetch(PDO::FETCH_ASSOC);
@@ -23,9 +23,9 @@ if ($statement->rowCount() == 0) {
   return;
 }
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "ELIMINÓ", 'CIUDADES', $ciudad["CIUDAD"]);
+registrarEnKardex($_SESSION["user"]["cedula"], "ELIMINÓ", 'CIUDADES', $ciudad["CIUDAD"]);
 //ELIMINAMOS EL ROW CON EL ID DE LA TARGETA SELECCIONADA, nos ahorramos dos statement y ejecutamos en la misma linea
-$conn->prepare("DELETE FROM LUGARPRODUCCION WHERE IDLUGAR = :id")->execute([":id" => $id]);
+$conn->prepare("DELETE FROM ciudad_produccion WHERE IDLUGAR = :id")->execute([":id" => $id]);
 
 //REDIRIGIMOShome
 header("Location: ../ciudades.php");

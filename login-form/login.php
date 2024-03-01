@@ -11,21 +11,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $error = "Llena todos los campos";
   } else {
     //verificamos que el user existe
-    $statement = $conn->prepare("SELECT * FROM usuarios WHERE user = :user LIMIT 1");
+    $statement = $conn->prepare("SELECT * FROM usuarios WHERE usu_user = :user LIMIT 1");
     $statement->bindParam(":user", $_POST["user"]);
     $statement->execute();
     //COMPROBAMOS QUE EL ID EXISTA, EN CASO DE QUE EL USUARIO NO SEA UN NAVEGADOR, Y SI NO EXISTE EL ID MANDAMOS UN ERROR
     if ($statement->rowCount() == 0) {
-      $error = "Credenciales invalidas (user)";
+      $error = "Credenciales invalidas u.";
     } else {
       //obtenemos los datos de usuario y asignamos a una variable user y lo pedimos en fetch assoc para que lo mande en un formato asociativo
       $user = $statement->fetch(PDO::FETCH_ASSOC);
       //comparamos si la contrasenia ingresada en el form es igual a la contrasenia que obtuvimos en la variable user
-      if (!password_verify($_POST["password"], $user["PASSWORD"])) {
-        $error = "Credenciales invalidas";
+      if (!password_verify($_POST["password"], $user["usu_password"])) {
+        $error = "Credenciales invalidas p";
       } else {
         //borramos por asi decir la contrasenia del usuario en la secion para que no almacene ese valor y por seguridad
-        unset($user["PASSWORD"]);
+        unset($user["usu_password"]);
         //iniciamos una sesion la cual es una cookie que es como un hash almacenado en el pc usuario para que almacene compruebe el usuario, asi la manera  de acceder a la sesion es por medio de la cockie y si alguien intenta hackear necesita el hash para poder hacer peticiones al servidor en lugar de solo necesitas el id
         session_start();
         //asignamos el usuario que se logueo a la secion iniciada

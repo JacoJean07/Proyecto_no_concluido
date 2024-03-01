@@ -8,7 +8,7 @@ if (!isset($_SESSION["user"])) {
     header("Location: ../login-form/login.php");
     return;
 }
-if (($_SESSION["user"]["ROL"] != 3)) {
+if (($_SESSION["user"]["usu_rol"] != 3)) {
     header("Location: ../index.php");
     return;
 }
@@ -24,7 +24,7 @@ if (!isset($_GET["id"]) || empty($_GET["id"])) {
 $id = $_GET["id"];
 
 // Verificamos si la orden de diseño existe en la base de datos
-$statement = $conn->prepare("SELECT * FROM ORDENDISENIO WHERE PRODUCTO = :id");
+$statement = $conn->prepare("SELECT * FROM orden_disenio WHERE od_id = :id");
 $statement->execute([":id" => $id]);
 $orden_diseño = $statement->fetch(PDO::FETCH_ASSOC);
 
@@ -35,12 +35,12 @@ if (!$orden_diseño) {
 }
 
 // Actualizar el estado de la orden de diseño a "Revisando" (código de estado 4)
-$conn->prepare("UPDATE ORDENDISENIO SET ESTADO = 4 WHERE PRODUCTO = :id")->execute([
+$conn->prepare("UPDATE orden_disenio SET od_estado = 'MATERIALIDAD' WHERE od_id = :id")->execute([
     ":id" => $id,
 ]);
 
 // Registramos el movimiento en el kardex
-registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Revisando orden de diseño", 'ORDENDISENIO', "Producto: " . $orden_diseño["PRODUCTO"]);
+registrarEnKardex($_SESSION["user"]["ID_USER"], "PASÓ A MATERIALIDAD", 'ORDEN DISEÑO', "PRODUCTO: " . $orden_diseño["od_producto"]);
 
 // Redirigimos a la página de ordenes de diseño
 header("Location: ../od.php");

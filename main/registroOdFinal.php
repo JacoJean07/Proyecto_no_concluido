@@ -11,12 +11,18 @@ if (!isset($_SESSION["user"])) {
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
 //validacion para el usuario tipo diseniador 
-if ($_SESSION["user"]["ROL"] == 3) {
+if ($_SESSION["user"]["usu_rol"] == 3) {
     // Obtener el diseñador de la sesión activa
-    $diseniador = $_SESSION["user"]["CEDULA"];
+    $diseniador = $_SESSION["user"]["cedula"];
 
     // Consultar el registro actual del diseñador
-    $registroQuery = $conn->prepare("SELECT * FROM REGISTROS WHERE DISENIADOR = :diseniador AND HORA_FINAL IS NULL LIMIT 1");
+    $registroQuery = $conn->prepare("SELECT registros_disenio.*, orden_disenio.od_detalle
+    FROM registros_disenio
+    JOIN orden_disenio ON registros_disenio.od_id = orden_disenio.od_id
+    WHERE registros_disenio.rd_diseniador = :diseniador
+    AND registros_disenio.rd_hora_fin IS NULL
+    LIMIT 1;
+    ");
     $registroQuery->execute(array(':diseniador' => $diseniador));
     $registro = $registroQuery->fetch(PDO::FETCH_ASSOC);
 
@@ -29,11 +35,11 @@ if ($_SESSION["user"]["ROL"] == 3) {
             // Validamos que no se manden datos vacíos
             
             // Insertamos un nuevo registro
-            $statement = $conn->prepare("UPDATE REGISTROS SET HORA_FINAL = CURRENT_TIMESTAMP, OBSERVACIONES = :observaciones WHERE ID = :id");
+            $statement = $conn->prepare("UPDATE registros_disenio SET rd_hora_fin = CURRENT_TIMESTAMP, rd_observaciones = :observaciones WHERE rd_id = :id");
 
             $statement->execute([
                 ":observaciones" => $_POST["observaciones"],
-                ":id" => $registro["ID"]
+                ":id" => $registro["rd_id"]
             ]);
 
             // Redirigimos a la página principal o a donde desees
@@ -67,20 +73,20 @@ if ($_SESSION["user"]["ROL"] == 3) {
                     <form class="row g-3" method="POST" action="registroOdFinal.php">
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input value="<?= $registro["PRODUCTO"] ?>" class="form-control" id="PRODUCTO" name="PRODUCTO" placeholder="PRODUCTO" required readonly></input>
-                                <label for="PRODUCTO">PRODUCTO</label>
+                                <input value="<?= $registro["od_detalle"] ?>" class="form-control" id="od_detalle" name="od_detalle" placeholder="od_detalle" required readonly></input>
+                                <label for="od_detalle">PRODUCTO</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input value="<?= $registro["HORA_INICIO"] ?>" class="form-control" id="horainicio" name="horainicio" placeholder="horainicio" required readonly></input>
+                                <input value="<?= $registro["rd_hora_ini"] ?>" class="form-control" id="horainicio" name="horainicio" placeholder="horainicio" required readonly></input>
                                 <label for="horainicio">HORA INICIO</label>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
                                 <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Observaciones"></textarea>
-                                <label for="observaciones">Observaciones (Opcional)</label>
+                                <label for="observaciones">OBSERVACIONES (Opcional).</label>
                             </div>
                         </div>
                         <div class="text-center">

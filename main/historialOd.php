@@ -11,27 +11,35 @@ if (!isset($_SESSION["user"])) {
 }
 
 // Validamos los perfiles
-if ($_SESSION["user"]["ROL"] != 2) {
+if ($_SESSION["user"]["usu_rol"] != 2) {
     // Si el rol no es 2 (Diseñador ADMIN), redirigimos al usuario a la página de inicio
     header("Location:./index.php");
     return;
 }
 
-// Obtener el estado del filtro si está presente
-$estado_filter = isset($_GET['estado']) ? intval($_GET['estado']) : null;
+// Obtener el od_estado del filtro si está presente
+$estado_filter = isset($_GET['od_estado']) ? intval($_GET['od_estado']) : null;
 
 // Preparar la consulta base
-$query = "SELECT * FROM ORDENDISENIO";
+$query = "SELECT od.*, 
+                  persona_responsable.per_nombres AS responsable_nombres, 
+                  persona_responsable.per_apellidos AS responsable_apellidos, 
+                  persona_comercial.per_nombres AS comercial_nombres, 
+                  persona_comercial.per_apellidos AS comercial_apellidos
+          FROM orden_disenio od
+          LEFT JOIN personas persona_responsable ON od.od_responsable = persona_responsable.cedula
+          LEFT JOIN personas persona_comercial ON od.od_comercial = persona_comercial.cedula";
 
-// Si hay un estado filtrado, agregarlo a la consulta
+
+// Si hay un od_estado filtrado, agregarlo a la consulta
 if ($estado_filter !== null) {
-    $query .= " WHERE ESTADO = :estado";
+    $query .= " WHERE od_estado = :estado";
 }
 
 // Preparar y ejecutar la consulta
 $ordenes_disenio = $conn->prepare($query);
 
-// Si hay un estado filtrado, bindear el parámetro y ejecutar la consulta
+// Si hay un od_estado filtrado, bindear el parámetro y ejecutar la consulta
 if ($estado_filter !== null) {
     $ordenes_disenio->bindParam(':estado', $estado_filter, PDO::PARAM_INT);
 }
@@ -57,33 +65,14 @@ $ordenes_disenio->execute();
                                     <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
                                     <a href="./reporte_exel/exel_op.php" class="btn btn-success btn-xs">
                                                         <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
-                                                        Exportar a Excel
+                                                        EXPORTAR A EXCEL
                                                     </a>
-                                </div>
-
-                                <!-- Filtro de estado -->
-                                <div class="row mt-3">
-                                    <div class="col-md-4">
-                                        <form method="GET">
-                                            <div class="form-group">
-                                                <select class="form-control" name="estado" id="estado">
-                                                    <option selected disabled value="">Selecciona un estado</option>
-                                                    <option value="1" <?php if ($estado_filter === 1) echo 'selected'; ?>>Aprobada</option>
-                                                    <option value="2" <?php if ($estado_filter === 2) echo 'selected'; ?>>En Diseño</option>
-                                                    <option value="3" <?php if ($estado_filter === 3) echo 'selected'; ?>>Desaprobada</option>
-                                                    <option value="4" <?php if ($estado_filter === 4) echo 'selected'; ?>>Revisando</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary m-2">Filtrar</button>
-                                            <a class="btn btn-primary" href="./historialOd.php">Ver todos los registros</a>
-                                        </form>
-                                    </div>
                                 </div>
 
                                 <?php if ($ordenes_disenio->rowCount() == 0) : ?>
                                     <div class="col-md-4 mx-auto mb-3">
                                         <div class="card card-body text-center">
-                                            <p>No hay órdenes de diseño</p>
+                                            <p>NO HAY ÓRDENES DE DISEÑO AÚN.</p>
                                         </div>
                                     </div>
                                 <?php else : ?>
@@ -92,8 +81,11 @@ $ordenes_disenio->execute();
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>PRODUCTO</th>
-                                                <th>MARCA</th>
+                                                <th>RESPONSABLE</th>
+                                                <th>DETALLE</th>
+                                                <th>CLIENTE</th>
+                                                <th>COMERCIAL</th>
+                                                <th>FECHA DE REGISTRO</th>
                                                 <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
                                                 <th></th>
@@ -102,32 +94,16 @@ $ordenes_disenio->execute();
                                         <tbody>
                                             <?php foreach ($ordenes_disenio as $orden) : ?>
                                                 <tr>
-                                                    <th><?= $orden["ID"] ?></th>
-                                                    <th><?= $orden["PRODUCTO"] ?></th>
-                                                    <th><?= $orden["MARCA"] ?></th>
-                                                    <th><?= $orden["FECHAENTREGA"] ?></th>
+                                                    <th><?= $orden["od_id"] ?></th>
+                                                    <td><?= $orden["responsable_nombres"] ?> <?= $orden["responsable_apellidos"] ?></td>
+                                                    <th><?= $orden["od_detalle"] ?></th>
+                                                    <th><?= $orden["od_cliente"] ?></th>
+                                                    <td><?= $orden["comercial_nombres"] ?> <?= $orden["comercial_apellidos"] ?></td>
+                                                    <th><?= $orden["od_fechaRegistro"] ?></th>
+                                                    <th><?= $orden["od_fechaEntrega"] ?></th>
+                                                    <th><?= $orden["od_estado"] ?></th>
                                                     <td>
-                                                        <?php
-                                                        switch ($orden["ESTADO"]) {
-                                                            case 1:
-                                                                echo 'Aprobada';
-                                                                break;
-                                                            case 2:
-                                                                echo 'En Diseño';
-                                                                break;
-                                                            case 3:
-                                                                echo 'Desaprobada';
-                                                                break;
-                                                            case 4:
-                                                                echo 'Revisando';
-                                                                break;
-                                                            default:
-                                                                echo 'Desconocido';
-                                                        }
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <a href="detallesOd.php?id=<?= $orden["PRODUCTO"] ?>" class="btn btn-primary mb-2">Ver Registros</a>
+                                                        <a href="detallesOd.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">VER REGISTROS</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>

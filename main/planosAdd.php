@@ -16,21 +16,21 @@ $idop = null;
 $opInfo = null;
 $opPlanos = null;
 
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
+if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
         if (empty($_POST["idop"])) {
-            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
+            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
-            // Obtener la información de la OP y sus planos
-            $opInfoStatement = $conn->prepare("SELECT * FROM OP WHERE IDOP = :idop AND OPNOTIFICACIONCORREO != 'OP CREADA'");
+            // Obtener la información de la op y sus planos
+            $opInfoStatement = $conn->prepare("SELECT * FROM op WHERE op_id = :idop AND op_estado == 'OP CREADA' OR op_estado == 'OP EN PRODUCCIÓN' ");
             $opInfoStatement->bindParam(":idop", $_POST["idop"]);
             $opInfoStatement->execute();
             $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
 
-            // Obtener los planos asociados a la OP
-            $opPlanosStatement = $conn->prepare("SELECT * FROM PLANOS WHERE IDOP = :idop");
+            // Obtener los planos asociados a la op
+            $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop");
             $opPlanosStatement->bindParam(":idop", $_POST["idop"]);
             $opPlanosStatement->execute();
             $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
@@ -45,10 +45,10 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 <section class="section">
     <div class="row">
         <div class="">
-            <!-- Código para buscar OP por IDOP -->
+            <!-- Código para buscar op por op_id -->
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Buscar OP por Número de OP</h5>
+                    <h5 class="card-title">BUSCAR POR NÚMERO DE OP</h5>
 
                     <!-- si hay un error mandar un danger -->
                     <?php if ($error): ?> 
@@ -59,28 +59,28 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <form class="row g-3" method="POST" action="planosAddtest.php" onsubmit="updateAction()">
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="idop" name="idop" placeholder="IDOP" autocomplete="idop" required>
-                                <label for="idop">Número de OP</label>
+                                <input type="text" class="form-control" id="idop" name="idop" placeholder="op_id" autocomplete="idop" required>
+                                <label for="idop">NÚMERO DE OP</label>
                             </div>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                            <button type="reset" class="btn btn-secondary">Limpiar</button>
+                            <button type="submit" class="btn btn-primary">BUSCAR</button>
+                            <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Mostrar información de la OP y sus planos -->
+            <!-- Mostrar información de la op y sus planos -->
             <?php if ($opInfo): ?>
                 <section class="section">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">Datos de la OP</h5>
-                                    <p>Número de OP: <?= $opInfo["IDOP"] ?></p>
-                                    <p>Cliente: <?= $opInfo["OPCLIENTE"] ?></p>
+                                    <h5 class="card-title">DATOS DE LA OP</h5>
+                                    <p>NÚMERO DE OP: <?= $opInfo["op_id"] ?></p>
+                                    <p>CLIENTE: <?= $opInfo["OPCLIENTE"] ?></p>
                                 </div>
                             </div>
                         </div>
@@ -93,12 +93,12 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Planos de la OP</h5>
+                                        <h5 class="card-title">PLANOS DE LA OP</h5>
                                         <!-- si el array asociativo $opPlanos no tiene nada dentro, entonces imprimir el siguiente div -->
                                         <?php if (empty($opPlanos)): ?>
                                             <div class="col-md-4 mx-auto mb-3">
                                                 <div class="card card-body text-center">
-                                                    <p>Busque una OP</p>
+                                                    <p>BUSQUE UNA OP</p>
                                                 </div>
                                             </div>
                                         <?php else: ?>
@@ -106,32 +106,17 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                             <table class="table datatable">
                                                 <thead>
                                                     <tr>
-                                                        <th>Número de Plano</th>
-                                                        <th>Estado</th>
+                                                        <th>NÚMERO DE PLANO</th>
+                                                        <th>ESTADO</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($opPlanos as $opPlano): ?>
                                                         <tr>
-                                                            <td><?= $opPlano["PLANNUMERO"] ?></td>
-                                                            <td>
-                                                                <?php
-                                                                    if ($opPlano["PLAESTADO"] == 1 ) {
-                                                                        echo("Activo");
-                                                                    } elseif ($opPlano["PLAESTADO"] == 2 ) {
-                                                                        echo("Pausado");
-                                                                    } elseif ($opPlano["PLAESTADO"] == 3 ) {
-                                                                        echo("Anulado");
-                                                                    } 
-                                                                ?>
-                                                            </td>
-                                                            <td>
-                                                                <?php if($opPlano["PLANOTIFICACION"] == 0 ) : ?>
-                                                                    <a href="./validaciones/notiPlano.php?id=<?= $opPlano["IDPLANO"] ?>" class="btn btn-warning mb-2">Notificar problema</a>
-                                                                <?php else : ?>
-                                                                <?php endif ?>
-                                                            </td>
+                                                            <td><?= $opPlano["pla_numero"] ?></td>
+                                                            <td><?= $opPlano["pla_estado"] ?></td>
+                                                            <td></td>
                                                             
                                                         </tr>
                                                     <?php endforeach ?>

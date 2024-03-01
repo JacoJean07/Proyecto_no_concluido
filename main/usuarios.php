@@ -16,45 +16,45 @@ $error = null;
 $id = isset($_GET["id"]) ? $_GET["id"] : null; 
 $usuarioEditar = null;
 
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
+if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1) {
     // Llamamos los contactos de la base de datos y especificamos que sean los que tengan el usu_id de la función session_start
-    $usuarios = $conn->query("SELECT * FROM USUARIOS");
-    $personas = $conn->query("SELECT * FROM PERSONAS");
+    $usuarios = $conn->query("SELECT * FROM usuarios");
+    $personas = $conn->query("SELECT * FROM personas");
 
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
         if (empty($_POST["cedula"]) || empty($_POST["usuario"]) || empty($_POST["rol"])) {
-            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
+            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
             // Verificamos si ya existe un registro para el usuario actual
-            $existingStatement = $conn->prepare("SELECT ID_USER FROM USUARIOS WHERE CEDULA = :cedula");
+            $existingStatement = $conn->prepare("SELECT id_user FROM usuarios WHERE cedula = :cedula");
             $existingStatement->execute([":cedula" => $_POST['cedula']]);
             $existingUsuario = $existingStatement->fetch(PDO::FETCH_ASSOC);
         
             if ($existingUsuario) {
                 // Si existe, actualizamos el registro existente
-                $statement = $conn->prepare("UPDATE USUARIOS SET
-                    USER = :usuario,
-                    ROL = :rol
-                    WHERE ID_USER = :id");
+                $statement = $conn->prepare("UPDATE usuarios SET
+                    usu_user = :usuario,
+                    usu_rol = :rol
+                    WHERE id_user = :id");
         
                 $statement->execute([
-                    ":id" => $existingUsuario["ID_USER"],
+                    ":id" => $existingUsuario["id_user"],
                     ":usuario" => $_POST["usuario"],
                     ":rol" => $_POST["rol"],
                 ]);
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITO", 'USUARIOS', $_POST["usuario"]);
+                registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'usuarios', $_POST["usuario"]);
             } else {
                 // Validamos la contraseña si es un nuevo registro
                 if (empty($_POST["password"])) {
-                    $error = "POR FAVOR RELLENA EL CAMPO DE CONTRASEÑA";
+                    $error = "POR FAVOR RELLENA EL CAMPO DE CONTRASEÑA.";
                 } elseif (!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()-_+=])[A-Za-z0-9!@#$%^&*()-_+=]{6,}$/', $_POST["password"])) {
-                    $error = "La contraseña debe tener al menos 6 caracteres y contener al menos una letra mayúscula, un número y un carácter especial."; 
+                    $error = "LA CONTRASEÑA DEBE TENER AL MENOS 6 CARÁCTERES Y CONTENER AL MENOS UNA LETRA MAYÚSCULA, UN NÚMERO Y UN CARÁCTER ESPECIAL."; 
                 } else {
                     // Si no existe, insertamos un nuevo registro
-                    $statement = $conn->prepare("INSERT INTO USUARIOS (CEDULA, USER, PASSWORD, ROL, REGISTRO) 
+                    $statement = $conn->prepare("INSERT INTO usuarios (cedula, usu_user, usu_password, usu_rol, usu_registro) 
                     VALUES (:cedula, :usuario, :password, :rol, CURRENT_TIMESTAMP)");
 
                     $statement->execute([
@@ -64,7 +64,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     ":rol" => $_POST["rol"],
                     ]);
                     // Registramos el movimiento en el kardex
-                    registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'USUARIOS', $_POST["usuario"]);
+                    registrarEnKardex($_SESSION["user"]["cedula"], "CREÓ", 'USUARIOS', $_POST["usuario"]);
 
                 }
             }
@@ -94,7 +94,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                 <div class="card-body accordion-item">
                     <h5 class="card-title accordion-header" id="headingOne">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Nuevo Usuario
+                            NUEVO USUARIO
                         </button>
                     </h5>
 
@@ -113,7 +113,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                                     <label for="cedula">Cédula</label>
                                     <datalist id="cedulaList">
                                         <?php foreach ($personas as $persona): ?>
-                                        <option value="<?= $persona["CEDULA"]?>">
+                                        <option value="<?= $persona["cedula"]?>">
                                         <?php endforeach ?>
                                     </datalist>
                                 </div>
@@ -121,7 +121,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Trabajador" readonly>
-                                    <label for="nombre">Trabajador</label>
+                                    <label for="nombre">TRABAJADOR</label>
                                 </div>
                             </div>
 
@@ -131,33 +131,33 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <div class="col-md-6">
                                 <div class="form-floating">
                                 <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario" autocomplete="usuario" required>
-                                <label for="usuario">Usuario</label>
+                                <label for="usuario">USUARIO</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating d-flex">
                                 <input type="password" class="form-control" id="password" name="password" placeholder="password" autocomplete="password" required>
-                                <label for="password">Contraseña</label>
+                                <label for="password">CONTRASEÑA</label>
                                 <button id="show_password" class="btn btn-primary" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
                                 <select class="form-select" id="rol" aria-label="State" name="rol">
-                                    <option value="1">Super Administrador</option>
-                                    <option value="2">Admi Diseño</option>
-                                    <option value="3">Diseñador</option>
-                                    <option value="4">Admi Producción</option>
-                                    <option value="5">Producción</option>
-                                    <option value="6">Personal</option>
-                                    <option value="7">Presentación</option>
+                                    <option value="1">SUPER ADMINISTRADOR</option>
+                                    <option value="2">ADMIN DISEÑO</option>
+                                    <option value="3">DISEÑADOR</option>
+                                    <option value="4">ADMIN PRODUCCIÓN</option>
+                                    <option value="5">PRODUCCIÓN</option>
+                                    <option value="6">PERSONAL</option>
+                                    <option value="7">PRESENTACIÓN</option>
                                 </select>
-                                <label for="rol">Rol de Usuario</label>
+                                <label for="rol">ROL DE USUARIO</label>
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                                <button type="reset" class="btn btn-secondary">Limpiar</button>
+                                <button type="submit" class="btn btn-primary">GUARDAR</button>
+                                <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                             </div>
                             </form>
                         </div>
@@ -167,9 +167,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
             <?php else : ?>
                 <?php 
                     $statement = $conn->prepare("SELECT U.*, P.* 
-                                                FROM USUARIOS U
-                                                INNER JOIN PERSONAS P ON U.CEDULA = P.CEDULA
-                                                WHERE U.ID_USER = :id");
+                                                FROM usuarios U
+                                                INNER JOIN personas P ON U.cedula = P.cedula
+                                                WHERE U.id_user = :id");
 
                     $statement->bindParam(":id", $id);
                     $statement->execute();
@@ -188,19 +188,19 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                     <?php endif ?>
                     <form class="row g-3" method="POST" action="usuarios.php">
                     <?php
-                    $nombreTrabajador = isset($usuarioEditar['PERNOMBRES']) ? $usuarioEditar['PERNOMBRES'] : '';
-                    $nombreTrabajador .= isset($usuarioEditar['PERAPELLIDOS']) ? ' ' . $usuarioEditar['PERAPELLIDOS'] : '';
+                    $nombreTrabajador = isset($usuarioEditar['per_nombres']) ? $usuarioEditar['per_nombres'] : '';
+                    $nombreTrabajador .= isset($usuarioEditar['per_apellidos']) ? ' ' . $usuarioEditar['per_apellidos'] : '';
                     ?>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input value="<?= $usuarioEditar['CEDULA'] ?>" type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()" readonly>
-                            <label for="cedula">Cédula</label>
+                            <input value="<?= $usuarioEditar['cedula'] ?>" type="text" class="form-control" id="cedula" name="cedula" placeholder="Buscar por Cedula" list="cedulaList" oninput="buscarPorCedula()" readonly>
+                            <label for="cedula">CÉDULA</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input value="<?= $nombreTrabajador ?>" id="trabajadorInfo" id="trabajadorInfo" type="text" class="form-control" id="nombre" name="nombre" placeholder="Trabajador" readonly>
-                            <label for="nombre">Trabajador</label>
+                            <label for="nombre">TRABAJADOR</label>
                         </div>
                     </div>
 
@@ -209,29 +209,29 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                        <input value="<?= $usuarioEditar['USER'] ?>" type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
-                        <label for="usuario">Usuario</label>
+                        <input value="<?= $usuarioEditar['usu_user'] ?>" type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
+                        <label for="usuario">USUARIO</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
                             <select class="form-select" id="rol" aria-label="State" name="rol">
-                                <option value="1" <?= ($usuarioEditar['ROL'] == 1) ? 'selected' : '' ?>>Super Administrador</option>
-                                <option value="2" <?= ($usuarioEditar['ROL'] == 2) ? 'selected' : '' ?>>Admi Diseño</option>
-                                <option value="3" <?= ($usuarioEditar['ROL'] == 3) ? 'selected' : '' ?>>Diseñador</option>
-                                <option value="4" <?= ($usuarioEditar['ROL'] == 4) ? 'selected' : '' ?>>Admi Producción</option>
-                                <option value="5" <?= ($usuarioEditar['ROL'] == 5) ? 'selected' : '' ?>>Producción</option>
-                                <option value="6" <?= ($usuarioEditar['ROL'] == 6) ? 'selected' : '' ?>>Personal</option>
-                                <option value="7" <?= ($usuarioEditar['ROL'] == 7) ? 'selected' : '' ?>>Presentación</option>
+                                <option value="1" <?= ($usuarioEditar['usu_rol'] == 1) ? 'selected' : '' ?>>SUPER ADMINISTRADOR</option>
+                                <option value="2" <?= ($usuarioEditar['usu_rol'] == 2) ? 'selected' : '' ?>>ADMIN DISEÑO</option>
+                                <option value="3" <?= ($usuarioEditar['usu_rol'] == 3) ? 'selected' : '' ?>>DISEÑADOR</option>
+                                <option value="4" <?= ($usuarioEditar['usu_rol'] == 4) ? 'selected' : '' ?>>ADMIN PRODUCCIÓN</option>
+                                <option value="5" <?= ($usuarioEditar['usu_rol'] == 5) ? 'selected' : '' ?>>PRODUCCIÓN</option>
+                                <option value="6" <?= ($usuarioEditar['usu_rol'] == 6) ? 'selected' : '' ?>>PERSONAL</option>
+                                <option value="7" <?= ($usuarioEditar['usu_rol'] == 7) ? 'selected' : '' ?>>PRESENTACIÓN</option>
                             </select>
 
-                            <label for="rol">Rol de Usuario</label>
+                            <label for="rol">ROL DE USUARIO</label>
                         </div>
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Actualizar</button>
-                        <button type="reset" class="btn btn-secondary">Limpiar</button>
+                        <button type="submit" class="btn btn-primary">ACTUALIZAR</button>
+                        <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                     </div>
                     </form>
 
@@ -244,12 +244,12 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
 
                     <div class="card">
                         <div class="card-body">
-                        <h5 class="card-title">Usuarios</h5>
+                        <h5 class="card-title">USUARIO</h5>
                         <!-- si el array asociativo $teachers no tiene nada dentro, entonces imprimir el siguiente div -->
                         <?php if ($usuarios->rowCount() == 0): ?>
                             <div class= "col-md-4 mx-auto mb-3">
                                 <div class= "card card-body text-center">
-                                    <p>No hay Usuarios Aún.</p>
+                                    <p>NO HAY USUARIOS AÚN.</p>
                                 </div>
                             </div>
                         <?php else: ?>
@@ -268,31 +268,31 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 1) {
                             <tbody>
                             <?php foreach ($usuarios as $usu): ?>
                                 <tr>
-                                <th><?= $usu["CEDULA"]?></th>
-                                <td><?= $usu["USER"]?></td>
+                                <th><?= $usu["cedula"]?></th>
+                                <td><?= $usu["usu_user"]?></td>
                                 <td>
-                                    <?php if( $usu["ROL"] == 1): ?>
-                                        Super Administrador
-                                    <?php elseif( $usu["ROL"] == 2): ?>
-                                        Admi Diseño
-                                    <?php elseif( $usu["ROL"] == 3): ?>
-                                        Diseñadores
-                                    <?php elseif( $usu["ROL"] == 4): ?>
-                                        Admi Producción
-                                    <?php elseif( $usu["ROL"] == 5): ?>
-                                        Producción
-                                    <?php elseif( $usu["ROL"] == 6): ?>
-                                        Personal
-                                    <?php elseif( $usu["ROL"] == 7): ?>
-                                        Presentacion
+                                    <?php if( $usu["usu_rol"] == 1): ?>
+                                        SUPER ADMINISTRADOR
+                                    <?php elseif( $usu["usu_rol"] == 2): ?>
+                                        ADMIN DISEÑO
+                                    <?php elseif( $usu["usu_rol"] == 3): ?>
+                                        DISEÑADOR
+                                    <?php elseif( $usu["usu_rol"] == 4): ?>
+                                        ADMIN PRODUCCIÓN
+                                    <?php elseif( $usu["usu_rol"] == 5): ?>
+                                        PRODUCCIÓN
+                                    <?php elseif( $usu["usu_rol"] == 6): ?>
+                                        PERSONAL
+                                    <?php elseif( $usu["usu_rol"] == 7): ?>
+                                        PRESENTACIÓN
                                     <?php endif ?>
                                 </td>
-                                <td><?= $usu["REGISTRO"]?></td>
+                                <td><?= $usu["usu_registro"]?></td>
                                 <td>
-                                    <a href="usuarios.php?id=<?= $usu["ID_USER"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                    <a href="usuarios.php?id=<?= $usu["id_user"] ?>" class="btn btn-secondary mb-2">EDITAR</a>
                                 </td>
                                 <td>
-                                    <a href="cambiar_contrasena.php?id=<?= $usu["CEDULA"] ?>" class="btn btn-danger mb-2">Cambiar Contraseña</a>
+                                    <a href="cambiar_contrasena.php?id=<?= $usu["cedula"] ?>" class="btn btn-danger mb-2">CAMBIAR CONTRASEÑA</a>
                                 </td>
                                 </tr>
                             <?php endforeach ?>

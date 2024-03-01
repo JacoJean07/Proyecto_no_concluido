@@ -1,8 +1,7 @@
 <?php
-$dataUser = $conn->query("SELECT * FROM PERSONAS WHERE CEDULA = {$_SESSION["user"]["CEDULA"]} LIMIT 1");
+$dataUser = $conn->query("SELECT * FROM personas WHERE cedula = {$_SESSION["user"]["cedula"]} LIMIT 1");
 $data = $dataUser->fetch(PDO::FETCH_ASSOC);
-$notis = $conn->query("SELECT * FROM PLANOS WHERE PLANOTIFICACION = 1 ");
-$totalNotificaciones = $notis->rowCount(); 
+$totalNotificaciones = NULL; 
 
 
 date_default_timezone_set('America/Lima'); 
@@ -140,30 +139,30 @@ date_default_timezone_set('America/Lima');
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="https://static.vecteezy.com/system/resources/previews/005/005/788/original/user-icon-in-trendy-flat-style-isolated-on-grey-background-user-symbol-for-your-web-site-design-logo-app-ui-illustration-eps10-free-vector.jpg" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2"><?= $data["PERNOMBRES"] ?></span>
+            <span class="d-none d-md-block dropdown-toggle ps-2"><?= $data["per_nombres"] ?></span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6><?= $data["PERAPELLIDOS"] . " " . $data["PERNOMBRES"] ?></h6>
+              <h6><?= $data["per_apellidos"] . " " . $data["per_nombres"] ?></h6>
               <span>
-              <?php if( $_SESSION ["user"]["ROL"] == 1): ?>
+              <?php if( $_SESSION ["user"]["usu_rol"] == 1): ?>
                                         Super Administrador
-                                    <?php elseif( $_SESSION ["user"]["ROL"] == 2): ?>
+                                    <?php elseif( $_SESSION ["user"]["usu_rol"] == 2): ?>
                                         Admi Diseño
-                                    <?php elseif( $_SESSION ["user"]["ROL"] == 3): ?>
+                                    <?php elseif( $_SESSION ["user"]["usu_rol"] == 3): ?>
                                         Diseñadores
-                                    <?php elseif( $_SESSION ["user"]["ROL"] == 4): ?>
+                                    <?php elseif( $_SESSION ["user"]["usu_rol"] == 4): ?>
                                         Admi Producción
-                                    <?php elseif( $_SESSION ["user"]["ROL"] == 5): ?>
+                                    <?php elseif( $_SESSION ["user"]["usu_rol"] == 5): ?>
                                         Producción
-                                    <?php elseif( $_SESSION ["user"]["ROL"] == 6): ?>
+                                    <?php elseif( $_SESSION ["user"]["usu_rol"] == 6): ?>
                                         Personal
-                                    <?php elseif( $_SESSION ["user"]["ROL"] == 7): ?>
+                                    <?php elseif( $_SESSION ["user"]["usu_rol"] == 7): ?>
                                         Presentacion
                                     <?php endif ?>
               </span>
-              <span><?= "| " . $data["PERAREATRABAJO"] ?></span>
+              <span><?= "| " . $data["per_areaTrabajo"] ?></span>
             </li> 
             <li>
               <hr class="dropdown-divider">

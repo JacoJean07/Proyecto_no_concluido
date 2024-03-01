@@ -14,49 +14,46 @@ if (!isset($_SESSION["user"])) {
 $error = null;
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $ordenEditar = null;
-$state = 2;
+$state = "PROPUESTA";
 
 // Obtener el diseñador de la sesión activa
-$diseniador = $_SESSION["user"]["CEDULA"];
+$diseniador = $_SESSION["user"]["cedula"];
 
-if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user"]["ROL"] == 3) {
+if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
-        if ( empty($_POST["producto"]) || empty($_POST["marca"]) || empty($_POST["fecha_entrega"])) {
-            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
+        if ( empty($_POST["detalle"]) || empty($_POST["cliente"]) || empty($_POST["fecha_entrega"])) {
+            $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
-            // Verificamos si ya existe una orden de diseño para el producto actual
-            $existingStatement = $conn->prepare("SELECT PRODUCTO FROM ORDENDISENIO WHERE PRODUCTO = :producto");
-            $existingStatement->execute([":producto" => $_POST["producto"]]);
-            $existingOrden = $existingStatement->fetch(PDO::FETCH_ASSOC);
 
             if ($existingOrden) {
                 // Si existe, actualizamos la orden existente
-                $statement = $conn->prepare("UPDATE ORDENDISENIO SET MARCA = :marca, FECHAENTREGA = :fecha_entrega WHERE PRODUCTO = :producto");
+                $statement = $conn->prepare("UPDATE orden_disenio SET od_cliente = :cliente, od_fechaEntrega = :fecha_entrega WHERE od_id = $id");
                 $statement->execute([
-                    ":producto" => $_POST["producto"],
-                    ":marca" => $_POST["marca"],
+                    ":cliente" => $_POST["cliente"],
                     ":fecha_entrega" => $_POST["fecha_entrega"]
                 ]);
 
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "EDITÓ", 'ORDENES DE DISEÑO', $_POST["producto"]);
+                registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
             } else {
                 // Si no existe, insertamos una nueva orden
-                $statement = $conn->prepare("INSERT INTO ORDENDISENIO (RESPONSABLE_CEDULA, PRODUCTO, MARCA, FECHAENTREGA, ESTADO) 
-                                              VALUES (:responsable, :producto, :marca, :fecha_entrega, :estado)");
+                $statement = $conn->prepare("INSERT INTO orden_disenio (od_responsable, od_comercial, od_detalle, od_cliente, od_fechaEntrega, od_estado) 
+                VALUES (:responsable, :comercial, :detalle, :cliente, :fecha_entrega, :estado)");
 
                 $statement->execute([
-                    ":responsable" => $_SESSION["user"]["CEDULA"],
-                    ":producto" => $_POST["producto"],
-                    ":marca" => $_POST["marca"],
-                    ":fecha_entrega" => $_POST["fecha_entrega"],
-                    ":estado" => $state
+                ":responsable" => $_SESSION["user"]["cedula"],
+                ":comercial" => $_POST["cedula"], 
+                ":detalle" => $_POST["detalle"],
+                ":cliente" => $_POST["cliente"],
+                ":fecha_entrega" => $_POST["fecha_entrega"],
+                ":estado" => $state
                 ]);
 
+
                 // Registramos el movimiento en el kardex
-                registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "CREÓ", 'ORDENES DE DISEÑO', $_POST["producto"]);
+                registrarEnKardex($_SESSION["user"]["cedula"], "CREÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
             }
 
             // Redirigimos a od.php
@@ -66,11 +63,22 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
     }
 
     // Llamamos las órdenes de diseño de la base de datos
-    $ordenes = $conn->query("SELECT * FROM ORDENDISENIO WHERE RESPONSABLE_CEDULA = $diseniador AND ESTADO = 2");
+    $ordenes = $conn->prepare("SELECT od.*, 
+        personas_responsable.per_nombres AS responsable_nombres, 
+        personas_responsable.per_apellidos AS responsable_apellidos,
+        personas_comercial.per_nombres AS comercial_nombres,
+        personas_comercial.per_apellidos AS comercial_apellidos
+        FROM orden_disenio od
+        JOIN personas personas_responsable ON od.od_responsable = personas_responsable.cedula
+        JOIN personas personas_comercial ON od.od_comercial = personas_comercial.cedula
+        WHERE od.od_responsable = :diseniador AND od.od_estado = 'PROPUESTA'");
+    $ordenes->bindParam(":diseniador", $diseniador);
+    $ordenes->execute();
+
 
     // Obtenemos la información de la orden a editar
     if (!empty($id)) {
-        $statement = $conn->prepare("SELECT * FROM ORDENDISENIO WHERE PRODUCTO = :id");
+        $statement = $conn->prepare("SELECT * FROM orden_disenio WHERE od_id = :id");
         $statement->bindParam(":id", $id);
         $statement->execute();
         $ordenEditar = $statement->fetch(PDO::FETCH_ASSOC);
@@ -92,7 +100,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                     <div class="card-body accordion-item">
                         <h5 class="card-title accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Nueva Orden de Diseño
+                                NUEVA ORDEN DE DISEÑO
                             </button>
                         </h5>
 
@@ -105,27 +113,44 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <form class="row g-3" method="POST" action="od.php">
-                                    <div class="col-md-6">
+                                <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="producto" name="producto" placeholder="Producto" autocomplete="producto" required>
-                                            <label for="producto">Producto</label>
+                                            <input type="text" class="form-control" id="nombres" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()" autocomplete="vendedor" required>
+                                            <label for="vendedor">INGRESAR AMBOS NOMBRES DEL COMERCIAL</label>
+                                            <datalist id="nombresList">
+                                                <?php foreach ($personas as $persona) : ?>
+                                                    <option value="<?= $persona["per_nombres"] ?>">
+                                                    <?php endforeach ?>
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" readonly>
+                                            <label for="cedula">CÉDULA DEL COMERCIAL</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca" autocomplete="marca" required>
-                                            <label for="marca">Marca</label>
+                                            <input type="text" class="form-control" id="detalle" name="detalle" placeholder="Producto" autocomplete="detalle" required>
+                                            <label for="detalle">PRODUCTO</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Marca" autocomplete="cliente" required>
+                                            <label for="cliente">MARCA</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
                                             <input type="datetime-local" class="form-control" id="fecha_entrega" name="fecha_entrega" placeholder="Fecha de Entrega" autocomplete="fecha_entrega" required>
-                                            <label for="fecha_entrega">Fecha de Entrega</label>
+                                            <label for="fecha_entrega">FECHA DE ENTREGA</label>
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
-                                        <button type="reset" class="btn btn-secondary">Limpiar</button>
+                                        <button type="submit" class="btn btn-primary">GUARDAR</button>
+                                        <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                                     </div>
                                 </form>
                             </div>
@@ -136,7 +161,7 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                 <!-- Código para editar una orden de diseño existente -->
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Editar Orden de Diseño</h5>
+                        <h5 class="card-title">EDITAR ORDEN DE DISEÑO</h5>
 
                         <!-- si hay un error mandar un danger -->
                         <?php if ($error): ?>
@@ -147,25 +172,31 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                         <form class="row g-3" method="POST" action="od.php?id=<?= $id ?>">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="producto" name="producto" placeholder="Producto" autocomplete="producto" value="<?= $ordenEditar["PRODUCTO"] ?>">
-                                    <label for="producto">Producto</label>
+                                    <input type="text" class="form-control" id="detalle" name="detalle" placeholder="Producto" autocomplete="detalle" value="<?= $ordenEditar["od_detalle"] ?>">
+                                    <label for="detalle">DETALLE</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca" autocomplete="marca" value="<?= $ordenEditar["MARCA"] ?>">
-                                    <label for="marca">Marca</label>
+                                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Marca" autocomplete="cliente" value="<?= $ordenEditar["od_cliente"] ?>">
+                                    <label for="cliente">CLIENTE</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="datetime-local" class="form-control" id="fecha_entrega" name="fecha_entrega" placeholder="Fecha de Entrega" autocomplete="fecha_entrega" value="<?= date('Y-m-d\TH:i', strtotime($ordenEditar["FECHAENTREGA"])) ?>">
-                                    <label for="fecha_entrega">Fecha de Entrega</label>
+                                    <input type="text" class="form-control" id="comercial" name="comercial" placeholder="comercial" autocomplete="comercial" value="<?= $ordenEditar["od_comercial"] ?>">
+                                    <label for="comercial">COMERCIAL</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="datetime-local" class="form-control" id="fecha_entrega" name="fecha_entrega" placeholder="Fecha de Entrega" autocomplete="fecha_entrega" value="<?= date('Y-m-d\TH:i', strtotime($ordenEditar["od_fechaEntrega"])) ?>">
+                                    <label for="fecha_entrega">FECHA DE ENTREGA</label>
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Actualizar</button>
-                                <button type="reset" class="btn btn-secondary">Limpiar</button>
+                                <button type="submit" class="btn btn-primary">ACTUALIZAR</button>
+                                <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                             </div>
                         </form>
                     </div>
@@ -177,12 +208,12 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Órdenes de Diseño</h5>
+                                <h5 class="card-title">ÓRDENES DE DISEÑO</h5>
                                 <!-- si el array asociativo $ordenes no tiene nada dentro, entonces imprimir el siguiente div -->
                                 <?php if ($ordenes->rowCount() == 0): ?>
                                     <div class= "col-md-4 mx-auto mb-3">
                                         <div class= "card card-body text-center">
-                                            <p>No hay Órdenes de Diseño aún.</p>
+                                            <p>NO HAY ÓRDENES DE DISEÑO AÚN</p>
                                         </div>
                                     </div>
                                 <?php else: ?>
@@ -191,9 +222,9 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                         <thead>
                                             <tr>
                                                 <th>RESPONSABLE</th>
-                                                <th>PRODUCTO</th>
-                                                <th>CAMPAÑA</th>
-                                                <th>MARCA</th>
+                                                <th>DETALLE</th>
+                                                <th>CLIENTE</th>
+                                                <th>COMERCIAL</th>
                                                 <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
                                                 <th></th>
@@ -203,16 +234,17 @@ if ($_SESSION["user"]["ROL"] && $_SESSION["user"]["ROL"] == 2 || $_SESSION["user
                                         <tbody>
                                             <?php foreach ($ordenes as $orden): ?>
                                                 <tr>
-                                                    <td><?= $orden["RESPONSABLE_CEDULA"] ?></td>
-                                                    <td><?= $orden["PRODUCTO"] ?></td>
-                                                    <td><?= $orden["MARCA"] ?></td>
-                                                    <td><?= date('d-m-Y H:i', strtotime($orden["FECHAENTREGA"])) ?></td>
-                                                    <td><?= $orden["ESTADO"] == 1 ? "Aprobada" : "En Diseño" ?></td>
+                                                    <td><?= $orden["responsable_nombres"] ?> <?= $orden["responsable_apellidos"] ?></td>
+                                                    <td><?= $orden["od_detalle"] ?></td>
+                                                    <td><?= $orden["od_cliente"] ?></td>
+                                                    <td><?= $orden["comercial_nombres"] ?> <?= $orden["comercial_apellidos"] ?></td>
+                                                    <td><?= date('d-m-Y H:i', strtotime($orden["od_fechaEntrega"])) ?></td>
+                                                    <td><?= $orden["od_estado"] ?></td>
                                                     <td>
-                                                        <a href="validaciones/odRevisar.php?id=<?= $orden["PRODUCTO"] ?>" class="btn btn-primary mb-2">Enviar para Aprobar</a>
+                                                        <a href="validaciones/odRevisar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">ENVIAR PARA APROBAR</a>
                                                     </td>
                                                     <td>
-                                                        <a href="od.php?id=<?= $orden["PRODUCTO"] ?>" class="btn btn-secondary mb-2">Editar</a>
+                                                        <a href="od.php?id=<?= $orden["od_id"] ?>" class="btn btn-secondary mb-2">EDITAR</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>
