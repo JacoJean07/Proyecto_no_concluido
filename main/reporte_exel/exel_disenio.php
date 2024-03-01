@@ -184,7 +184,7 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         $fecha_limite2 = date('Y-m-15', strtotime($year . '-' . $month));
         $fecha_limite3 = date('Y-m-22', strtotime($year . '-' . $month));
 
-    $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
+        // $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
 
 
         // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana en la primera semana del mes
@@ -218,9 +218,58 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         $stmPrimeraSemana3 = $conn->prepare($sqlFecha1);
         $stmPrimeraSemana3->bindParam(':fecha_limite', $fecha_limite3);
         $stmPrimeraSemana3->execute();
-        $stmPrimeraSemana4 = $conn->prepare($sqlFecha1);
+        /*  $stmPrimeraSemana4 = $conn->prepare($sqlFecha1);
         $stmPrimeraSemana4->bindParam(':fecha_limite', $fecha_limite4);
+        $stmPrimeraSemana4->execute();*/
+        // Calcular el último día del mes específico
+        $ultimoDiaMes = date('Y-m-t', strtotime($year . '-' . $month . '-01'));
+
+        // Calcular los últimos tres días del mes específico
+        $fecha_limite_29 = date('Y-m-d', strtotime($year . '-' . $month . '-29'));
+        $fecha_limite_30 = date('Y-m-d', strtotime($year . '-' . $month . '-30'));
+        $fecha_limite_31 = date('Y-m-d', strtotime($year . '-' . $month . '-31'));
+
+        // Determinar en qué columna colocar los datos según el último día del mes
+        $ultimoDia = date('j', strtotime($ultimoDiaMes)); // Obtener el día del mes
+        $columna_29 = 'BA';
+        $columna_30 = 'BB';
+        $columna_31 = 'BC';
+
+        if ($ultimoDia == 31) {
+            $columna_29 = 'BA';
+            $columna_30 = 'BB';
+            $columna_31 = 'BC';
+        } elseif ($ultimoDia == 30) {
+            $columna_29 = 'BA';
+            $columna_30 = 'BB';
+        } elseif ($ultimoDia == 29) {
+            $columna_29 = 'BA';
+        }
+
+        // Consulta SQL para obtener el contador de registros para los últimos tres días del mes y año específicos, por diseñador
+        $sqlNueva1 = "SELECT 
+               CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
+               CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS,
+               SUM(CASE WHEN DATE(hora_inicio) = :fecha_limite_29 THEN 1 ELSE 0 END) AS registros_29,
+               SUM(CASE WHEN DATE(hora_inicio) = :fecha_limite_30 THEN 1 ELSE 0 END) AS registros_30,
+               SUM(CASE WHEN DATE(hora_inicio) = :fecha_limite_31 THEN 1 ELSE 0 END) AS registros_31
+           FROM REGISTROS 
+           LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA
+           WHERE 
+               DATE(hora_inicio) IN (:fecha_limite_29, :fecha_limite_30, :fecha_limite_31)
+               AND YEAR(hora_inicio) = :anio
+               AND MONTH(hora_inicio) = :mes
+           GROUP BY DISENIADOR";
+
+        // Preparar y ejecutar la consulta
+        $stmPrimeraSemana4 = $conn->prepare($sqlNueva1);
+        $stmPrimeraSemana4->bindParam(':fecha_limite_29', $fecha_limite_29);
+        $stmPrimeraSemana4->bindParam(':fecha_limite_30', $fecha_limite_30);
+        $stmPrimeraSemana4->bindParam(':fecha_limite_31', $fecha_limite_31);
+        $stmPrimeraSemana4->bindParam(':anio', $year); // Año específico
+        $stmPrimeraSemana4->bindParam(':mes', $month); // Mes específico
         $stmPrimeraSemana4->execute();
+
 
         // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana
         $sqlNuevaHoja = "SELECT 
@@ -297,14 +346,18 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         $nuevaHoja->setCellValue('AU6', 'SABADO');
         $nuevaHoja->setCellValue('AV6', 'DOMINGO');
         //QUINTA semna
-        $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
+        /* $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
         $nuevaHoja->setCellValue('BA6', 'LUNES');
         $nuevaHoja->setCellValue('BB6', 'MARTES');
         $nuevaHoja->setCellValue('BC6', 'MIERCOLES');
         $nuevaHoja->setCellValue('BD6', 'JUEVES');
         $nuevaHoja->setCellValue('BE6', 'VIERNES');
         $nuevaHoja->setCellValue('BF6', 'SABADO');
-        $nuevaHoja->setCellValue('BG6', 'DOMINGO');
+        $nuevaHoja->setCellValue('BG6', 'DOMINGO');*/
+        $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
+        $nuevaHoja->setCellValue('BA6', '29');
+        $nuevaHoja->setCellValue('BB6', '30');
+        $nuevaHoja->setCellValue('BC6', '31');
 
         // Obtener el número de filas inicial para los datos de la hoja nueva
         $filaNuevaHoja = 7;
@@ -394,7 +447,7 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
             // Mostrar los datos de la segunda consulta si están disponibles
             if ($rowPrimeraSemana4) {
                 // Mostrar el diseñador en la columna AZ
-                $nuevaHoja->setCellValue('AZ' . $filaNuevaHoja, $rowPrimeraSemana4['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana4['CEDULA_APELLIDOS']);
+                /*$nuevaHoja->setCellValue('AZ' . $filaNuevaHoja, $rowPrimeraSemana4['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana4['CEDULA_APELLIDOS']);
 
                 // Mostrar la cantidad de registros por día de la semana
                 $nuevaHoja->setCellValue('BA' . $filaNuevaHoja, $rowPrimeraSemana4['LUNES']);
@@ -403,7 +456,14 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
                 $nuevaHoja->setCellValue('BD' . $filaNuevaHoja, $rowPrimeraSemana4['JUEVES']);
                 $nuevaHoja->setCellValue('BE' . $filaNuevaHoja, $rowPrimeraSemana4['VIERNES']);
                 $nuevaHoja->setCellValue('BF' . $filaNuevaHoja, $rowPrimeraSemana4['SABADO']);
-                $nuevaHoja->setCellValue('BG' . $filaNuevaHoja, $rowPrimeraSemana4['DOMINGO']);
+                $nuevaHoja->setCellValue('BG' . $filaNuevaHoja, $rowPrimeraSemana4['DOMINGO']);*/
+                // Mostrar el diseñador en la columna AZ
+                $nuevaHoja->setCellValue('AZ' . $filaNuevaHoja, $rowPrimeraSemana4['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemana4['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $nuevaHoja->setCellValue($columna_29 . $filaNuevaHoja, $rowPrimeraSemana4['registros_29']);
+                $nuevaHoja->setCellValue($columna_30 . $filaNuevaHoja, $rowPrimeraSemana4['registros_30']);
+                $nuevaHoja->setCellValue($columna_31 . $filaNuevaHoja, $rowPrimeraSemana4['registros_31']);
             }
             $filaNuevaHoja++;
         }
@@ -412,7 +472,7 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
             $nuevaHoja->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        
+
 
         // Establecer un ancho específico para las columnas AE, AO y AZ
         $nuevaHoja->getColumnDimension('AE')->setWidth(40);
