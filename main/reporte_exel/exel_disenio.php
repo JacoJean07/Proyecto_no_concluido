@@ -24,11 +24,11 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         // Consulta SQL para obtener datos de la base de datos con filtro por año y mes
 
         $sql = "SELECT REGISTROS.*,
-CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
-CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS
-FROM REGISTROS 
-LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA
-WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :month";
+                CEDULA.PERNOMBRES AS CEDULA_NOMBRES, 
+                CEDULA.PERAPELLIDOS AS CEDULA_APELLIDOS
+        FROM REGISTROS 
+        LEFT JOIN PERSONAS AS CEDULA ON REGISTROS.DISENIADOR = CEDULA.CEDULA
+        WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :month";
 
         // Preparar y ejecutar la consulta con parámetros
         $stmt = $conn->prepare($sql);
@@ -178,13 +178,81 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
 
         // Crear una nueva hoja en el archivo de Excel y establecer su título
         $nuevaHoja = $excel->createSheet()->setTitle('REPORTE');
+
+        // Añadir la imagen al archivo de Excel
+        $imgPath = '../../exel/logo_icon.jpeg'; // Ruta de la imagen
+
+        // Crear una nueva instancia de Drawing para cada ubicación de la imagen
+        $coordenadasImagenes = ['A1', 'K1', 'U1', 'AE1', 'AO1', 'AZ1'];
+
+        foreach ($coordenadasImagenes as $coordenada) {
+            $drawingNuevaHoja = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawingNuevaHoja->setName('Logo');
+            $drawingNuevaHoja->setDescription('Logo');
+            $drawingNuevaHoja->setPath($imgPath); // Ruta de la imagen
+            $drawingNuevaHoja->setHeight(100); // Establecer la altura de la imagen
+            $drawingNuevaHoja->setWidth(100); // Establecer el ancho de la imagen
+            $drawingNuevaHoja->setCoordinates($coordenada); // Establecer la coordenada de la celda
+            $drawingNuevaHoja->setWorksheet($nuevaHoja);
+        }
+
+        // Establecer los datos en las celdas especificadas
+        $nuevaHoja->setCellValue('C3', 'FECHA DEL REPORTE');
+        $nuevaHoja->setCellValue('H3', 'FECHA DEL REPORTE');
+        $nuevaHoja->setCellValue('Z3', 'FECHA DEL REPORTE');
+        $nuevaHoja->setCellValue('H6', 'REPORTE GENERADO POR');
+
+        // Verificar si se encontraron resultados
+        if ($usuario) {
+            // Obtener nombres y apellidos del usuario
+            $nombresUsuario = $usuario['PERNOMBRES'];
+            $apellidosUsuario = $usuario['PERAPELLIDOS'];
+
+            // Mostrar los nombres y apellidos del usuario en la celda H6
+            $nuevaHoja->setCellValue('H6', $nombresUsuario . ' ' . $apellidosUsuario);
+        } else {
+            // En caso de no encontrar resultados, mostrar un mensaje alternativo
+            $nuevaHoja->setCellValue('H6', 'Usuario no encontrado');
+        }
+
+        // Obtener la fecha y hora actual
+        $fechaHoraActual = date('Y-m-d H:i:s'); // Formato: Año-Mes-Día Hora:Minuto:Segundo
+
+        // Añadir la fecha y hora actual en las celdas C3, H3 y Z3
+        $nuevaHoja->setCellValue('C3', $fechaHoraActual);
+        $nuevaHoja->setCellValue('H3', $fechaHoraActual);
+        $nuevaHoja->setCellValue('Z3', $fechaHoraActual);
+
+        // Aplicar estilos a las celdas individualmente
+        $nuevaHoja->getStyle('C3:H3')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 13],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        $nuevaHoja->getStyle('H6')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 13],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // Ajustar el alto de la fila 1 después de haber insertado todas las imágenes
+        $nuevaHoja->getRowDimension('1')->setRowHeight(20); // Establecer el alto de la fila 1
+
+        // Ajustar el alto de la fila 1 después de haber insertado todas las imágenes
+        $nuevaHoja->getRowDimension('1')->setRowHeight(20); // Establecer el alto de la fila 1
+
         // Definir la fecha límite para la primera semana del mes
         $fecha_limite = date('Y-m-01', strtotime($year . '-' . $month));
         $fecha_limite1 = date('Y-m-08', strtotime($year . '-' . $month));
         $fecha_limite2 = date('Y-m-15', strtotime($year . '-' . $month));
         $fecha_limite3 = date('Y-m-22', strtotime($year . '-' . $month));
 
-         $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
+        $fecha_limite4 = date('Y-m-29', strtotime($year . '-' . $month));
 
 
         // Consulta SQL para obtener los diseñadores y la cantidad de registros que tienen cada uno por día de la semana en la primera semana del mes
@@ -433,33 +501,33 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
 
 
         //QUINTA semna
-         // Crear un array para almacenar las fechas de la tercera semana
-         $fechas_quinta_semana = array();
-         for ($i = 0; $i < 3; $i++) {
-             // Obtener la fecha para cada día de la tercera semana
-             $fecha_quinta_semana = date('Y-m-d', strtotime($fecha_limite4 . " +$i days"));
-             // Agregar la fecha al array de la tercera semana
-             $fechas_quinta_semana[] = $fecha_quinta_semana;
-         }
- 
-         // Crear un array para almacenar los encabezados de la tercera semana
-         $encabezados_quinta_semana = array();
-         foreach ($fechas_quinta_semana as $fecha) {
-             // Obtener el nombre completo del día de la semana
-             $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
-             // Formatear la fecha como "dd/mm" y añadir el nombre del día
-             $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
-             // Agregar el encabezado al array
-             $encabezados_quinta_semana[] = $encabezado;
-         }
- 
-         // Mostrar los encabezados en la tercera semana
-         $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
-         $columna1 = 'BA';
-         foreach ($encabezados_quinta_semana as $encabezado) {
-             $nuevaHoja->setCellValue($columna1 . '6', $encabezado);
-             $columna1++;
-         }
+        // Crear un array para almacenar las fechas de la tercera semana
+        $fechas_quinta_semana = array();
+        for ($i = 0; $i < 3; $i++) {
+            // Obtener la fecha para cada día de la tercera semana
+            $fecha_quinta_semana = date('Y-m-d', strtotime($fecha_limite4 . " +$i days"));
+            // Agregar la fecha al array de la tercera semana
+            $fechas_quinta_semana[] = $fecha_quinta_semana;
+        }
+
+        // Crear un array para almacenar los encabezados de la tercera semana
+        $encabezados_quinta_semana = array();
+        foreach ($fechas_quinta_semana as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia;
+            // Agregar el encabezado al array
+            $encabezados_quinta_semana[] = $encabezado;
+        }
+
+        // Mostrar los encabezados en la tercera semana
+        $nuevaHoja->setCellValue('AZ6', 'DISEÑADOR');
+        $columna1 = 'BA';
+        foreach ($encabezados_quinta_semana as $encabezado) {
+            $nuevaHoja->setCellValue($columna1 . '6', $encabezado);
+            $columna1++;
+        }
 
 
         // Obtener el número de filas inicial para los datos de la hoja nueva
@@ -638,35 +706,14 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
 
 
         // Establecer un ancho específico para las columnas AE, AO y AZ
-        $nuevaHoja->getColumnDimension('AE')->setWidth(40);
+        /*$nuevaHoja->getColumnDimension('AE')->setWidth(40);
         $nuevaHoja->getColumnDimension('AO')->setWidth(40);
-        $nuevaHoja->getColumnDimension('AZ')->setWidth(40);
+        $nuevaHoja->getColumnDimension('AZ')->setWidth(40);*/
 
-        $nuevaHoja->getColumnDimension('AA')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AB')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AF')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AG')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AH')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AI')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AJ')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AK')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AL')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AP')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AQ')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AR')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AS')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AT')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AU')->setWidth(15);
-        $nuevaHoja->getColumnDimension('AV')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BA')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BB')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BA')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BC')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BD')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BE')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BF')->setWidth(15);
-        $nuevaHoja->getColumnDimension('BG')->setWidth(15);
-        // Función para aplicar estilos comunes a la fila 6 en un rango de columnas específico
+        $nuevaHoja->getColumnDimension('AA')->setWidth(25);
+        $nuevaHoja->getColumnDimension('AB')->setWidth(25);
+
+
         function applyCommonStylesToRow6($sheet, $startColumn, $endColumn)
         {
             $columnRange = $startColumn . '6:' . $endColumn . '6';
@@ -686,7 +733,13 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
                 ],
             ]);
+
+            // Ajustar automáticamente el ancho de las columnas al contenido
+            for ($col = $startColumn; $col <= $endColumn; $col++) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
         }
+
 
 
         // Llamar a la función para cada rango de columnas
@@ -695,7 +748,15 @@ WHERE YEAR(REGISTROS.HORA_INICIO) = :year AND MONTH(REGISTROS.HORA_INICIO) = :mo
         applyCommonStylesToRow6($nuevaHoja, 'AE', 'AL');
         applyCommonStylesToRow6($nuevaHoja, 'U', 'AB');
         applyCommonStylesToRow6($nuevaHoja, 'AO', 'AV');
-        applyCommonStylesToRow6($nuevaHoja, 'AZ', 'BG');
+        applyCommonStylesToRow6($nuevaHoja, 'AZ', 'BC');
+
+        //ALICAR  EL BORDE 
+        $nuevaHoja->getStyle('A6:H' . $filaNuevaHoja)->applyFromArray($styleArray);
+        $nuevaHoja->getStyle('K6:R' . $filaNuevaHoja)->applyFromArray($styleArray);
+        $nuevaHoja->getStyle('AE6:AL' . $filaNuevaHoja)->applyFromArray($styleArray);
+        $nuevaHoja->getStyle('U6:AB' . $filaNuevaHoja)->applyFromArray($styleArray);
+        $nuevaHoja->getStyle('AO6:AV' . $filaNuevaHoja)->applyFromArray($styleArray);
+        $nuevaHoja->getStyle('AZ6:BC' . $filaNuevaHoja)->applyFromArray($styleArray);
 
 
         // Establecer el alto de la fila 6
