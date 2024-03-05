@@ -141,9 +141,10 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         $hojaActiva->setCellValue('M' . $fila, $estado);
         $hojaActiva->setCellValue('N' . $fila, $rows['op_fechaFinalizacion']);
 
-        // Establecer el estilo solo para la celda específica con estado "OP ANULADA" en la columna M
+        // Establecer el estilo para toda la fila con estado "OP ANULADA"
         if ($rows['op_estado'] == 'OP ANULADA') {
-            $hojaActiva->getStyle('M' . $fila)->applyFromArray([
+            $range = 'A' . $fila . ':N' . $fila; // Rango de celdas para la fila actual
+            $hojaActiva->getStyle($range)->applyFromArray([
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => 'FF0000'], // Color rojo
@@ -178,7 +179,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
     }
 
     // Establecer estilos y ajustes de tamaño de celdas
-   $hojaActiva->getStyle('A6:N' . $fila)->getAlignment()->setWrapText(true); // Activar el ajuste de texto en las celdas
+    $hojaActiva->getStyle('A6:N' . $fila)->getAlignment()->setWrapText(true); // Activar el ajuste de texto en las celdas
     $hojaActiva->getStyle('A6:N' . $fila)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER); // Centrar verticalmente el texto en las celdas
 
     // Ajustar automáticamente el tamaño de las columnas y filas
@@ -210,7 +211,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
     // Guardar el archivo en la salida (output)
     $writer->save('php://output');
     // Registrar el movimiento en el kardex
-   // registrarEnKardex($_SESSION["user"]["ID_USER"], $_SESSION["user"]["USER"], "Se a generado un reporte", 'OP', "Reporte");
+    registrarEnKardex($_SESSION["user"]["cedula"], "Se a generado un reporte", 'OP', "Reporte");
 
     exit;
 } else {
