@@ -170,7 +170,8 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                                             <option value="PINTURA" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "PINTURA") ? "selected" : "" ?>>PINTURA</option>
                                             <option value="ACRÍLICOS Y ACABADOS" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "ACRÍLICOS Y ACABADOS") ? "selected" : "" ?>>ACRÍLICOS Y ACABADOS</option>
                                             <option value="MÁQUINAS" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "MÁQUINAS") ? "selected" : "" ?>>MÁQUINAS</option>
-                                            <option value="METAL MECÁNICA" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "METAL MECÁNICA") ? "selected" : "" ?>>METAL MECÁNICA</option>
+                                            <option value="METALMECÁNICA" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "METALMECÁNICA") ? "selected" : "" ?>>METALMECÁNICA</option>
+                                            <option value="DEP PRODUCCIÓN" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DEP PRODUCCIÓN") ? "selected" : "" ?>>DEPARTAMNETO DE  PRODUCCIÓN</option>
                                             <option value="DISEÑO" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DISEÑO") ? "selected" : "" ?>>DISEÑO</option>
                                         </select>
                                         <label for="areatrabajo">ÁREA DE TRABAJO</label>

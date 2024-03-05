@@ -19,7 +19,7 @@ $state = "PROPUESTA";
 // Obtener el diseñador de la sesión activa
 $diseniador = $_SESSION["user"]["cedula"];
 
-if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3) {
+if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3|| $_SESSION["user"]["usu_rol"] == 1) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos

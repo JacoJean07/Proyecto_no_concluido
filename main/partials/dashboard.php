@@ -37,10 +37,10 @@
         </li><!-- End Components Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav-op" data-bs-toggle="collapse" href="#">
             <i class="bi bi-box-seam"></i><span>OP's</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
-          <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <ul id="forms-nav-op" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
               <a href="ciudades.php">
                 <i class="bi bi-circle"></i><span>Ciudad de Producción</span>
@@ -69,10 +69,10 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+          <a class="nav-link collapsed" data-bs-target="#charts-nav-design" data-bs-toggle="collapse" href="#">
             <i class="bi bi-bar-chart"></i><span>Produccion</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
-          <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <ul id="charts-nav-design" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
               <a href="planos.php">
                 <i class="bi bi-circle"></i><span>Planos</span>
@@ -117,6 +117,55 @@
               </a>
             </li>
 
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-journal-text"></i><span>Diseño</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="historialRegistros.php">
+                <i class="bi bi-circle"></i><span>Historial de registros</span>
+              </a>
+            </li>
+            <li>
+              <a href="historialOd.php">
+                <i class="bi bi-circle"></i><span>Ordenes de Diseño</span>
+              </a>
+            </li>
+            <li>
+              <a href="validarOd.php">
+                <i class="bi bi-circle"></i><span>Aprobar ordenes de diseño</span>
+              </a>
+            </li>
+            <li>
+            <a href="opcionesOP.php">
+              <i class="bi bi-circle"></i><span>Estados de OP</span>
+            </a>
+          </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav-disenio" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-journal-text"></i><span>Registros</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-nav-disenio" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="registroOd.php">
+                <i class="bi bi-circle"></i><span>Nuevo Registro</span>
+              </a>
+            </li>
+            <li>
+              <a href="historialRegistros.php">
+                <i class="bi bi-circle"></i><span>Historial de mis Registros</span>
+              </a>
+            </li>
+            <li>
+              <a href="od.php">
+                <i class="bi bi-circle"></i><span>Crear una nueva Orden de Diseño</span>
+              </a>
+            </li>
           </ul>
         </li>
 

@@ -17,33 +17,61 @@ $opPlanos = null;
 if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSION["user"]["usu_rol"] == 2) {
     //llamr los contactos de la base de datos y especificar que sean los que tengan la op_id de la funcion seccion_start
     $op = $conn->query("SELECT op.*, 
-                        cedula.per_nombres AS cedula_nombres, cedula.per_apellidos AS cedula_apellidos,
-                        vendedor.per_nombres AS vendedor_nombres, vendedor.per_apellidos AS vendedor_apellidos
-                    FROM op
-                    LEFT JOIN personas AS cedula ON op.cedula = cedula.cedula
-                    LEFT JOIN personas AS vendedor ON op.op_vendedor = vendedor.cedula
-                    WHERE op.op_estrado NOT IN ('OP FINALIZADA', 'OP ANULADA')");
+                                orden.od_responsable,
+                                responsable.per_nombres AS responsable_nombres,
+                                responsable.per_apellidos AS responsable_apellidos,
+                                orden.od_comercial,
+                                comercial.per_nombres AS comercial_nombres,
+                                comercial.per_apellidos AS comercial_apellidos,
+                                orden.od_detalle,
+                                orden.od_cliente
+                        FROM op
+                        LEFT JOIN orden_disenio AS orden ON op.od_id = orden.od_id
+                        LEFT JOIN personas AS responsable ON orden.od_responsable = responsable.cedula
+                        LEFT JOIN personas AS comercial ON orden.od_comercial = comercial.cedula
+                        WHERE op.op_estado NOT IN ('OP FINALIZADA', 'OP ANULADA')");
 
     $opanulada = $conn->query("SELECT op.*, 
-                            cedula.per_nombres AS cedula_nombres, cedula.per_apellidos AS cedula_apellidos,
-                            vendedor.per_nombres AS vendedor_nombres, vendedor.per_apellidos AS vendedor_apellidos
-                    FROM op
-                    LEFT JOIN personas AS cedula ON op.cedula = cedula.cedula
-                    LEFT JOIN personas AS vendedor ON op.op_vendedor = vendedor.cedula
-                    WHERE op.op_estrado IN ('OP ANULADA')");
+                                        orden.od_responsable,
+                                        responsable.per_nombres AS responsable_nombres,
+                                        responsable.per_apellidos AS responsable_apellidos,
+                                        orden.od_comercial,
+                                        comercial.per_nombres AS comercial_nombres,
+                                        comercial.per_apellidos AS comercial_apellidos,
+                                        orden.od_detalle,
+                                        orden.od_cliente
+                                FROM op
+                                LEFT JOIN orden_disenio AS orden ON op.od_id = orden.od_id
+                                LEFT JOIN personas AS responsable ON orden.od_responsable = responsable.cedula
+                                LEFT JOIN personas AS comercial ON orden.od_comercial = comercial.cedula
+                                WHERE op.op_estado IN ('OP ANULADA')");
     $opfinalizada = $conn->query("SELECT op.*, 
-                            cedula.per_nombres AS cedula_nombres, cedula.per_apellidos AS cedula_apellidos,
-                            vendedor.per_nombres AS vendedor_nombres, vendedor.per_apellidos AS vendedor_apellidos
-                    FROM op
-                    LEFT JOIN personas AS cedula ON op.cedula = cedula.cedula
-                    LEFT JOIN personas AS vendedor ON op.op_vendedor = vendedor.cedula
-                    WHERE op.op_estrado IN ('OP FINALIZADA')");
+                                        orden.od_responsable,
+                                        responsable.per_nombres AS responsable_nombres,
+                                        responsable.per_apellidos AS responsable_apellidos,
+                                        orden.od_comercial,
+                                        comercial.per_nombres AS comercial_nombres,
+                                        comercial.per_apellidos AS comercial_apellidos,
+                                        orden.od_detalle,
+                                        orden.od_cliente
+                                FROM op
+                                LEFT JOIN orden_disenio AS orden ON op.od_id = orden.od_id
+                                LEFT JOIN personas AS responsable ON orden.od_responsable = responsable.cedula
+                                LEFT JOIN personas AS comercial ON orden.od_comercial = comercial.cedula
+                                WHERE op.op_estado IN ('OP FINALIZADA')");
     $optotal = $conn->query("SELECT op.*, 
-                            cedula.per_nombres AS cedula_nombres, cedula.per_apellidos AS cedula_apellidos,
-                            vendedor.per_nombres AS vendedor_nombres, vendedor.per_apellidos AS vendedor_apellidos
-                    FROM op
-                    LEFT JOIN personas AS cedula ON op.cedula = cedula.cedula
-                    LEFT JOIN personas AS vendedor ON op.op_vendedor = vendedor.cedula");
+                                        orden.od_responsable,
+                                        responsable.per_nombres AS responsable_nombres,
+                                        responsable.per_apellidos AS responsable_apellidos,
+                                        orden.od_comercial,
+                                        comercial.per_nombres AS comercial_nombres,
+                                        comercial.per_apellidos AS comercial_apellidos,
+                                        orden.od_detalle,
+                                        orden.od_cliente
+                                FROM op
+                                LEFT JOIN orden_disenio AS orden ON op.od_id = orden.od_id
+                                LEFT JOIN personas AS responsable ON orden.od_responsable = responsable.cedula
+                                LEFT JOIN personas AS comercial ON orden.od_comercial = comercial.cedula");
 
     // Obtener opciones para IDAREA desde la base de datos
     $lugarproduccion = $conn->query("SELECT * FROM ciudad_produccion");
@@ -112,13 +140,13 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                     <?php foreach ($op as $op) : ?>
                                                         <tr>
                                                             <td><?= $op["op_id"] ?> </td>
-                                                            <td><?= $op["op_cliente"] ?></td>
-                                                            <td><?= $op["cedula_nombres"] . " " . $op["cedula_apellidos"] ?></td>
+                                                            <td><?= $op["od_cliente"] ?></td>
+                                                            <td><?= $op["responsable_nombres"] . " " . $op["responsable_apellidos"] ?></td>
                                                             <td><?= $op["op_estado"] ?></td>
                                                             <td>
                                                                 <?php if ($op["op_reproceso"] != 0) : ?>
                                                                     Es un reproceso
-                                                                <?php elseif ($_SESSION["user"]["usu_rol"] == 1) : ?>
+                                                                <?php elseif ($_SESSION["user"]["usu_rol"] == 1 ||$_SESSION["user"]["usu_rol"] == 2) : ?>
                                                                     <button type="button" class="btn btn-warning mb-2" onclick="openReprosesoModal(<?= $op["op_id"] ?>)">REPROCESO</button>
                                                                     <div class="modal fade" id="reproseso-<?= $op["op_id"] ?>" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                                         <div class="modal-dialog modal-dialog-centered">
@@ -128,7 +156,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
-                                                                                    <p>Esta usted de acuerdo en generar u reproseso en la op <?= $op["op_id"] ?> del cliente <?= $op["op_cliente"] ?></p>
+                                                                                    <p>Esta usted de acuerdo en generar u reproseso en la op <?= $op["op_id"] ?> del cliente <?= $op["od_cliente"] ?></p>
                                                                                     <section class="section">
                                                                                         <div class="row">
                                                                                             <div class="">
@@ -171,7 +199,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                 <?php endif  ?>
                                                             </td>
                                                             <td>
-                                                                <?php if ($op["op_estrado"] != 3) : ?>
+                                                                <?php if ($op["op_estado"] != "OP PAUSADA") : ?>
                                                                     <button type="button" class="btn btn-success mb-2" onclick="openPausarModal(<?= $op["op_id"] ?>)">Pausar</button>
                                                                     <div class="modal fade" id="pausar-<?= $op["op_id"] ?>" tabindex="-1" style="display: none;" aria-modal="true" role="dialog">
                                                                         <div class="modal-dialog modal-dialog-centered">
@@ -181,7 +209,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
-                                                                                    <p>Esta usted de acuerdo de pausar la op <?= $op["op_id"] ?> del cliente <?= $op["op_cliente"] ?></p>
+                                                                                    <p>Esta usted de acuerdo de pausar la op <?= $op["op_id"] ?> del cliente <?= $op["od_cliente"] ?></p>
                                                                                     <section class="section">
                                                                                         <div class="row">
                                                                                             <div class="">
@@ -229,7 +257,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
-                                                                                    <p>Esta usted seguro de activar la op <?= $op["op_id"] ?> del cliente <?= $op["op_cliente"] ?></p>
+                                                                                    <p>Esta usted seguro de activar la op <?= $op["op_id"] ?> del cliente <?= $op["od_cliente"] ?></p>
                                                                                     <section class="section">
                                                                                         <div class="row">
                                                                                             <div class="">
@@ -279,7 +307,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
                                                                             <div class="modal-body">
-                                                                                <p>Esta usted seguro que quiere anular la siguiente op <?= $op["op_id"] ?> del cliente <?= $op["op_cliente"] ?></p>
+                                                                                <p>Esta usted seguro que quiere anular la siguiente op <?= $op["op_id"] ?> del cliente <?= $op["od_cliente"] ?></p>
                                                                                 <section class="section">
                                                                                     <div class="row">
                                                                                         <div class="">
@@ -492,10 +520,10 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                     <?php foreach ($optotal as $optotal) : ?>
                                                         <tr>
                                                             <td><?= $optotal["op_id"] ?></td>
-                                                            <td><?= $optotal["op_cliente"] ?></td>
-                                                            <td><?= $optotal["op_detalle"] ?></td>
-                                                            <td><?= $optotal["cedula_nombres"] . " " . $optotal["cedula_apellidos"] ?></td>
-                                                            <td><?= $optotal["vendedor_nombres"] . " " . $optotal["vendedor_apellidos"] ?></td>
+                                                            <td><?= $optotal["od_cliente"] ?></td>
+                                                            <td><?= $optotal["od_detalle"] ?></td>
+                                                            <td><?= $optotal["responsable_nombres"] . " " . $optotal["responsable_apellidos"] ?></td>
+                                                            <td><?= $optotal["comercial_nombres"] . " " . $optotal["comercial_apellidos"] ?></td>
                                                             <td><?= $optotal["op_registro"] ?></td>
                                                             <td><?= $optotal["op_direccionLocal"] ?></td>
                                                             <td><?= $optotal["op_personaContacto"] ?></td>

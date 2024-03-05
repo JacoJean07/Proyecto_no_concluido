@@ -83,6 +83,7 @@ CREATE TABLE ciudad_produccion (
     lu_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     lu_ciudad VARCHAR(255) NOT NULL
 );
+INSERT INTO `ciudad_produccion`(`lu_ciudad`) VALUES('QUITO'),('GUAYAQUIL');
 
 CREATE TABLE op (
     op_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,

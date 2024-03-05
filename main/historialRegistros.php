@@ -17,7 +17,7 @@ $registros = null;
 $usuario = $_SESSION["user"]["cedula"];
 
 // Validamos los perfiles
-if ($_SESSION["user"]["usu_rol"] == 2) {
+if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
     // Definir los nombres de los días de la semana
     $dias_semana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 

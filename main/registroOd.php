@@ -8,7 +8,7 @@ if (!isset($_SESSION["user"])) {
     return;
 }
 //validacion para el usuario tipo diseniador 
-if ($_SESSION["user"]["usu_rol"] == 3) {
+if ($_SESSION["user"]["usu_rol"] == 3||$_SESSION["user"]["usu_rol"] == 1) {
     // Obtener el diseñador de la sesión activa
     $diseniador = $_SESSION["user"]["cedula"];
 
