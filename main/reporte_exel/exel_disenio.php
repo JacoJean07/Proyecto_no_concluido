@@ -911,48 +911,74 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         $hojaHora->getRowDimension('1')->setRowHeight(20); // Establecer el alto de la fila 1
 
         $sqlHora = "SELECT 
-        CEDULA.per_nombres AS CEDULA_NOMBRES, 
-        CEDULA.per_apellidos AS CEDULA_APELLIDOS,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 2 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS LUNES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 3 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MARTES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 4 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MIERCOLES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 5 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS JUEVES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 6 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS VIERNES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 7 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS SABADO,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 1 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS DOMINGO
-    FROM 
-        registros_disenio AS Regi
-        LEFT JOIN PERSONAS AS CEDULA ON Regi.rd_diseniador = CEDULA.CEDULA
-    WHERE 
-        YEAR(Regi.rd_hora_ini) = :year 
-        AND MONTH(Regi.rd_hora_ini) = :month
-    GROUP BY 
-        Regi.rd_diseniador";
+                        CEDULA.per_nombres AS CEDULA_NOMBRES, 
+                        CEDULA.per_apellidos AS CEDULA_APELLIDOS,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 2 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS LUNES,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 3 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MARTES,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 4 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MIERCOLES,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 5 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS JUEVES,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 6 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS VIERNES,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 7 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS SABADO,
+                        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 1 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS DOMINGO
+                    FROM  registros_disenio AS Regi
+                    LEFT JOIN PERSONAS AS CEDULA ON Regi.rd_diseniador = CEDULA.CEDULA
+                    WHERE 
+                            YEAR(Regi.rd_hora_ini) = :year 
+                            AND MONTH(Regi.rd_hora_ini) = :month
+                    GROUP BY 
+                            Regi.rd_diseniador";
 
         $sqlSemana = "SELECT 
-        CEDULA.per_nombres AS CEDULA_NOMBRES, 
-        CEDULA.per_apellidos AS CEDULA_APELLIDOS,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 2 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS LUNES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 3 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MARTES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 4 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MIERCOLES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 5 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS JUEVES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 6 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS VIERNES,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 7 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS SABADO,
-        SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 1 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS DOMINGO
-    FROM 
-        registros_disenio AS Regi
-        LEFT JOIN PERSONAS AS CEDULA ON Regi.rd_diseniador = CEDULA.CEDULA
-    WHERE 
-        Regi.rd_hora_ini >= :fecha_limite 
-        AND Regi.rd_hora_ini < DATE_ADD(:fecha_limite, INTERVAL 7 DAY)
-    GROUP BY 
-        Regi.rd_diseniador";
+                            CEDULA.per_nombres AS CEDULA_NOMBRES, 
+                            CEDULA.per_apellidos AS CEDULA_APELLIDOS,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 2 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS LUNES,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 3 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MARTES,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 4 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS MIERCOLES,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 5 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS JUEVES,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 6 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS VIERNES,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 7 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS SABADO,
+                            SEC_TO_TIME(SUM(CASE WHEN DAYOFWEEK(Regi.rd_hora_ini) = 1 THEN TIME_TO_SEC(TIMEDIFF(Regi.rd_hora_fin, Regi.rd_hora_ini)) ELSE 0 END)) AS DOMINGO
+                        FROM registros_disenio AS Regi
+                        LEFT JOIN PERSONAS AS CEDULA ON Regi.rd_diseniador = CEDULA.CEDULA
+                        WHERE 
+                            Regi.rd_hora_ini >= :fecha_limite 
+                            AND Regi.rd_hora_ini < DATE_ADD(:fecha_limite, INTERVAL 7 DAY)
+                        GROUP BY 
+                            Regi.rd_diseniador";
+        $sqlHoraFinal = "SELECT 
+                            CEDULA.per_nombres AS CEDULA_NOMBRES, 
+                            CEDULA.per_apellidos AS CEDULA_APELLIDOS,
+                            SUM(CASE WHEN DATE(rd_hora_ini) = :fecha_limite_29 THEN TIMESTAMPDIFF(SECOND, rd_hora_ini, rd_hora_fin) ELSE 0 END) AS tiempo_29,
+                            SUM(CASE WHEN DATE(rd_hora_ini) = :fecha_limite_30 THEN TIMESTAMPDIFF(SECOND, rd_hora_ini, rd_hora_fin) ELSE 0 END) AS tiempo_30,
+                            SUM(CASE WHEN DATE(rd_hora_ini) = :fecha_limite_31 THEN TIMESTAMPDIFF(SECOND, rd_hora_ini, rd_hora_fin) ELSE 0 END) AS tiempo_31
+                        FROM registros_disenio AS Regi
+                        LEFT JOIN personas AS CEDULA ON Regi.rd_diseniador = CEDULA.CEDULA
+                        WHERE 
+                        DATE(rd_hora_ini) IN (:fecha_limite_29, :fecha_limite_30, :fecha_limite_31)
+                        AND YEAR(rd_hora_ini) = :anio
+                        AND MONTH(rd_hora_ini) = :mes
+                        GROUP BY rd_diseniador";
         // Preparar y ejecutar la consulta con parámetros para la primera semana
         $stmPrimeraSemHora = $conn->prepare($sqlSemana);
         $stmPrimeraSemHora->bindParam(':fecha_limite', $fecha_limite);
         $stmPrimeraSemHora->execute();
-
-
+        $stmPrimeraSemHora1 = $conn->prepare($sqlSemana);
+        $stmPrimeraSemHora1->bindParam(':fecha_limite', $fecha_limite1);
+        $stmPrimeraSemHora1->execute();
+        $stmPrimeraSemHora2 = $conn->prepare($sqlSemana);
+        $stmPrimeraSemHora2->bindParam(':fecha_limite', $fecha_limite2);
+        $stmPrimeraSemHora2->execute();
+        $stmPrimeraSemHora3 = $conn->prepare($sqlSemana);
+        $stmPrimeraSemHora3->bindParam(':fecha_limite', $fecha_limite3);
+        $stmPrimeraSemHora3->execute();
+        // Preparar y ejecutar la consulta
+        $stmPrimeraSemHora4 = $conn->prepare($sqlHoraFinal);
+        $stmPrimeraSemHora4->bindParam(':fecha_limite_29', $fecha_limite_29);
+        $stmPrimeraSemHora4->bindParam(':fecha_limite_30', $fecha_limite_30);
+        $stmPrimeraSemHora4->bindParam(':fecha_limite_31', $fecha_limite_31);
+        $stmPrimeraSemHora4->bindParam(':anio', $year); // Año específico
+        $stmPrimeraSemHora4->bindParam(':mes', $month); // Mes específico
+        $stmPrimeraSemHora4->execute();
         // Preparar y ejecutar la consulta con parámetros para la nueva hoja
         $stmtHora = $conn->prepare($sqlHora);
         $stmtHora->bindParam(':year', $year);
@@ -979,6 +1005,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         }
 
 
+
         // Crear un array para almacenar los encabezados de la primera semana
         $encabezados_primera_semanaHora = array();
         foreach ($fechas_primera_semanaHora as $fecha) {
@@ -999,16 +1026,137 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         }
 
 
+        // Crear un array para almacenar las fechas de la segunda semana
+        $fechas_segunda_semanaHora = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la segunda semana
+            $fecha_segunda_semanaHora = date('Y-m-d', strtotime($fecha_limite1 . " +$i days"));
+            // Agregar la fecha al array de la segunda semana
+            $fechas_segunda_semanaHora[] = $fecha_segunda_semanaHora;
+        }
+
+        // Crear un array para almacenar los encabezados de la segunda semana
+        $encabezados_segunda_semanaHora = array();
+        foreach ($fechas_segunda_semanaHora as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia1 = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado1 = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia1;
+            // Agregar el encabezado al array
+            $encabezados_segunda_semanaHora[] = $encabezado1;
+        }
+
+        // SEGUNDA SEMANA
+        $hojaHora->setCellValue('U6', 'DISEÑADOR');
+        $columna1 = 'V';
+        foreach ($encabezados_segunda_semanaHora as $encabezado1) {
+            $hojaHora->setCellValue($columna1 . '6', $encabezado1);
+            $columna1++;
+        }
+        //TERCERA semana
+
+        // Crear un array para almacenar las fechas de la tercera semana
+        $fechas_tercera_semanaHora = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la tercera semana
+            $fecha_tercera_semanaHora = date('Y-m-d', strtotime($fecha_limite2 . " +$i days"));
+            // Agregar la fecha al array de la tercera semana
+            $fechas_tercera_semanaHora[] = $fecha_tercera_semanaHora;
+        }
+
+        // Crear un array para almacenar los encabezados de la tercera semana
+        $encabezados_tercera_semanaHora = array();
+        foreach ($fechas_tercera_semanaHora as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia2 = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado2 = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia2;
+            // Agregar el encabezado al array
+            $encabezados_tercera_semanaHora[] = $encabezado2;
+        }
+
+        // Mostrar los encabezados en la tercera semana
+        $hojaHora->setCellValue('AE6', 'DISEÑADOR');
+        $columna2 = 'AF';
+        foreach ($encabezados_tercera_semanaHora as $encabezado2) {
+            $hojaHora->setCellValue($columna2 . '6', $encabezado2);
+            $columna2++;
+        }
+
+        //CUARTA semana
+        // Crear un array para almacenar las fechas de la tercera semana
+        $fechas_cuarta_semanaHora = array();
+        for ($i = 0; $i < 7; $i++) {
+            // Obtener la fecha para cada día de la tercera semana
+            $fecha_cuarta_semanaHora = date('Y-m-d', strtotime($fecha_limite3 . " +$i days"));
+            // Agregar la fecha al array de la tercera semana
+            $fechas_cuarta_semanaHora[] = $fecha_cuarta_semanaHora;
+        }
+
+        // Crear un array para almacenar los encabezados de la tercera semana
+        $encabezados_cuarta_semanaHora = array();
+        foreach ($fechas_cuarta_semanaHora as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia3 = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado3 = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia3;
+            // Agregar el encabezado al array
+            $encabezados_cuarta_semanaHora[] = $encabezado3;
+        }
+
+        // Mostrar los encabezados en la tercera semana
+        $hojaHora->setCellValue('AO6', 'DISEÑADOR');
+        $columna3 = 'AP';
+        foreach ($encabezados_cuarta_semanaHora as $encabezado3) {
+            $hojaHora->setCellValue($columna3 . '6', $encabezado3);
+            $columna3++;
+        }
+
+
+        //QUINTA semna
+        // Crear un array para almacenar las fechas de la tercera semana
+        $fechas_quinta_semanaHora = array();
+        for ($i = 0; $i < 3; $i++) {
+            // Obtener la fecha para cada día de la tercera semana
+            $fecha_quinta_semanaHora = date('Y-m-d', strtotime($fecha_limite4 . " +$i days"));
+            // Agregar la fecha al array de la tercera semana
+            $fechas_quinta_semanaHora[] = $fecha_quinta_semanaHora;
+        }
+
+        // Crear un array para almacenar los encabezados de la tercera semana
+        $encabezados_quinta_semanaHora = array();
+        foreach ($fechas_quinta_semanaHora as $fecha) {
+            // Obtener el nombre completo del día de la semana
+            $nombre_dia4 = $dias_semana_espanol[date('N', strtotime($fecha)) - 1];
+            // Formatear la fecha como "dd/mm" y añadir el nombre del día
+            $encabezado4 = date('d/m', strtotime($fecha)) . ' ' . $nombre_dia4;
+            // Agregar el encabezado al array
+            $encabezados_quinta_semanaHora[] = $encabezado4;
+        }
+
+        // Mostrar los encabezados en la tercera semana
+        $hojaHora->setCellValue('AZ6', 'DISEÑADOR');
+        $columna4 = 'BA';
+        foreach ($encabezados_quinta_semanaHora as $encabezado4) {
+            $hojaHora->setCellValue($columna4 . '6', $encabezado4);
+            $columna4++;
+        }
+
         // Obtener el número de filas inicial para los datos de la hoja nueva
         $filahojaHora = 7;
         // Obtener el número de filas necesario para ambas consultas
-        $totalFilasHora = max($stmPrimeraSemHora->rowCount(),  $stmtHora->rowCount());
+        $totalFilasHora = max($stmPrimeraSemHora->rowCount(), $stmPrimeraSemHora1->rowCount(), $stmPrimeraSemHora2->rowCount(), $stmPrimeraSemHora3->rowCount(),  $stmPrimeraSemHora4->rowCount(), $stmtHora->rowCount());
 
         // Iterar sobre las filas y escribir los datos en la hoja de Excel
         for ($i = 0; $i < $totalFilasHora; $i++) {
             // Obtener los datos de la primera consulta
             $rowPrimeraSemHora = $stmPrimeraSemHora->fetch(PDO::FETCH_ASSOC);
-            $rowHojaHora = $stmtHora->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemHora1 = $stmPrimeraSemHora1->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemHora2 = $stmPrimeraSemHora2->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemHora3 = $stmPrimeraSemHora3->fetch(PDO::FETCH_ASSOC);
+            $rowPrimeraSemHora4 = $stmPrimeraSemHora4->fetch(PDO::FETCH_ASSOC);
+            // Obtener los datos de la segunda consulta
+            $rowHojaHora = $stmtHora->fetch(PDO::FETCH_ASSOC);   // Mostrar los datos de la primera consulta si están disponibles
             if ($rowHojaHora) {
                 // Mostrar el diseñador en la columna A
                 $hojaHora->setCellValue('A' . $filahojaHora, $rowHojaHora['CEDULA_NOMBRES'] . ' ' . $rowHojaHora['CEDULA_APELLIDOS']);
@@ -1022,6 +1170,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
                 $hojaHora->setCellValue('G' . $filahojaHora, $rowHojaHora['SABADO']);
                 $hojaHora->setCellValue('H' . $filahojaHora, $rowHojaHora['DOMINGO']);
             }
+
             // Mostrar los datos de la primera consulta si están disponibles
             if ($rowPrimeraSemHora) {
                 // Mostrar el diseñador en la columna K
@@ -1064,9 +1213,172 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
                     $columna++;
                 }
             }
-             $filahojaHora++;
-            
+
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemHora1) {
+                // Mostrar el diseñador en la columna U
+                $hojaHora->setCellValue('U' . $filahojaHora, $rowPrimeraSemHora1['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemHora1['CEDULA_APELLIDOS']);
+
+                // Inicializar la primera columna donde se colocarán los valores de la consulta
+                $columna1 = 'V';
+
+                // Iterar sobre los encabezados de la segunda semana
+                foreach ($encabezados_segunda_semana as $encabezado1) {
+                    // Obtener el nombre del día de la semana desde el encabezado
+                    $nombre_dia1 = substr($encabezado1, strpos($encabezado1, ' ') + 1);
+
+                    // Asignar el valor correspondiente del array de la consulta al día correspondiente
+                    switch ($nombre_dia1) {
+                        case 'Lunes':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['LUNES']);
+                            break;
+                        case 'Martes':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['MARTES']);
+                            break;
+                        case 'Miércoles':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['MIERCOLES']);
+                            break;
+                        case 'Jueves':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['JUEVES']);
+                            break;
+                        case 'Viernes':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['VIERNES']);
+                            break;
+                        case 'Sábado':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['SABADO']);
+                            break;
+                        case 'Domingo':
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, $rowPrimeraSemHora1['DOMINGO']);
+                            break;
+                        default:
+                            // En caso de que no se encuentre el nombre del día, asignar un valor vacío
+                            $hojaHora->setCellValue($columna1 . $filahojaHora, '');
+                    }
+
+                    // Avanzar a la siguiente columna
+                    $columna1++;
+                }
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemHora2) {
+                // Mostrar el diseñador en la columna AE
+                $hojaHora->setCellValue('AE' . $filahojaHora, $rowPrimeraSemHora2['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemHora2['CEDULA_APELLIDOS']);
+                $columna2 = 'AF';
+                // Iterar sobre los encabezados de la segunda semana
+                foreach ($encabezados_tercera_semana as $encabezado2) {
+                    // Obtener el nombre del día de la semana desde el encabezado
+                    $nombre_dia2 = substr($encabezado2, strpos($encabezado2, ' ') + 1);
+
+                    // Asignar el valor correspondiente del array de la consulta al día correspondiente
+                    switch ($nombre_dia2) {
+                        case 'Lunes':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['LUNES']);
+                            break;
+                        case 'Martes':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['MARTES']);
+                            break;
+                        case 'Miércoles':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['MIERCOLES']);
+                            break;
+                        case 'Jueves':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['JUEVES']);
+                            break;
+                        case 'Viernes':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['VIERNES']);
+                            break;
+                        case 'Sábado':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['SABADO']);
+                            break;
+                        case 'Domingo':
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, $rowPrimeraSemHora2['DOMINGO']);
+                            break;
+                        default:
+                            // En caso de que no se encuentre el nombre del día, asignar un valor vacío
+                            $hojaHora->setCellValue($columna2 . $filahojaHora, '');
+                    }
+
+                    // Avanzar a la siguiente columna
+                    $columna2++;
+                }
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemHora3) {
+                // Mostrar el diseñador en la columna AO
+                $hojaHora->setCellValue('AO' . $filahojaHora, $rowPrimeraSemHora3['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemHora3['CEDULA_APELLIDOS']);
+                $columna3 = 'AP';
+                // Iterar sobre los encabezados de la segunda semana
+                foreach ($encabezados_cuarta_semana as $encabezado3) {
+                    // Obtener el nombre del día de la semana desde el encabezado
+                    $nombre_dia3 = substr($encabezado3, strpos($encabezado3, ' ') + 1);
+
+                    // Asignar el valor correspondiente del array de la consulta al día correspondiente
+                    switch ($nombre_dia3) {
+                        case 'Lunes':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['LUNES']);
+                            break;
+                        case 'Martes':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['MARTES']);
+                            break;
+                        case 'Miércoles':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['MIERCOLES']);
+                            break;
+                        case 'Jueves':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['JUEVES']);
+                            break;
+                        case 'Viernes':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['VIERNES']);
+                            break;
+                        case 'Sábado':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['SABADO']);
+                            break;
+                        case 'Domingo':
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, $rowPrimeraSemHora3['DOMINGO']);
+                            break;
+                        default:
+                            // En caso de que no se encuentre el nombre del día, asignar un valor vacío
+                            $hojaHora->setCellValue($columna3 . $filahojaHora, '');
+                    }
+                    $columna3++;
+                }
+            }
+            // Mostrar los datos de la segunda consulta si están disponibles
+            if ($rowPrimeraSemHora4) {
+                // Mostrar el diseñador en la columna AZ
+
+                $hojaHora->setCellValue('AZ' . $filahojaHora, $rowPrimeraSemHora4['CEDULA_NOMBRES'] . ' ' . $rowPrimeraSemHora4['CEDULA_APELLIDOS']);
+
+                // Mostrar la cantidad de registros por día de la semana
+                $hojaHora->setCellValue($columna_29 . $filahojaHora, $rowPrimeraSemHora4['registros_29']);
+                $hojaHora->setCellValue($columna_30 . $filahojaHora, $rowPrimeraSemHora4['registros_30']);
+                $hojaHora->setCellValue($columna_31 . $filahojaHora, $rowPrimeraSemHora4['registros_31']);
+            }
+            $filahojaHora++;
         }
+        foreach (range('A', 'Z') as $columnID) {
+            $hojaHora->getColumnDimension($columnID)->setAutoSize(true);
+        }
+        $hojaHora->getColumnDimension('AA')->setWidth(25);
+        $hojaHora->getColumnDimension('AB')->setWidth(25);
+        // Llamar a la función para cada rango de columnas
+        applyCommonStylesToRow6($hojaHora, 'A', 'H');
+        applyCommonStylesToRow6($hojaHora, 'K', 'R');
+        applyCommonStylesToRow6($hojaHora, 'AE', 'AL');
+        applyCommonStylesToRow6($hojaHora, 'U', 'AB');
+        applyCommonStylesToRow6($hojaHora, 'AO', 'AV');
+        applyCommonStylesToRow6($hojaHora, 'AZ', 'BC');
+        //ALICAR  EL BORDE 
+        $hojaHora->getStyle('A6:H' . $filahojaHora)->applyFromArray($styleArray);
+        $hojaHora->getStyle('K6:R' . $filahojaHora)->applyFromArray($styleArray);
+        $hojaHora->getStyle('AE6:AL' . $filahojaHora)->applyFromArray($styleArray);
+        $hojaHora->getStyle('U6:AB' . $filahojaHora)->applyFromArray($styleArray);
+        $hojaHora->getStyle('AO6:AV' . $filahojaHora)->applyFromArray($styleArray);
+        $hojaHora->getStyle('AZ6:BC' . $filahojaHora)->applyFromArray($styleArray);
+
+
+        // Establecer el alto de la fila 6
+        $hojaHora->getRowDimension('6')->setRowHeight(70);
+
+
 
         // Finalmente, ajusta el índice de la hoja activa
         $excel->setActiveSheetIndex(0); // Puedes ajustar el índice según sea necesario

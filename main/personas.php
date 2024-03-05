@@ -13,7 +13,7 @@ if (!isset($_SESSION["user"])) {
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
 $state = 1;
-$id = isset($_GET["id"]) ? $_GET["id"] : null; 
+$id = isset($_GET["id"]) ? $_GET["id"] : null;
 $personaEditar = null;
 
 if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
@@ -73,7 +73,7 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                 } else {
                     // Si no hay un ID, estamos insertando un nuevo registro
                     $statement = $conn->prepare("INSERT INTO personas ( cedula, per_nombres, per_apellidos, per_fechaNacimiento, per_estado, per_areaTrabajo, per_correo) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo, :correo)");
-                    
+
                     // Ejecutamos
                     $statement->execute([
                         ":cedula" => $cedula,
@@ -102,7 +102,6 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
         $statement->execute();
         $personaEditar = $statement->fetch(PDO::FETCH_ASSOC);
     }
-
 } else {
     header("Location: ./index.php");
     exit();
@@ -116,12 +115,13 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
         <div class="">
             <div class="card accordion" id="accordionExample">
                 <div class="card-body accordion-item">
-                    <?php if ($id): ?>
+                    <?php if ($id) : ?>
                         <h5 class="card-title">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 EDITAR EMPLEADO
-                            </button></h5>
-                    <?php else: ?>
+                            </button>
+                        </h5>
+                    <?php else : ?>
                         <h5 class="card-title accordion-header" id="headingOne">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 NUEVO EMPLEADO
@@ -132,7 +132,7 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
                             <!-- si hay un error mandar un danger -->
-                            <?php if ($error): ?> 
+                            <?php if ($error) : ?>
                                 <div class="alert alert-danger" role="alert">
                                     <?= $error ?>
                                 </div>
@@ -146,7 +146,7 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" value="<?= $personaEditar ? $personaEditar["per_nombres"] : "" ?>"autocomplete="nombres" required>
+                                        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" value="<?= $personaEditar ? $personaEditar["per_nombres"] : "" ?>" autocomplete="nombres" required>
                                         <label for="nombres">NOMBRES</label>
                                     </div>
                                 </div>
@@ -171,8 +171,10 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                                             <option value="ACRÍLICOS Y ACABADOS" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "ACRÍLICOS Y ACABADOS") ? "selected" : "" ?>>ACRÍLICOS Y ACABADOS</option>
                                             <option value="MÁQUINAS" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "MÁQUINAS") ? "selected" : "" ?>>MÁQUINAS</option>
                                             <option value="METALMECÁNICA" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "METALMECÁNICA") ? "selected" : "" ?>>METALMECÁNICA</option>
-                                            <option value="DEP PRODUCCIÓN" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DEP PRODUCCIÓN") ? "selected" : "" ?>>DEPARTAMNETO DE  PRODUCCIÓN</option>
+                                            <option value="DEP PRODUCCIÓN" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DEP PRODUCCIÓN") ? "selected" : "" ?>>DEPARTAMNETO DE PRODUCCIÓN</option>
                                             <option value="DISEÑO" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DISEÑO") ? "selected" : "" ?>>DISEÑO</option>
+                                            <option value="COMERCIAL" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "COMERCIAL") ? "selected" : "" ?>>COMERCIAL</option>
+
                                         </select>
                                         <label for="areatrabajo">ÁREA DE TRABAJO</label>
                                     </div>
@@ -201,55 +203,55 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                             <div class="card-body">
                                 <h5 class="card-title">EMPLEADOS</h5>
                                 <!-- si el array asociativo $teachers no tiene nada dentro, entonces imprimir el siguiente div -->
-                                <?php if ($personas->rowCount() == 0): ?>
-                                    <div class= "col-md-4 mx-auto mb-3">
-                                        <div class= "card card-body text-center">
+                                <?php if ($personas->rowCount() == 0) : ?>
+                                    <div class="col-md-4 mx-auto mb-3">
+                                        <div class="card card-body text-center">
                                             <p>NO HAY EMPLEADOS AÚN.</p>
                                         </div>
                                     </div>
-                                <?php else: ?>
-                                <!-- Table with stripped rows -->
-                                <table class="table datatable">
-                                    <thead>
-                                    <tr>
-                                        <th>APELLIDOS</th>
-                                        <th>NOMBRES</th>
-                                        <th>CÉDULA</th>
-                                        <th>EDAD</th>
-                                        <th>ÁREA DE TRABAJO</th>
-                                        <th>CORREO ELECTRÓNICO</th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php foreach ($personas as $persona): ?>
-                                        <tr>
-                                        <th><?= $persona["per_apellidos"]?></th>
-                                        <td><?= $persona["per_nombres"]?></td>
-                                        <td><?= $persona["cedula"]?></td>
-                                        <td>
-                                            <?php
-                                            // Calcular la edad a partir de la fecha de nacimiento
-                                            $birthdate = new DateTime($persona["per_fechaNacimiento"]);
-                                            $today = new DateTime();
-                                            $age = $today->diff($birthdate)->y;
-                                            echo $age;
-                                            ?>
-                                        </td>
-                                        <td><?= $persona["per_areaTrabajo"]?></td>
-                                        <td><?= $persona["per_correo"]?></td>
-                                        <td>
-                                            <a href="personas.php?id=<?= $persona["cedula"] ?>" class="btn btn-secondary mb-2">ACTUALIZAR</a>
-                                        </td>
-                                        <td>
-                                            <a href="./delete/personas.php?id=<?= $persona["cedula"] ?>" class="btn btn-danger mb-2">ELIMINAR</a>
-                                        </td>
-                                        </tr>
-                                    <?php endforeach ?>
-                                    
-                                    </tbody>
-                                </table>
+                                <?php else : ?>
+                                    <!-- Table with stripped rows -->
+                                    <table class="table datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>APELLIDOS</th>
+                                                <th>NOMBRES</th>
+                                                <th>CÉDULA</th>
+                                                <th>EDAD</th>
+                                                <th>ÁREA DE TRABAJO</th>
+                                                <th>CORREO ELECTRÓNICO</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($personas as $persona) : ?>
+                                                <tr>
+                                                    <th><?= $persona["per_apellidos"] ?></th>
+                                                    <td><?= $persona["per_nombres"] ?></td>
+                                                    <td><?= $persona["cedula"] ?></td>
+                                                    <td>
+                                                        <?php
+                                                        // Calcular la edad a partir de la fecha de nacimiento
+                                                        $birthdate = new DateTime($persona["per_fechaNacimiento"]);
+                                                        $today = new DateTime();
+                                                        $age = $today->diff($birthdate)->y;
+                                                        echo $age;
+                                                        ?>
+                                                    </td>
+                                                    <td><?= $persona["per_areaTrabajo"] ?></td>
+                                                    <td><?= $persona["per_correo"] ?></td>
+                                                    <td>
+                                                        <a href="personas.php?id=<?= $persona["cedula"] ?>" class="btn btn-secondary mb-2">ACTUALIZAR</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="./delete/personas.php?id=<?= $persona["cedula"] ?>" class="btn btn-danger mb-2">ELIMINAR</a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach ?>
+
+                                        </tbody>
+                                    </table>
                                 <?php endif ?>
                             </div>
                         </div>
