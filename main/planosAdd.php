@@ -24,7 +24,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
             // Obtener la información de la op y sus planos
-            $opInfoStatement = $conn->prepare("SELECT * FROM op WHERE op_id = :idop AND op_estado == 'OP CREADA' OR op_estado == 'OP EN PRODUCCIÓN' ");
+            $opInfoStatement = $conn->prepare("SELECT * FROM op WHERE op_id = :idop AND op_estado == 'OP CREADA' OR op_estado == 'EN PRODUCCION' ");
             $opInfoStatement->bindParam(":idop", $_POST["idop"]);
             $opInfoStatement->execute();
             $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);

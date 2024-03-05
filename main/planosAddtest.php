@@ -60,7 +60,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
     $opInfoStatement = $conn->prepare("SELECT op.op_id, od.od_cliente, od.od_detalle
         FROM op
         LEFT JOIN orden_disenio AS od ON op.od_id = od.od_id
-        WHERE op.op_id = :idop AND (op.op_estado = 'OP CREADA' OR op.op_estado = 'OP EN PRODUCCIÓN')
+        WHERE op.op_id = :idop AND (op.op_estado = 'OP CREADA' OR op.op_estado = 'EN PRODUCCION')
     ");
     $opInfoStatement->bindParam(":idop", $idop);
     $opInfoStatement->execute();

@@ -42,9 +42,9 @@ if ($row['total_planos'] == 0) {
 
 
 // Actualizamos el row con el ID de la cédula seleccionada
-$conn->prepare("UPDATE op SET op_estado = :estado, op_notiProFecha = CURRENT TIMESTAMP WHERE op_id = :id")->execute([
+$conn->prepare("UPDATE op SET op_estado = :estado, op_notiProFecha = CURRENT_TIMESTAMP WHERE op_id = :id")->execute([
     ":id" => $id,
-    ":estado" => "OP EN PRODUCCIÓN",
+    ":estado" => "EN PRODUCCION",
 ]);
 // Registramos el movimiento en el kardex
 registrarEnKardex($_SESSION["user"]["cedula"], "NOTIFICÓ POR CORREO A PRODUCCIÓN", 'OP', $id);

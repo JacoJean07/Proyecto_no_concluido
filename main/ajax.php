@@ -58,3 +58,26 @@ if(isset($_GET['op'])){
     }
 }
 ?>
+
+<?php
+if (isset($_GET['op_id'])) {
+    // Obtener el valor de op_id
+    $op_id = $_GET['op_id'];
+
+    // Consulta para obtener los planos asociados a la OP seleccionada
+    $query = "SELECT pla_id, pla_numero FROM planos WHERE op_id = :op_id AND pla_estado = 'ACTIVO'";
+    $statement = $conn->prepare($query);
+    $statement->bindParam(':op_id', $op_id, PDO::PARAM_INT);
+    $statement->execute();
+
+    // Obtener los resultados como un array asociativo
+    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    // Devolver los resultados como JSON
+    echo json_encode($result);
+} else {
+    // Si no se recibió el parámetro op_id, devolver un mensaje de error
+    echo json_encode(array('error' => 'No se recibió el parámetro op_id'));
+}
+?>
+

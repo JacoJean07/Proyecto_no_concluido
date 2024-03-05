@@ -30,7 +30,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["usu_rol"]) || ($_SESS
     $conn->prepare("UPDATE op SET op_estado = :estado WHERE op_id = :id")->execute([
 
         ":id" => $id,
-        ":estado" => "OP EN PRODUCCIÓN"
+        ":estado" => "EN PRODUCCION"
     ]);
     //REGISTRA EL MOVIEMIENTO EN EL KARDEX
     registrarEnKardex($_SESSION["user"]["cedula"], "SE ACTIVO UNA OP", 'OP', $id);

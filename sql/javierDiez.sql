@@ -94,7 +94,7 @@ CREATE TABLE op (
     op_direccionLocal VARCHAR(255) NOT NULL,
     op_personaContacto VARCHAR(255) NOT NULL,
     op_telefono VARCHAR(255) NOT NULL,
-    op_estado ENUM("OP CREADA", "OP EN PRODUCCIÓN", "OP PAUSADA", "OP FINALIZADA", "OP ANULADA", "EN COBRANZA", "PRODUCCIÓN GUAYAQUIL") NOT NULL,
+    op_estado ENUM("OP CREADA", "EN PRODUCCION", "OP PAUSADA", "OP FINALIZADA", "OP ANULADA", "EN COBRANZA", "PRODUCCION GUAYAQUIL") NOT NULL,
     op_reproceso BOOLEAN NOT NULL, /* 0 nada 1 reproceso */
     op_porcentaje DECIMAL(5, 2) UNSIGNED NULL,
     op_notiProFecha TIMESTAMP NULL,
@@ -170,7 +170,7 @@ CREATE TABLE registro (
     pro_id INT UNSIGNED NOT NULL,
     reg_fecha DATETIME NOT NULL,
     reg_cedula VARCHAR(255) NOT NULL,
-    reg_observacion VARCHAR(255) NOT NULL,
+    reg_observacion VARCHAR(255) NULL,
     op_id INT UNSIGNED NOT NULL,
     pla_id INT UNSIGNED NOT NULL,
     Foreign Key (pro_id) REFERENCES produccion(pro_id)
@@ -197,9 +197,9 @@ CREATE TABLE registro_reproceso (
 );
 CREATE TABLE registro_empleado (
     reg_id INT UNSIGNED NOT NULL,
-    reg_fechaFin DATETIME NOT NULL,
+    reg_fechaFin DATETIME NULL,
     reg_logistica BOOLEAN NOT NULL,
-    reg_areaTrabajo VARCHAR(255) NULL,
+    reg_areaTrabajo VARCHAR(255) NOT NULL,
     Foreign Key (reg_id) REFERENCES registro(reg_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
@@ -207,7 +207,7 @@ CREATE TABLE registro_empleado (
 /* atributo compuesto de registro_empleado */
 CREATE TABLE registro_empleado_actividades (
     reg_id INT UNSIGNED NOT NULL,
-    reg_detalle VARCHAR(255) NULL,
+    reg_detalle VARCHAR(255) NOT NULL,
     Foreign Key (reg_id) REFERENCES registro(reg_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT

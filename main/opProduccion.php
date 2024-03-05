@@ -31,7 +31,7 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
     LEFT JOIN personas AS responsable ON orden.od_responsable = responsable.cedula
     LEFT JOIN personas AS comercial ON orden.od_comercial = comercial.cedula
     LEFT JOIN planos ON op.op_id = planos.op_id
-    WHERE op.op_estado = 'OP CREADA'
+    WHERE op.op_estado = 'EN PRODUCCION'
     GROUP BY op.op_id"
     );
 
