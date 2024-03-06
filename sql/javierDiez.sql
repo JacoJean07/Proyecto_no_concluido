@@ -59,10 +59,16 @@ CREATE TABLE orden_disenio(
     od_comercial VARCHAR(255) NOT NULL,  /*cedula del vendedor o comercial*/
     od_detalle VARCHAR(255) NOT NULL,
     od_cliente VARCHAR(255) NOT NULL,
-    od_fechaEntrega DATETIME NOT NULL,
     od_fechaRegistro DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     od_estado ENUM("PROPUESTA", "DESAPROBADA", "MATERIALIDAD", "OP" , "OP CREADA") NOT NULL, 
     Foreign Key (od_responsable) REFERENCES personas(cedula)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
+);
+CREATE TABLE od_actividades ( 
+    od_id INT UNSIGNED NOT NULL,
+    odAct_detalle VARCHAR(255) NOT NULL,
+    Foreign Key (od_id) REFERENCES orden_disenio(od_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT
 );
@@ -71,6 +77,7 @@ CREATE TABLE registros_disenio(
     rd_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     od_id INT UNSIGNED NOT NULL,
     rd_diseniador VARCHAR(255) NOT NULL, /*cedula*/
+    rd_detalle VARCHAR(255) NOT NULL,
     rd_hora_ini DATETIME NOT NULL,
     rd_hora_fin DATETIME NULL,
     rd_observaciones VARCHAR(255) NULL,

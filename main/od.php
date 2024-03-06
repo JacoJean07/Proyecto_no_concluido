@@ -15,15 +15,20 @@ $error = null;
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $ordenEditar = null;
 $state = "PROPUESTA";
+$elementos = [null];
 
 // Obtener el diseñador de la sesión activa
 $diseniador = $_SESSION["user"]["cedula"];
+
+// Obtener todos los elementos del array (si existen)
+$elementos = isset($_SESSION["elementos"]) ? $_SESSION["elementos"] : [];
+
 
 if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3|| $_SESSION["user"]["usu_rol"] == 1) {
     // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validamos que no se manden datos vacíos
-        if ( empty($_POST["detalle"]) || empty($_POST["cliente"]) || empty($_POST["fecha_entrega"])) {
+        if ( empty($_POST["detalle"]) || empty($_POST["cliente"]) || empty($_POST["cedula"]) ) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
 
@@ -31,34 +36,34 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                 // Si existe, actualizamos la orden existente
                 $statement = $conn->prepare("UPDATE orden_disenio SET od_cliente = :cliente, od_fechaEntrega = :fecha_entrega WHERE od_id = $id");
                 $statement->execute([
-                    ":cliente" => $_POST["cliente"],
-                    ":fecha_entrega" => $_POST["fecha_entrega"]
+                    ":cliente" => $_POST["cliente"]
                 ]);
 
                 // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
             } else {
                 // Si no existe, insertamos una nueva orden
-                $statement = $conn->prepare("INSERT INTO orden_disenio (od_responsable, od_comercial, od_detalle, od_cliente, od_fechaEntrega, od_estado) 
-                VALUES (:responsable, :comercial, :detalle, :cliente, :fecha_entrega, :estado)");
+                $statement = $conn->prepare("INSERT INTO orden_disenio (od_responsable, od_comercial, od_detalle, od_cliente, od_estado) 
+                VALUES (:responsable, :comercial, :detalle, :cliente, :estado)");
 
                 $statement->execute([
-                ":responsable" => $_SESSION["user"]["cedula"],
-                ":comercial" => $_POST["cedula"], 
-                ":detalle" => $_POST["detalle"],
-                ":cliente" => $_POST["cliente"],
-                ":fecha_entrega" => $_POST["fecha_entrega"],
-                ":estado" => $state
+                    ":responsable" => $_SESSION["user"]["cedula"],
+                    ":comercial" => $_POST["cedula"], 
+                    ":detalle" => $_POST["detalle"],
+                    ":cliente" => $_POST["cliente"],
+                    ":estado" => $state
                 ]);
-
 
                 // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["cedula"], "CREÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
-            }
 
-            // Redirigimos a od.php
-            header("Location: od.php");
-            return;
+                // Obtener el ID de la orden recién creada
+                $nuevaOrdenId = $conn->lastInsertId();
+
+                // Redirigir a la página od_actividades.php con el ID de la nueva orden
+                header("Location: od_actividades.php?id=$nuevaOrdenId");
+                exit;
+            }
         }
     }
 
@@ -113,7 +118,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <form class="row g-3" method="POST" action="od.php">
-                                <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control" id="nombres" name="vendedor" placeholder="Buscar por nombre" list="nombresList" oninput="buscarPorNombres()" autocomplete="vendedor" required>
                                             <label for="vendedor">INGRESAR AMBOS NOMBRES DEL COMERCIAL</label>
@@ -126,7 +131,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" readonly>
+                                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Cedula" readonly required>
                                             <label for="cedula">CÉDULA DEL COMERCIAL</label>
                                         </div>
                                     </div>
@@ -139,17 +144,11 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
                                             <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Marca" autocomplete="cliente" required>
-                                            <label for="cliente">MARCA</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3">
-                                            <input type="datetime-local" class="form-control" id="fecha_entrega" name="fecha_entrega" placeholder="Fecha de Entrega" autocomplete="fecha_entrega" required>
-                                            <label for="fecha_entrega">FECHA DE ENTREGA</label>
+                                            <label for="cliente">CLIENTE</label>
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">GUARDAR</button>
+                                        <button type="submit" name="od" class="btn btn-primary">GUARDAR</button>
                                         <button type="reset" class="btn btn-secondary">LIMPIAR</button>
                                     </div>
                                 </form>
@@ -188,12 +187,6 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                                     <label for="comercial">COMERCIAL</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="datetime-local" class="form-control" id="fecha_entrega" name="fecha_entrega" placeholder="Fecha de Entrega" autocomplete="fecha_entrega" value="<?= date('Y-m-d\TH:i', strtotime($ordenEditar["od_fechaEntrega"])) ?>">
-                                    <label for="fecha_entrega">FECHA DE ENTREGA</label>
-                                </div>
-                            </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">ACTUALIZAR</button>
                                 <button type="reset" class="btn btn-secondary">LIMPIAR</button>
@@ -221,12 +214,13 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
+                                                <th># OD</th>
                                                 <th>RESPONSABLE</th>
                                                 <th>DETALLE</th>
                                                 <th>CLIENTE</th>
                                                 <th>COMERCIAL</th>
-                                                <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
+                                                <th>ACTIVIDADES</th>
                                                 <th></th>
                                                 <th></th>
                                             </tr>
@@ -234,12 +228,15 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                                         <tbody>
                                             <?php foreach ($ordenes as $orden): ?>
                                                 <tr>
+                                                    <td><?= $orden["od_id"] ?></td>
                                                     <td><?= $orden["responsable_nombres"] ?> <?= $orden["responsable_apellidos"] ?></td>
                                                     <td><?= $orden["od_detalle"] ?></td>
                                                     <td><?= $orden["od_cliente"] ?></td>
                                                     <td><?= $orden["comercial_nombres"] ?> <?= $orden["comercial_apellidos"] ?></td>
-                                                    <td><?= date('d-m-Y H:i', strtotime($orden["od_fechaEntrega"])) ?></td>
                                                     <td><?= $orden["od_estado"] ?></td>
+                                                    <td>
+                                                        <a href="./od_actividades.php?id=<?= $orden["od_id"] ?>" class="btn btn-secondary mb-2">VER ACTIVIDADES</a>
+                                                    </td>
                                                     <td>
                                                         <a href="validaciones/odRevisar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">ENVIAR PARA APROBAR</a>
                                                     </td>
@@ -262,3 +259,79 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
 </section>
 
 <?php require "./partials/footer.php"; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Obtener el contenedor de la lista
+    var listaElementos = document.getElementById('listaElementos');
+
+    // Obtener el campo de entrada y el botón de agregar
+    var campoEntrada = document.getElementById('nuevo_elemento');
+    var botonAgregar = document.getElementById('agregarElemento');
+
+    // Manejador de evento para agregar elemento
+    botonAgregar.addEventListener('click', function() {
+        // Obtener el valor del nuevo elemento
+        var nuevoElemento = campoEntrada.value;
+
+        // Validar si el campo no está vacío
+        if (nuevoElemento.trim() !== '') {
+            // Crear un nuevo elemento de lista y agregarlo al contenedor
+            var nuevoItem = document.createElement('li');
+            nuevoItem.textContent = nuevoElemento;
+            listaElementos.appendChild(nuevoItem);
+
+            // Limpiar el campo de entrada después de agregar el elemento
+            campoEntrada.value = '';
+
+            // Enviar el nuevo elemento al servidor utilizando AJAX
+            enviarElementoAlServidor(nuevoElemento);
+        }
+    });
+
+    // Función para enviar el nuevo elemento al servidor utilizando AJAX
+    function enviarElementoAlServidor(nuevoElemento) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'forms/actualizar_elementos.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    // La solicitud se completó exitosamente
+                    console.log('Elemento agregado correctamente al servidor.');
+                } else {
+                    // Hubo un error al procesar la solicitud
+                    console.error('Error al agregar el elemento al servidor.');
+                }
+            }
+        };
+        xhr.send('nuevo_elemento=' + encodeURIComponent(nuevoElemento));
+    }
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var listaElementos = document.getElementById('listaElementos');
+        var campoEntrada = document.getElementById('nuevo_elemento');
+        var botonAgregar = document.getElementById('agregarElemento');
+        var botonLimpiar = document.getElementById('limpiarArray'); // Botón para limpiar el array
+
+        botonAgregar.addEventListener('click', function() {
+            var nuevoElemento = campoEntrada.value;
+            if (nuevoElemento.trim() !== '') {
+                var nuevoItem = document.createElement('li');
+                nuevoItem.textContent = nuevoElemento;
+                listaElementos.appendChild(nuevoItem);
+                campoEntrada.value = '';
+            }
+        });
+
+        // Manejador de clic para limpiar el array
+        botonLimpiar.addEventListener('click', function() {
+            listaElementos.innerHTML = ''; // Vaciar el contenido del contenedor
+            // También podrías limpiar el array en el servidor utilizando AJAX si fuera necesario
+        });
+    });
+
+</script>

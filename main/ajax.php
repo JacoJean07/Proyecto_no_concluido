@@ -2,9 +2,10 @@
 require "../sql/database.php";
 
 if (isset($_GET['cedula'])) {
+    // Manejar la solicitud para obtener la cédula por cédula
     $cedula = $_GET['cedula'];
 
-    // Realiza la consulta a la base de datos para obtener el per_nombres del trabajador
+    // Realizar la consulta a la base de datos para obtener el per_nombres del trabajador
     $statement = $conn->prepare("SELECT per_nombres, per_apellidos FROM personas WHERE cedula = :cedula");
     $statement->bindParam(":cedula", $cedula);
     $statement->execute();
@@ -18,50 +19,44 @@ if (isset($_GET['cedula'])) {
         // Manejar el caso en que la consulta no fue exitosa
         echo "NO SE ENCONTRÓ TRABAJADOR CON ESA CÉDULA.";
     }
-}
+} elseif (isset($_GET['nombres'])) {
+    // Manejar la solicitud para obtener la cédula por nombres
+    $nombres = $_GET['nombres'];
 
-if(isset($_GET['nombres'])){
-    $nombres =$_GET['nombres'];
-
-    //REALIZAR LA COULTA EN LA BASE DE DATOS PARA OBTENER LA cedula DEL TRABAJADOR
+    // Realizar la consulta a la base de datos para obtener la cedula del trabajador
     $statement = $conn->prepare("SELECT cedula FROM personas WHERE per_nombres = :nombres");
     $statement->bindParam(":nombres", $nombres);
     $statement->execute();
     $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-    // VERIFICAR SI LA CONSULTA FUE EXITOSA ANTES DE ACCEDER A LOS VALORES DEL ARRAY
+    // Verificar si la consulta fue exitosa antes de acceder a los valores del array
     if ($result !== false) {
-        // DEVUELVE LA cedula DEL TRABAJADOR COMO RESPUESTA
+        // Devuelve la cédula del trabajador como respuesta
         echo $result['cedula'];
     } else {
-        // MANEJAR EL CASO EN QUE LA CONSULTA NO FUE EXITOSAMENTE
+        // Manejar el caso en que la consulta no fue exitosa
         echo "NO SE ENCONTRÓ TRABAJADOR CON ESE NOMBRE.";
     }
-}
-
-if(isset($_GET['op'])){
+} elseif (isset($_GET['op'])) {
+    // Manejar la solicitud para obtener el cliente de la OP
     $op = $_GET['op'];
 
-    //REALIZAR LA CONSULTA EN LA BASE DE DATOS PARA OBTENER EL CLIENTE DE LA OP
+    // Realizar la consulta a la base de datos para obtener el cliente de la OP
     $statement = $conn->prepare("SELECT op_cliente FROM op WHERE op_id = :op");
     $statement->bindParam(":op", $op);
     $statement->execute();
     $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-    //VERIFICAR SI LAC ONSULTA FUE EXITOSA ANTES DE ACCEDER A LOS VALORES DEL ARRAY
-    if($result !== false){
-        //DEVUELVE EL CLIENTE DEL TRABAJADOR COMO RESPUESTA
+    // Verificar si la consulta fue exitosa antes de acceder a los valores del array
+    if ($result !== false) {
+        // Devuelve el cliente de la OP como respuesta
         echo $result['op_cliente'];
-    }else{
-        //MANEJAR EL CASO EN QUE LA CONSULTA NO FUE EXITOSAMENTE
-        echo "NO SE ENCONTRO EL CLIENTE CON LA OP INGRESADA";
+    } else {
+        // Manejar el caso en que la consulta no fue exitosa
+        echo "NO SE ENCONTRÓ EL CLIENTE CON LA OP INGRESADA";
     }
-}
-?>
-
-<?php
-if (isset($_GET['op_id'])) {
-    // Obtener el valor de op_id
+} elseif (isset($_GET['op_id'])) {
+    // Manejar la solicitud para obtener los planos asociados a la OP seleccionada
     $op_id = $_GET['op_id'];
 
     // Consulta para obtener los planos asociados a la OP seleccionada
@@ -76,8 +71,7 @@ if (isset($_GET['op_id'])) {
     // Devolver los resultados como JSON
     echo json_encode($result);
 } else {
-    // Si no se recibió el parámetro op_id, devolver un mensaje de error
-    echo json_encode(array('error' => 'No se recibió el parámetro op_id'));
+    // Si no se recibió ningún parámetro válido en la solicitud, devolver un mensaje de error
+    echo json_encode(array('error' => 'No se recibió ningún parámetro válido'));
 }
 ?>
-
