@@ -49,12 +49,27 @@ $registros->execute([":id" => $id_orden_disenio]);
                             <div class="card-body">
                                 <!-- Mostrar información de la orden de diseño -->
                                 <div class="card-header">
-                                    <h5 class="card-tittle">DETALLES DE LA ORDEN DE DISEÑO</h5>
-                                </div>
+    <h5 class="card-tittle">DETALLES DE LA ORDEN DE DISEÑO</h5>
+    <!-- Verificación del ID de la orden de diseño -->
+    <?php
+    // Verifica si $orden_disenio["od_id"] está definido y no es nulo
+    if (isset($orden_disenio["od_id"])) {
+        echo "<p>ID de la orden de diseño: " . $orden_disenio["od_id"] . "</p>";
+    } else {
+        echo "<p>ID de la orden de diseño no está definido o es nulo</p>";
+    }
+    ?>
+    <!-- Botón para exportar a Excel con ícono desde la carpeta exel y estilizado con Bootstrap -->
+    <a href="./reporte_exel/exel_orden_disenio.php?id=<?= $orden_disenio["od_id"] ?>" class="btn btn-success btn-xs">
+        <img src="../exel/exel_icon.png" alt="Icono Excel" class="me-1" style="width: 25px; height: 25px;">
+        EXPORTAR A EXCEL
+    </a>
+</div>
+
                                 <div class="card-body">
                                     <p><strong>NÚMERO DE ORDEN DE DISEÑO:</strong> <?php echo $orden_disenio["od_id"]; ?></p>
                                     <p><strong>DETALLE:</strong> <?php echo $orden_disenio["od_detalle"]; ?></p>
-                                    <p><strong>RESPONSABLE:</strong> <?php echo $orden_disenio["per_nombres"] . " ". $orden_disenio["per_apellidos"]; ?></p>
+                                    <p><strong>RESPONSABLE:</strong> <?php echo $orden_disenio["per_nombres"] . " " . $orden_disenio["per_apellidos"]; ?></p>
                                     <p><strong>CLIENTE:</strong> <?php echo $orden_disenio["od_cliente"]; ?></p>
                                     <p><strong>FECHA DE ENTREGA:</strong> <?php echo $orden_disenio["od_fechaEntrega"]; ?></p>
                                     <p><strong>ESTADO:</strong> <?php echo $orden_disenio["od_estado"]; ?></p>
