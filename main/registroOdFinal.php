@@ -79,6 +79,12 @@ if ($_SESSION["user"]["usu_rol"] == 3) {
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
+                                <input value="<?= $registro["rd_detalle"] ?>" class="form-control" id="od_detalle" name="od_detalle" placeholder="od_detalle" required readonly></input>
+                                <label for="od_detalle">ACTIVIDAD</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
                                 <input value="<?= $registro["rd_hora_ini"] ?>" class="form-control" id="horainicio" name="horainicio" placeholder="horainicio" required readonly></input>
                                 <label for="horainicio">HORA INICIO</label>
                             </div>

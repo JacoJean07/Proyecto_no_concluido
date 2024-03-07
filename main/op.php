@@ -144,6 +144,15 @@ if (($_SESSION["user"]["usu_rol"]) || ($_SESSION["user"]["usu_rol"] == 1) || ($_
                         ]);
                     }
                 }
+
+                $estadoOd = "OP CREADA";
+
+                //SINO AY UN REGISTRO ACTUALIZARME
+                $stament = $conn->prepare("UPDATE orden_disenio SET od_estado = :estado WHERE od_id = $od_id");
+
+                $stament->execute([
+                    ":estado" => $estadoOd
+                ]);
             }
             //REDIRIGIREMOS AHOME.PHP
             header("Location: op.php");

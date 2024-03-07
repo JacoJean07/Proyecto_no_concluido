@@ -13,7 +13,7 @@ if ($_SESSION["user"]["usu_rol"] == 3||$_SESSION["user"]["usu_rol"] == 1) {
     $diseniador = $_SESSION["user"]["cedula"];
 
     // Buscar od_productos existentes
-    $od_productosQuery = $conn->prepare("SELECT od_detalle, od_cliente FROM orden_disenio WHERE od_estado = 'PROPUESTA'");
+    $od_productosQuery = $conn->prepare("SELECT od_detalle, od_cliente, od_id FROM orden_disenio WHERE od_estado = 'PROPUESTA'");
     $od_productosQuery->execute();
     $od_productos = $od_productosQuery->fetchAll(PDO::FETCH_ASSOC);
 
@@ -27,24 +27,19 @@ if ($_SESSION["user"]["usu_rol"] == 3||$_SESSION["user"]["usu_rol"] == 1) {
     } else {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Validamos que no se manden datos vacíos
-            if (empty($_POST["od_detalle"])) {
+            if (empty($_POST["od_detalle"]) && empty($_POST["odAct_detalle"])) {
                 $error = "POR FAVOR SELECCIONA UN PRODUCTO.";
             } else {
-                // Obtener el od_id correspondiente al od_detalle seleccionado
-                $od_detalle = $_POST["od_detalle"];
-                $od_id_query = $conn->prepare("SELECT od_id FROM orden_disenio WHERE od_detalle = :od_detalle");
-                $od_id_query->bindParam(":od_detalle", $od_detalle);
-                $od_id_query->execute();
-                $od_id_result = $od_id_query->fetch(PDO::FETCH_ASSOC);
-                $od_id = $od_id_result['od_id'];
+                $od_id = $_POST['od_id'];
     
                 // Insertamos un nuevo registro
-                $statement = $conn->prepare("INSERT INTO registros_disenio (od_id, rd_diseniador, rd_hora_ini, rd_hora_fin) 
-                                            VALUES (:od_id, :diseniador, CURRENT_TIMESTAMP, NULL)");
+                $statement = $conn->prepare("INSERT INTO registros_disenio (od_id, rd_diseniador, rd_detalle, rd_hora_ini, rd_hora_fin) 
+                                            VALUES (:od_id, :diseniador, :rd_detalle, CURRENT_TIMESTAMP, NULL)");
     
                 $statement->execute([
                     ":od_id" => $od_id,
-                    ":diseniador" => $diseniador
+                    ":diseniador" => $diseniador,
+                    ":rd_detalle" => $_POST['od_actividades']
                 ]);
     
                 // Redirigimos a la página principal o a donde desees
@@ -86,16 +81,26 @@ $error = null;
                                 <select class="form-select" id="od_detalle" name="od_detalle" required>
                                     <option selected disabled value="">SELECCIONA EL PRODUCTO</option>
                                     <?php foreach ($od_productos as $od_detalle): ?>
-                                        <option value="<?= $od_detalle["od_detalle"] ?>" data-od_cliente="<?= $od_detalle["od_cliente"] ?>"><?= $od_detalle["od_detalle"] ?></option>
+                                        <option value="<?= $od_detalle["od_detalle"] ?>" data-od_cliente="<?= $od_detalle["od_cliente"] ?>" data-od_id="<?= $od_detalle["od_id"] ?>"><?= $od_detalle["od_detalle"] ?></option>
                                     <?php endforeach ?>
                                 </select>
                                 <label for="od_detalle">PRODUCTO</label>
                             </div>
                         </div>
+                        <input type="hidden" id="od_id" name="od_id">
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="od_cliente" name="od_cliente" placeholder="od_cliente" required readonly></input>
                                 <label for="od_cliente">CLIENTE</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="od_actividades" name="od_actividades" required>
+                                    <option selected disabled value="">SELECCIONA LA ACTIVIDAD</option>
+                                    <!-- Las opciones se cargarán dinámicamente mediante JavaScript -->
+                                </select>
+                                <label for="od_actividades">ACTIVIDAD</label>
                             </div>
                         </div>
                         <div class="text-center">
@@ -119,5 +124,45 @@ $error = null;
         
         document.getElementById('od_cliente').value = od_cliente;
         document.getElementById('compania').value = compania;
+    });
+</script>
+
+<script>
+    document.getElementById('od_detalle').addEventListener('change', function() {
+        var od_id = this.options[this.selectedIndex].getAttribute('data-od_id'); // Obtén el valor de od_id
+        
+        // Realiza una petición AJAX para obtener las actividades basadas en el od_id seleccionado
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'Ajax.php'); // Ruta al archivo PHP que maneja la solicitud AJAX
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var actividades = JSON.parse(xhr.responseText); // Parsea la respuesta JSON
+                // Elimina todos los elementos de opción actuales del select de actividades
+                var selectActividades = document.getElementById('od_actividades');
+                selectActividades.innerHTML = ''; // Limpia el select
+                // Crea opciones para cada actividad devuelta por la consulta AJAX
+                actividades.forEach(function(actividad) {
+                    var option = document.createElement('option');
+                    option.value = actividad.odAct_detalle;
+                    option.text = actividad.odAct_detalle;
+                    selectActividades.appendChild(option);
+                });
+            } else {
+                console.error('Error en la petición AJAX');
+            }
+        };
+        // Envía el od_id seleccionado al servidor
+        xhr.send('od_id=' + od_id);
+    });
+
+</script>
+
+<script>
+    document.getElementById('od_detalle').addEventListener('change', function() {
+        var od_id = this.options[this.selectedIndex].getAttribute('data-od_id');
+        var od_cliente = this.options[this.selectedIndex].getAttribute('data-od_cliente');
+        document.getElementById('od_cliente').value = od_cliente;
+        document.getElementById('od_id').value = od_id; // Agregar esta línea para establecer el valor de od_id en un campo oculto
     });
 </script>

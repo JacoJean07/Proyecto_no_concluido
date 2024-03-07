@@ -45,7 +45,7 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
     }
 
     // Obtener todas las actividades relacionadas con la orden de diseño
-    $actividades = $conn->prepare("SELECT * FROM od_actividades WHERE od_id = :od_id");
+    $actividades = $conn->prepare("SELECT * FROM od_actividades WHERE od_id = :od_id AND odAct_estado = 0");
     $actividades->bindParam(":od_id", $id);
     $actividades->execute();
 } else {
@@ -83,7 +83,7 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
                             <?php foreach ($actividades as $actividad): ?>
                                 <li class="list-group-item list-group-item d-flex justify-content-between align-items-center">
                                     <?php echo $actividad['odAct_detalle']; ?>
-                                    <a class="text-rigth" href="./validaciones/deleteActividad.php?id=<?= $actividad["od_id"]?>&detalle=<?= urlencode($actividad["odAct_detalle"]) ?>">
+                                    <a class="text-rigth" href="./validaciones/deleteActividad.php?id=<?= $actividad["id"]?>&od_id=<?= $actividad["od_id"] ?>">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="red" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
                                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
                                         </svg>

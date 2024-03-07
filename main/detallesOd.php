@@ -85,6 +85,7 @@ $registros->execute([":id" => $id_orden_disenio]);
                                             <tr>
                                                 <th>#</th>
                                                 <th>DISEÑADOR</th>
+                                                <th>ACTIVIDAD</th>
                                                 <th>FECHA DE INICIO</th>
                                                 <th>FECHA FINAL</th>
                                                 <th>OBSERVACIONES</th>
@@ -97,6 +98,7 @@ $registros->execute([":id" => $id_orden_disenio]);
                                                 <tr>
                                                     <td><?= $contador-- ?></td>
                                                     <td><?php echo $registro["per_nombres"] . " " . $registro["per_apellidos"]; ?></td>
+                                                    <td><?php echo $registro["rd_detalle"]; ?></td>
                                                     <td><?php echo $registro["rd_hora_ini"]; ?></td>
                                                     <td><?php echo $registro["rd_hora_fin"]; ?></td>
                                                     <td><?php echo $registro["rd_observaciones"]; ?></td>

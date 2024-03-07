@@ -66,8 +66,10 @@ CREATE TABLE orden_disenio(
         ON DELETE RESTRICT
 );
 CREATE TABLE od_actividades ( 
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     od_id INT UNSIGNED NOT NULL,
     odAct_detalle VARCHAR(255) NOT NULL,
+    odAct_estado BOOLEAN DEFAULT 0,
     Foreign Key (od_id) REFERENCES orden_disenio(od_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT

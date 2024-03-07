@@ -70,6 +70,18 @@ if (isset($_GET['cedula'])) {
 
     // Devolver los resultados como JSON
     echo json_encode($result);
+}elseif (isset($_POST["od_id"])) {
+    $od_id = $_POST["od_id"];
+
+    // Consulta SQL para obtener las actividades basadas en el od_id seleccionado
+    $query = "SELECT odAct_detalle FROM od_actividades WHERE od_id = :od_id AND odAct_estado = 0";
+    $statement = $conn->prepare($query);
+    $statement->bindParam(':od_id', $od_id);
+    $statement->execute();
+    $actividades = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+    // Formatear los datos como JSON y devolverlos
+    echo json_encode($actividades);
 } else {
     // Si no se recibió ningún parámetro válido en la solicitud, devolver un mensaje de error
     echo json_encode(array('error' => 'No se recibió ningún parámetro válido'));

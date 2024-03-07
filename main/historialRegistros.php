@@ -137,8 +137,9 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                                                 <tr>
                                                     <th>#</th>
                                                     <th>NUMERO DE OD</th>
-                                                    <th>PRODUCTO</th>
-                                                    <th>MARCA</th>
+                                                    <th>DETALLE</th>
+                                                    <th>CLIENTE</th>
+                                                    <th>ACTIVIDAD</th>
                                                     <th>HORA INICIO</th>
                                                     <th>HORA FINAL</th>
                                                     <th>OBSERVACIONES</th>
@@ -152,6 +153,7 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                                                         <th><?= $registros["od_id"] ?></th>
                                                         <th><?= $registros["od_detalle"] ?></th>
                                                         <th><?= $registros["od_cliente"] ?></th>
+                                                        <th><?= $registros["rd_detalle"] ?></th>
                                                         <td><?= $registros["rd_hora_ini"] ?></td>
                                                         <td><?= $registros["rd_hora_fin"] ?></td>
                                                         <td><?= $registros["rd_observaciones"] ?></td>
@@ -241,8 +243,9 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                                                     <th>#</th>
                                                     <th># OD</th>
                                                     <th>DISEÑADOR</th>
-                                                    <th>PRODUCTO</th>
-                                                    <th>MARCA</th>
+                                                    <th>DETALLE</th>
+                                                    <th>CLIENTE</th>
+                                                    <th>ACTIVIDAD</th>
                                                     <th>HORA INICIO</th>
                                                     <th>HORA FINAL</th>
                                                     <th>OBSERVACIONES</th>
@@ -257,6 +260,7 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                                                         <th><?= $registros["per_nombres"] . " " . $registros["per_apellidos"] ?></th>
                                                         <th><?= $registros["od_detalle"] ?></th>
                                                         <th><?= $registros["od_cliente"] ?></th>
+                                                        <th><?= $registros["rd_detalle"] ?></th>
                                                         <td><?= $registros["rd_hora_ini"] ?></td>
                                                         <td><?= $registros["rd_hora_fin"] ?></td>
                                                         <td><?= $registros["rd_observaciones"] ?></td>
