@@ -161,7 +161,7 @@ $error = null;
                                     <tr>
                                         <th># DE OP</th>
                                         <th># DE PLANO</th>
-                                        <th>FECHA</th>
+                                        <th>FECHA DE REGISTRO</th>
                                         <th>ÁREA</th>
                                         <th>PORCENTAJE</th>
                                     </tr>

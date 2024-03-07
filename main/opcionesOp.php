@@ -451,10 +451,10 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                     <?php foreach ($opanulada as $opanulada) : ?>
                                                         <tr>
                                                             <td><?= $opanulada["op_id"] ?></td>
-                                                            <td><?= $opanulada["op_cliente"] ?></td>
-                                                            <td><?= $opanulada["op_detalle"] ?></td>
-                                                            <td><?= $opanulada["cedula_nombres"] . " " . $opanulada["cedula_apellidos"] ?></td>
-                                                            <td><?= $opanulada["vendedor_nombres"] . " " . $opanulada["vendedor_apellidos"] ?></td>
+                                                            <td><?= $opanulada["od_cliente"] ?></td>
+                                                            <td><?= $opanulada["od_detalle"] ?></td>
+                                                            <td><?= $opanulada["responsable_nombres"] . " " . $opanulada["responsable_apellidos"] ?></td>
+                                                            <td><?= $opanulada["comercial_nombres"] . " " . $opanulada["comercial_apellidos"] ?></td>
                                                             <td><?= $opanulada["op_registro"] ?></td>
                                                             <td><?= $opanulada["op_direccionLocal"] ?></td>
                                                             <td><?= $opanulada["op_personaContacto"] ?></td>

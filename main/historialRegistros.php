@@ -167,7 +167,7 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                         </div>
                     </div>
                 </section>
-            <?php elseif (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 2)) : ?>
+            <?php elseif (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 2)||($_SESSION["user"]["usu_rol"] == 1)) : ?>
                 <section class="section">
                     <div class="row">
                         <div class="col-lg-12">

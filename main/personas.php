@@ -174,7 +174,7 @@ if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
                                             <option value="DEP PRODUCCIÓN" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DEP PRODUCCIÓN") ? "selected" : "" ?>>DEPARTAMNETO DE PRODUCCIÓN</option>
                                             <option value="DISEÑO" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "DISEÑO") ? "selected" : "" ?>>DISEÑO</option>
                                             <option value="COMERCIAL" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "COMERCIAL") ? "selected" : "" ?>>COMERCIAL</option>
-
+                                            <option value="TICS" <?= ($personaEditar && $personaEditar["per_areaTrabajo"] == "TICS") ? "selected" : "" ?>>TICS</option>
                                         </select>
                                         <label for="areatrabajo">ÁREA DE TRABAJO</label>
                                     </div>

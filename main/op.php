@@ -370,6 +370,7 @@ if (($_SESSION["user"]["usu_rol"]) || ($_SESSION["user"]["usu_rol"] == 1) || ($_
                                                     <td><?= $op["op_direccionLocal"] ?></td>
                                                     <td><?= $op["op_personaContacto"] ?></td>
                                                     <td><?= $op["op_telefono"] ?></td>
+                                                    <td></td>
                                                     <td><?= $op["op_estado"] ?></td>
                                                     <?php if ($_SESSION["user"]["usu_rol"] == 1) : ?>
                                                         <td>

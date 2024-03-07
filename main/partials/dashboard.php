@@ -168,6 +168,18 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav-persona" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-clipboard"></i><span>Registros de Empleados</span><i class="bi bi-chevron-down ms-auto "></i>
+          </a>
+          <ul id="forms-nav-persona" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="registroEmpleado.php">
+                <i class="bi bi-circle"></i><span>Nuevo Registro</span>
+              </a>
+            </li>
+          </ul>
+        </li>
 
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
       <?php elseif ($_SESSION["user"]["usu_rol"] == 2) : ?>
