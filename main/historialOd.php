@@ -82,7 +82,6 @@ $ordenes_disenio->execute();
                                                 <th>CLIENTE</th>
                                                 <th>COMERCIAL</th>
                                                 <th>FECHA DE REGISTRO</th>
-                                                <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
                                                 <th></th>
                                             </tr>
@@ -96,7 +95,6 @@ $ordenes_disenio->execute();
                                                     <th><?= $orden["od_cliente"] ?></th>
                                                     <td><?= $orden["comercial_nombres"] ?> <?= $orden["comercial_apellidos"] ?></td>
                                                     <th><?= $orden["od_fechaRegistro"] ?></th>
-                                                    <th><?= $orden["od_fechaEntrega"] ?></th>
                                                     <th><?= $orden["od_estado"] ?></th>
                                                     <td>
                                                         <a href="detallesOd.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">VER REGISTROS</a>

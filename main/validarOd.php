@@ -81,7 +81,7 @@ $ordenes_disenio = $conn->query($query);
                                                     <th><?= $orden["od_fechaEntrega"] ?></th>
                                                     <th><?= $orden["od_estado"] ?></th>
                                                     <td>
-                                                        <a href="validaciones/odAprovar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">Aprovar OD</a>
+                                                        <a href="validaciones/odAprovar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">Aprobar OD</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>

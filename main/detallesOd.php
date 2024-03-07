@@ -71,7 +71,6 @@ $registros->execute([":id" => $id_orden_disenio]);
                                     <p><strong>DETALLE:</strong> <?php echo $orden_disenio["od_detalle"]; ?></p>
                                     <p><strong>RESPONSABLE:</strong> <?php echo $orden_disenio["per_nombres"] . " " . $orden_disenio["per_apellidos"]; ?></p>
                                     <p><strong>CLIENTE:</strong> <?php echo $orden_disenio["od_cliente"]; ?></p>
-                                    <p><strong>FECHA DE ENTREGA:</strong> <?php echo $orden_disenio["od_fechaEntrega"]; ?></p>
                                     <p><strong>ESTADO:</strong> <?php echo $orden_disenio["od_estado"]; ?></p>
                                 </div>
 

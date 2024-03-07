@@ -52,11 +52,6 @@
               </a>
             </li>
             <li>
-              <a href="opProduccion.php">
-                <i class="bi bi-circle"></i><span>Lista de OP's en Producción</span>
-              </a>
-            </li>
-            <li>
               <a href="planosAdd.php">
                 <i class="bi bi-circle"></i><span>Añadir Planos</span>
               </a>
@@ -190,11 +185,6 @@
           </a>
           <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="historialRegistros.php">
-                <i class="bi bi-circle"></i><span>Historial de registros</span>
-              </a>
-            </li>
-            <li>
               <a href="historialOd.php">
                 <i class="bi bi-circle"></i><span>Ordenes de Diseño</span>
               </a>
@@ -205,40 +195,30 @@
               </a>
             </li>
             <li>
-            <a href="opcionesOP.php">
-              <i class="bi bi-circle"></i><span>Estados de OP</span>
-            </a>
-          </li>
+              <a href="historialRegistros.php">
+                <i class="bi bi-circle"></i><span>Historial de registros</span>
+              </a>
+            </li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-box-seam"></i><span>OP's</span><i class="bi bi-chevron-down ms-auto"></i>
+          <a class="nav-link collapsed" data-bs-target="#forms-op" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-box-seam"></i><span>OP</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
-          <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <ul id="forms-op" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-              <a href="ciudades.php">
-                <i class="bi bi-circle"></i><span>Ciudad de Producción</span>
+              <a href="opcionesOp.php">
+                <i class="bi bi-circle"></i><span>ÓRDENES DE PRODUCCIÓN</span>
               </a>
             </li>
             <li>
               <a href="op.php">
-                <i class="bi bi-circle"></i><span>Registro de OP</span>
-              </a>
-            </li>
-            <li>
-              <a href="opProduccion.php">
-                <i class="bi bi-circle"></i><span>Lista de OP's en Producción</span>
+                <i class="bi bi-circle"></i><span>REGISTRAR UNA OP</span>
               </a>
             </li>
             <li>
               <a href="planosAdd.php">
-                <i class="bi bi-circle"></i><span>Añadir Planos</span>
-              </a>
-            </li>
-            <li>
-              <a href="opcionesOp.php">
-                <i class="bi bi-circle"></i><span>Estados de las Op</span>
+                <i class="bi bi-circle"></i><span>AÑADIR PLANOS</span>
               </a>
             </li>
           </ul>
@@ -248,39 +228,39 @@
 
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-journal-text"></i><span>Registros</span><i class="bi bi-chevron-down ms-auto"></i>
+            <i class="bi bi-journal-text"></i><span>OD</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
+              <a href="od.php">
+                <i class="bi bi-circle"></i><span>CREAR ORDEN DE DISEÑO</span>
+              </a>
+            </li>
+            <li>
               <a href="registroOd.php">
-                <i class="bi bi-circle"></i><span>Nuevo Registro</span>
+                <i class="bi bi-circle"></i><span>NUEVO REGISTRO</span>
               </a>
             </li>
             <li>
               <a href="historialRegistros.php">
-                <i class="bi bi-circle"></i><span>Historial de mis Registros</span>
-              </a>
-            </li>
-            <li>
-              <a href="od.php">
-                <i class="bi bi-circle"></i><span>Crear una nueva Orden de Diseño</span>
+                <i class="bi bi-circle"></i><span>HISTORIAL DE MIS REGISTROS</span>
               </a>
             </li>
           </ul>
         </li>
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#forms-ORDEN" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-box-seam"></i><span>Ordenes de Producción</span><i class="bi bi-chevron-down ms-auto"></i>
+            <i class="bi bi-box-seam"></i><span>ÓRDENES DE PRODUCCIÓN</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="forms-ORDEN" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
               <a href="op.php">
-                <i class="bi bi-circle"></i><span>Registro de OP</span>
+                <i class="bi bi-circle"></i><span>REGISTRO DE OP</span>
               </a>
             </li>
             <li>
               <a href="planosAdd.php">
-                <i class="bi bi-circle"></i><span>Añadir Planos</span>
+                <i class="bi bi-circle"></i><span>AÑADIR PLANOS</span>
               </a>
             </li>
           </ul>
