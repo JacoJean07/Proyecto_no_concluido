@@ -78,11 +78,13 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
             $reg_cedula = $empleado;
             // Insertar los datos en la tabla de registro
             $insertRegistroQuery = $conn->prepare("INSERT INTO registro (pro_id, reg_fecha, reg_cedula, op_id, pla_id) 
-                                                   VALUES ((SELECT pro.pro_id FROM produccion pro INNER JOIN planos p ON pro.pla_id = p.pla_id WHERE p.pla_id = :pla_id), 
-                                                           CURRENT_TIMESTAMP, 
-                                                           :reg_cedula, 
-                                                           :op_id, 
-                                                           :pla_id)");
+                                                    VALUES ((SELECT pro.pro_id FROM produccion pro INNER JOIN planos p ON pro.pla_id = p.pla_id WHERE p.pla_id = :pla_id LIMIT 1), 
+                                                    CURRENT_TIMESTAMP, 
+                                                    :reg_cedula, 
+                                                    :op_id, 
+                                                    :pla_id)");
+
+
             $insertRegistroQuery->bindParam(':pla_id', $pla_id);
             $insertRegistroQuery->bindParam(':reg_cedula', $reg_cedula);
             $insertRegistroQuery->bindParam(':op_id', $op_id);
