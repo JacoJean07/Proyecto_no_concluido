@@ -66,8 +66,8 @@ $ordenes_disenio = $conn->query($query);
                                                 <th>PRODUCTO</th>
                                                 <th>RESPONSABLE</th>
                                                 <th>CLIENTE</th>
-                                                <th>FECHA DE ENTREGA</th>
                                                 <th>ESTADO</th>
+                                                <th></th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -78,10 +78,12 @@ $ordenes_disenio = $conn->query($query);
                                                     <th><?= $orden["od_detalle"] ?></th>
                                                     <th><?= $orden["responsable_nombres"] ?> <?= $orden["responsable_apellidos"] ?></th>
                                                     <th><?= $orden["od_cliente"] ?></th>
-                                                    <th><?= $orden["od_fechaEntrega"] ?></th>
                                                     <th><?= $orden["od_estado"] ?></th>
                                                     <td>
-                                                        <a href="validaciones/odAprovar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">Aprobar OD</a>
+                                                        <a href="validaciones/odAprovar.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">APROBAR OD</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="validaciones/odPropuesta.php?id=<?= $orden["od_id"] ?>" class="btn btn-primary mb-2">VOLVER A PROPUESTA</a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach ?>
