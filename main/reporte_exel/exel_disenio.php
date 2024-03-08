@@ -60,10 +60,12 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         // Seleccionar la hoja activa y establecer su título
         $hojaActiva = $excel->getActiveSheet();
         $hojaActiva->setTitle("Reporte de las Op");
-        $hojaActiva->setCellValue('C3', 'FECHA DEL REPORTE');
+        $hojaActiva->setCellValue('C3', 'FECHA DE GENERACION DEL REPORTE');
         $hojaActiva->setCellValue('C2', 'REPORTE GENERADO POR');
-        $hojaActiva->getStyle('C2:C3')->getFont()->setBold(true)->setSize(13);
-
+        $hojaActiva->setCellValue('C4', 'EL REPORTE ES DE LA FECHA');
+        $hojaActiva->setCellValue('D4', $year . ' - ' . $month);
+        $hojaActiva->getStyle('C2:C4')->getFont()->setBold(true)->setSize(13);
+        
         // Obtener la cédula del usuario actualmente logueado
         $cedulaUsuario = $_SESSION["user"]["cedula"];
 
@@ -201,18 +203,30 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         }
 
         // Establecer los datos en las celdas especificadas
-        $nuevaHoja->setCellValue('C3', 'FECHA DEL REPORTE');
-        $nuevaHoja->setCellValue('L3', 'FECHA DEL REPORTE');
-        $nuevaHoja->setCellValue('V3', 'FECHA DEL REPORTE');
-        $nuevaHoja->setCellValue('AF3', 'FECHA DEL REPORTE');
-        $nuevaHoja->setCellValue('AP3', 'FECHA DEL REPORTE');
-        $nuevaHoja->setCellValue('BA3', 'FECHA DEL REPORTE');
+        $nuevaHoja->setCellValue('C3', 'FECHA DE GENERACION DEL REPORTE');
+        $nuevaHoja->setCellValue('L3', 'FECHA DE GENERACION DEL REPORTE');
+        $nuevaHoja->setCellValue('V3', 'FECHA DE GENERACION DEL REPORTE');
+        $nuevaHoja->setCellValue('AF3', 'FECHA DE GENERACION DEL REPORTE');
+        $nuevaHoja->setCellValue('AP3', 'FECHA DE GENERACION DEL REPORTE');
+        $nuevaHoja->setCellValue('BA3', 'FECHA DE GENERACION DEL REPORTE');
         $nuevaHoja->setCellValue('C2', 'REPORTE GENERADO POR');
         $nuevaHoja->setCellValue('L2', 'REPORTE GENERADO POR');
         $nuevaHoja->setCellValue('V2', 'REPORTE GENERADO POR');
         $nuevaHoja->setCellValue('AF2', 'REPORTE GENERADO POR');
         $nuevaHoja->setCellValue('AP2', 'REPORTE GENERADO POR');
         $nuevaHoja->setCellValue('BA2', 'REPORTE GENERADO POR');
+        $nuevaHoja->setCellValue('C4', 'EL REPORTE ES DE LA FECHA');
+        $nuevaHoja->setCellValue('D4', $year . ' - ' . $month);
+        $nuevaHoja->setCellValue('L4', 'EL REPORTE ES DE LA FECHA');
+        $nuevaHoja->setCellValue('M4', $year . ' - ' . $month);
+        $nuevaHoja->setCellValue('V4', 'EL REPORTE ES DE LA FECHA');
+        $nuevaHoja->setCellValue('W4', $year . ' - ' . $month);
+        $nuevaHoja->setCellValue('AF4', 'EL REPORTE ES DE LA FECHA');
+        $nuevaHoja->setCellValue('AG4', $year . ' - ' . $month);
+        $nuevaHoja->setCellValue('AQ4', 'EL REPORTE ES DE LA FECHA');
+        $nuevaHoja->setCellValue('D4', $year . ' - ' . $month);
+        $nuevaHoja->setCellValue('BA4', 'EL REPORTE ES DE LA FECHA');
+        $nuevaHoja->setCellValue('BB4', $year . ' - ' . $month);
 
         // Verificar si se encontraron resultados
         if ($usuario) {
@@ -847,19 +861,30 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
             $drawingHojaHora->setWorksheet($hojaHora);
         }
         // Establecer los datos en las celdas especificadas
-        $hojaHora->setCellValue('C3', 'FECHA DEL REPORTE');
-        $hojaHora->setCellValue('L3', 'FECHA DEL REPORTE');
-        $hojaHora->setCellValue('V3', 'FECHA DEL REPORTE');
-        $hojaHora->setCellValue('AF3', 'FECHA DEL REPORTE');
-        $hojaHora->setCellValue('AP3', 'FECHA DEL REPORTE');
-        $hojaHora->setCellValue('BA3', 'FECHA DEL REPORTE');
+        $hojaHora->setCellValue('C3', 'FECHA DE GENERACION DEL REPORTE');
+        $hojaHora->setCellValue('L3', 'FECHA DE GENERACION DEL REPORTE');
+        $hojaHora->setCellValue('V3', 'FECHA DE GENERACION DEL REPORTE');
+        $hojaHora->setCellValue('AF3', 'FECHA DE GENERACION DEL REPORTE');
+        $hojaHora->setCellValue('AP3', 'FECHA DE GENERACION DEL REPORTE');
+        $hojaHora->setCellValue('BA3', 'FECHA DE GENERACION DEL REPORTE');
         $hojaHora->setCellValue('C2', 'REPORTE GENERADO POR');
         $hojaHora->setCellValue('L2', 'REPORTE GENERADO POR');
         $hojaHora->setCellValue('V2', 'REPORTE GENERADO POR');
         $hojaHora->setCellValue('AF2', 'REPORTE GENERADO POR');
         $hojaHora->setCellValue('AP2', 'REPORTE GENERADO POR');
         $hojaHora->setCellValue('BA2', 'REPORTE GENERADO POR');
-
+        $hojaHora->setCellValue('C4', 'EL REPORTE ES DE LA FECHA');
+        $hojaHora->setCellValue('D4', $year . ' - ' . $month);
+        $hojaHora->setCellValue('L4', 'EL REPORTE ES DE LA FECHA');
+        $hojaHora->setCellValue('M4', $year . ' - ' . $month);
+        $hojaHora->setCellValue('V4', 'EL REPORTE ES DE LA FECHA');
+        $hojaHora->setCellValue('W4', $year . ' - ' . $month);
+        $hojaHora->setCellValue('AF4', 'EL REPORTE ES DE LA FECHA');
+        $hojaHora->setCellValue('AG4', $year . ' - ' . $month);
+        $hojaHora->setCellValue('AQ4', 'EL REPORTE ES DE LA FECHA');
+        $hojaHora->setCellValue('D4', $year . ' - ' . $month);
+        $hojaHora->setCellValue('BA4', 'EL REPORTE ES DE LA FECHA');
+        $hojaHora->setCellValue('BB4', $year . ' - ' . $month);
         // Verificar si se encontraron resultados
         if ($usuario) {
             // Obtener nombres y apellidos del usuario
