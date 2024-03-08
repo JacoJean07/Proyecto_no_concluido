@@ -65,19 +65,33 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
     $opQuery->execute(array(':area_trabajo' => $area_trabajo_empleado));
     $ops = $opQuery->fetchAll(PDO::FETCH_ASSOC);
 
-    // Procesar el formulario cuando se envíe
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Validamos que no se manden datos vacios
-        if (empty($_POST["op_id"]) || empty($_POST["pla_id"]) ) {
-            $error = 'POR FAVOR SELECCIONAR OP Y PLANO.';
-        } else {
-            // Obtener los datos del formulario
-            $op_id = $_POST["op_id"];
-            $pla_id = $_POST["pla_id"];
-            // Obtener la cédula del empleado de la sesión
-            $reg_cedula = $empleado;
-            // Insertar los datos en la tabla de registro
-            $insertRegistroQuery = $conn->prepare("INSERT INTO registro (pro_id, reg_fecha, reg_cedula, op_id, pla_id) 
+    // Verificar si ya hay un registro activo para el diseñador actual
+    $registroQuery = $conn->prepare("SELECT *
+    FROM registro
+    JOIN registro_empleado ON registro.reg_id = registro_empleado.reg_id
+    JOIN registro_empleado_actividades AS Re ON registro.reg_id = Re.reg_id
+    WHERE registro.reg_cedula = :empleado
+     AND registro_empleado.reg_fechaFin IS NULL
+    LIMIT 1");
+    $registroQuery->execute(array(':empleado' => $empleado));
+
+    if ($registroQuery->rowCount() > 0) {
+        header("Location: registroEmpleadoFin.php");
+        return;
+    } else {
+        // Procesar el formulario cuando se envíe
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Validamos que no se manden datos vacios
+            if (empty($_POST["op_id"]) || empty($_POST["pla_id"])) {
+                $error = 'POR FAVOR SELECCIONAR OP Y PLANO.';
+            } else {
+                // Obtener los datos del formulario
+                $op_id = $_POST["op_id"];
+                $pla_id = $_POST["pla_id"];
+                // Obtener la cédula del empleado de la sesión
+                $reg_cedula = $empleado;
+                // Insertar los datos en la tabla de registro
+                $insertRegistroQuery = $conn->prepare("INSERT INTO registro (pro_id, reg_fecha, reg_cedula, op_id, pla_id) 
                                                     VALUES ((SELECT pro.pro_id FROM produccion pro INNER JOIN planos p ON pro.pla_id = p.pla_id WHERE p.pla_id = :pla_id LIMIT 1), 
                                                     CURRENT_TIMESTAMP, 
                                                     :reg_cedula, 
@@ -85,47 +99,48 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
                                                     :pla_id)");
 
 
-            $insertRegistroQuery->bindParam(':pla_id', $pla_id);
-            $insertRegistroQuery->bindParam(':reg_cedula', $reg_cedula);
-            $insertRegistroQuery->bindParam(':op_id', $op_id);
-            $insertRegistroQuery->bindParam(':pla_id', $pla_id);
-            $insertRegistroQuery->execute();
+                $insertRegistroQuery->bindParam(':pla_id', $pla_id);
+                $insertRegistroQuery->bindParam(':reg_cedula', $reg_cedula);
+                $insertRegistroQuery->bindParam(':op_id', $op_id);
+                $insertRegistroQuery->bindParam(':pla_id', $pla_id);
+                $insertRegistroQuery->execute();
 
-            // Obtener el ID del registro insertado
-            $reg_id = $conn->lastInsertId();
+                // Obtener el ID del registro insertado
+                $reg_id = $conn->lastInsertId();
 
-            // Insertar datos en la tabla de registro_empleado
-            $insertRegistroEmpleadoQuery = $conn->prepare("INSERT INTO registro_empleado (reg_id, reg_logistica, reg_areaTrabajo) 
+                // Insertar datos en la tabla de registro_empleado
+                $insertRegistroEmpleadoQuery = $conn->prepare("INSERT INTO registro_empleado (reg_id, reg_logistica, reg_areaTrabajo) 
                                                            VALUES (:reg_id, 0, :area_trabajo_empleado)");
-            $insertRegistroEmpleadoQuery->bindParam(':reg_id', $reg_id);
-            $insertRegistroEmpleadoQuery->bindParam(':area_trabajo_empleado', $area_trabajo_empleado);
-            $insertRegistroEmpleadoQuery->execute();
+                $insertRegistroEmpleadoQuery->bindParam(':reg_id', $reg_id);
+                $insertRegistroEmpleadoQuery->bindParam(':area_trabajo_empleado', $area_trabajo_empleado);
+                $insertRegistroEmpleadoQuery->execute();
 
-            if (!empty($_POST["actividades"])) {
-                foreach ($_POST["actividades"] as $actividad) {
-                    // Insertar cada actividad en la tabla registro_empleado_actividades
-                    $query = "INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) VALUES (:reg_id, :actividad)";
+                if (!empty($_POST["actividades"])) {
+                    foreach ($_POST["actividades"] as $actividad) {
+                        // Insertar cada actividad en la tabla registro_empleado_actividades
+                        $query = "INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) VALUES (:reg_id, :actividad)";
+                        $statement = $conn->prepare($query);
+                        $statement->bindParam(':reg_id', $reg_id);
+                        $statement->bindParam(':actividad', $actividad);
+                        $statement->execute();
+                    }
+                }
+
+                // Insertar otra actividad si se proporcionó
+                if (!empty($_POST["otra_actividad"])) {
+                    $otra_actividad = $_POST["otra_actividad"];
+                    // Insertar la otra actividad en la tabla registro_empleado_actividades
+                    $query = "INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) VALUES (:reg_id, :otra_actividad)";
                     $statement = $conn->prepare($query);
                     $statement->bindParam(':reg_id', $reg_id);
-                    $statement->bindParam(':actividad', $actividad);
+                    $statement->bindParam(':otra_actividad', $otra_actividad);
                     $statement->execute();
                 }
-            }
-    
-            // Insertar otra actividad si se proporcionó
-            if (!empty($_POST["otra_actividad"])) {
-                $otra_actividad = $_POST["otra_actividad"];
-                // Insertar la otra actividad en la tabla registro_empleado_actividades
-                $query = "INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) VALUES (:reg_id, :otra_actividad)";
-                $statement = $conn->prepare($query);
-                $statement->bindParam(':reg_id', $reg_id);
-                $statement->bindParam(':otra_actividad', $otra_actividad);
-                $statement->execute();
-            }
 
-            // Redirigir o mostrar un mensaje de éxito
-            header("Location: registroEmpleado.php");
-            exit();
+                // Redirigir o mostrar un mensaje de éxito
+                header("Location: registroEmpleado.php");
+                exit();
+            }
         }
     }
 } else {
@@ -149,18 +164,18 @@ $error = null;
                     <h5 class="card-title">NUEVO REGISTRO DE EMPLEADO</h5>
 
                     <!-- Si hay un error, mostrarlo -->
-                    <?php if ($error): ?>
+                    <?php if ($error) : ?>
                         <p class="text-danger">
                             <?= $error ?>
                         </p>
                     <?php endif ?>
-                    
+
                     <form class="row g-3" method="POST" action="registroEmpleado.php">
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="op_id" name="op_id" required>
                                     <option selected disabled value="">SELECCIONA LA ORDEN DE PRODUCCIÓN</option>
-                                    <?php foreach ($ops as $op): ?>
+                                    <?php foreach ($ops as $op) : ?>
                                         <option value="<?= $op["op_id"] ?>"><?= $op["op_id"] ?></option>
                                     <?php endforeach ?>
                                 </select>
@@ -184,7 +199,7 @@ $error = null;
                         <div class="col-md-12">
                             <h5 class="card-title">ACTIVIDADES</h5>
                             <!-- Checkbox para las actividades -->
-                            <?php foreach ($actividades as $actividad): ?>
+                            <?php foreach ($actividades as $actividad) : ?>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="<?= strtolower(str_replace(" ", "_", $actividad)) ?>" name="actividades[]" value="<?= $actividad ?>">
                                     <label class="form-check-label" for="<?= strtolower(str_replace(" ", "_", $actividad)) ?>">
@@ -219,7 +234,7 @@ $error = null;
     // Escucha el cambio en la selección de la orden de producción
     document.getElementById('op_id').addEventListener('change', function() {
         var opId = this.value; // Obtén el valor seleccionado de la orden de producción
-        
+
         // Realiza una petición AJAX para obtener los planos basados en la orden de producción seleccionada
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'validaciones/obtener_planos.php'); // Ruta al archivo PHP que maneja la solicitud AJAX
