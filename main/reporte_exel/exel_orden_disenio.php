@@ -80,12 +80,12 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
 
         // Consultar la base de datos para obtener la información de la orden de diseño
         $sql = "SELECT od.*, P.per_nombres, P.per_apellidos 
-                FROM orden_disenio od 
-                JOIN personas P ON od.od_responsable = P.cedula
-                WHERE od_id = :id";
+                FROM orden_disenio  AS od 
+                JOIN personas AS P ON od.od_responsable = P.cedula
+                WHERE od_id = :idorden";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id', $id_orden_disenio);
+        $stmt->bindParam(':idorden', $id_orden_disenio);
         $stmt->execute();
         $orden_disenio = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -94,15 +94,15 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         $hojaActiva->setCellValue('C7', 'DETALLE');
         $hojaActiva->setCellValue('C8', 'RESPONSABLE');
         $hojaActiva->setCellValue('C9', 'CLIENTE');
-        $hojaActiva->setCellValue('C10', 'FECHA DE ENTREGA');
-        $hojaActiva->setCellValue('C11', 'ESTADO');
+        $hojaActiva->setCellValue('C10', 'ESTADO');
+        
 
         $hojaActiva->setCellValue('D6', $orden_disenio['od_id']);
         $hojaActiva->setCellValue('D7', $orden_disenio['od_detalle']);
         $hojaActiva->setCellValue('D8', $orden_disenio['per_nombres'] . ' ' . $orden_disenio['per_apellidos']);
         $hojaActiva->setCellValue('D9', $orden_disenio['od_cliente']);
-        $hojaActiva->setCellValue('D10', $orden_disenio['od_fechaEntrega']);
-        $hojaActiva->setCellValue('D11', $orden_disenio['od_estado']);
+       
+        $hojaActiva->setCellValue('D10', $orden_disenio['od_estado']);
 
         $registro = "SELECT R.*, O.od_cliente, P.per_nombres, P.per_apellidos
                                 FROM registros_disenio R 
