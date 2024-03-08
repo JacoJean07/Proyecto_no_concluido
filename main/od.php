@@ -32,15 +32,22 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
 
-            if ($existingOrden) {
-                // Si existe, actualizamos la orden existente
-                $statement = $conn->prepare("UPDATE orden_disenio SET od_cliente = :cliente, od_fechaEntrega = :fecha_entrega WHERE od_id = $id");
+            if ($id) {
+                // Si hay un ID, estamos editando una orden existente
+                $statement = $conn->prepare("UPDATE orden_disenio SET od_detalle = :detalle, od_cliente = :cliente WHERE od_id = :id");
                 $statement->execute([
-                    ":cliente" => $_POST["cliente"]
+                    ":detalle" => $_POST["detalle"],
+                    ":cliente" => $_POST["cliente"],
+                    ":id" => $id
                 ]);
 
                 // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
+
+                // Redirigir a la página od_actividades.php con el ID de la nueva orden
+                header("Location: od.php");
+                exit;
+
             } else {
                 // Si no existe, insertamos una nueva orden
                 $statement = $conn->prepare("INSERT INTO orden_disenio (od_responsable, od_comercial, od_detalle, od_cliente, od_estado) 
@@ -177,14 +184,14 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Marca" autocomplete="cliente" value="<?= $ordenEditar["od_cliente"] ?>">
+                                    <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Marca" autocomplete="cliente" value="<?= $ordenEditar["od_cliente"] ?>" readonly>
                                     <label for="cliente">CLIENTE</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="comercial" name="comercial" placeholder="comercial" autocomplete="comercial" value="<?= $ordenEditar["od_comercial"] ?>">
-                                    <label for="comercial">COMERCIAL</label>
+                                    <input type="text" class="form-control" id="comercial" name="cedula" placeholder="comercial" autocomplete="comercial" value="<?= $ordenEditar["od_comercial"] ?>" readonly>
+                                    <label for="comercial">CÉDULA DEL COMERCIAL</label>
                                 </div>
                             </div>
                             <div class="text-center">
