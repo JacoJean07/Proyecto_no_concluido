@@ -41,7 +41,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         // Seleccionar la hoja activa y establecer su título
         $hojaActiva = $excel->getActiveSheet();
         $hojaActiva->setTitle("Reporte de la Orden de Diseño");
-        $hojaActiva->setCellValue('C3', 'FECHA DEL REPORTE');
+        $hojaActiva->setCellValue('C3', 'FECHA DE GENERACION DEL REPORTE');
         $hojaActiva->setCellValue('C2', 'REPORTE GENERADO POR');
         $hojaActiva->getStyle('C2:C3')->getFont()->setBold(true)->setSize(13);
 
@@ -118,8 +118,9 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         $hojaActiva->setCellValue('B13', 'DISEÑADOR');
         $hojaActiva->setCellValue('C13', 'FECHA HORA INICIO.');
         $hojaActiva->setCellValue('D13', 'FECHA  HORA FINAL.');
-        $hojaActiva->setCellValue('E13', 'OBSERVACION');
-        $hojaActiva->setCellValue('F13', 'ESTADO');
+        $hojaActiva->setCellValue('E13', 'ACTIVIDAD');
+        $hojaActiva->setCellValue('F13', 'OBSERVACION');
+        $hojaActiva->setCellValue('G13', 'ESTADO');
         // Obtener el número de filas inicial para los datos
         $fila = 14;
         $contador = 1; // Inicializar el contador
@@ -130,10 +131,11 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
             $hojaActiva->setCellValue('B' . $fila, $rows['per_nombres'] . ' ' . $rows['per_apellidos']);
             $hojaActiva->setCellValue('C' . $fila, $rows['rd_hora_ini']);
             $hojaActiva->setCellValue('D' . $fila, $rows['rd_hora_fin']);
-            $hojaActiva->setCellValue('E' . $fila, $rows['rd_observaciones']);
-            $hojaActiva->setCellValue('F' . $fila, ($rows["rd_diseniador"] == $orden_disenio["od_responsable"]) ? 'RESPONSABLE' : 'COLABORADOR');
+            $hojaActiva->setCellValue('E' . $fila, $rows['rd_detalle']);
+            $hojaActiva->setCellValue('F' . $fila, $rows['rd_observaciones']);
+            $hojaActiva->setCellValue('G' . $fila, ($rows["rd_diseniador"] == $orden_disenio["od_responsable"]) ? 'RESPONSABLE' : 'COLABORADOR');
             // Establecer estilos de la fila 6
-            $hojaActiva->getStyle('A13:F13')->applyFromArray([
+            $hojaActiva->getStyle('A13:G13')->applyFromArray([
                 'font' => [
                     'bold' => true, // Negrita
                     'size' => 14,   // Tamaño de letra 14
@@ -157,7 +159,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         }
 
         // Ajustar automáticamente el tamaño de las columnas y filas
-        foreach (range('A', 'F') as $columnID) {
+        foreach (range('A', 'G') as $columnID) {
             $hojaActiva->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -171,9 +173,9 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
             ],
         ];
 
-        $hojaActiva->getStyle('A13:F' . $fila)->applyFromArray($styleArray);
+        $hojaActiva->getStyle('A13:G' . $fila)->applyFromArray($styleArray);
         $hojaActiva->getStyle('C2:D3')->applyFromArray($styleArray);
-        $hojaActiva->getStyle('C6:D11')->applyFromArray($styleArray);
+        $hojaActiva->getStyle('C6:D10')->applyFromArray($styleArray);
         // Guardar el archivo de Excel y enviarlo como descarga
         $writer = new Xlsx($excel);
 
