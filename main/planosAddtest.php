@@ -1,8 +1,9 @@
 <?php
 require "../sql/database.php";
 require "./partials/kardex.php";
+require "./partials/session_handler.php"; 
 
-session_start();
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {
@@ -23,7 +24,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
         $cantidadPlanos = intval($_POST["planos"]);
 
         // Consulta para recuperar los planos asociados a la OP
-        $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop");
+        $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop LIMIT 1000");
         $opPlanosStatement->bindParam(":idop", $idop);
         $opPlanosStatement->execute();
         $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
@@ -50,7 +51,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
 
 
         // Actualizar la lista de planos después de agregar los nuevos
-        $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop");
+        $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop LIMIT 1000");
         $opPlanosStatement->bindParam(":idop", $idop);
         $opPlanosStatement->execute();
         $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
@@ -66,7 +67,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
     $opInfoStatement->execute();
     $opInfo = $opInfoStatement->fetch(PDO::FETCH_ASSOC);
 
-    $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop");
+    $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop LIMIT 1000");
     $opPlanosStatement->bindParam(":idop", $idop);
     $opPlanosStatement->execute();
     $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);

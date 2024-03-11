@@ -1,7 +1,7 @@
 <?php
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
-session_start();
+
 
 // Verificar si la sesión está iniciada correctamente y el rol es 1 o 2
 if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["usu_rol"]) || ($_SESSION["user"]["usu_rol"] == 1)) {

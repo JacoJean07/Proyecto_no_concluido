@@ -1,9 +1,11 @@
 <?php
 require "../sql/database.php";
 require "./partials/kardex.php";
+require "./partials/session_handler.php"; 
 
 
-session_start();
+
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {

@@ -1,7 +1,7 @@
 <?php
 require "../../sql/database.php";
 // Iniciar sesión para identificar las sesiones
-session_start();
+
 // Verificar si la sesión no existe, redirigir al login.php y detener la ejecución del script
 if (!isset($_SESSION["user"])) {
   header("Location: login.php");

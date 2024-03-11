@@ -1,8 +1,9 @@
 <?php
 require "../sql/database.php";
 require "./partials/kardex.php";
+require "./partials/session_handler.php"; 
 
-session_start();
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {
@@ -12,28 +13,21 @@ if (!isset($_SESSION["user"])) {
 
 // Declaramos la variable error que nos ayudará a mostrar errores, etc.
 $error = null;
-$id = isset($_GET["id"]) ? $_GET["id"] : null;
+$id = $_GET["id"] ?? null;
 $ordenEditar = null;
 $state = "PROPUESTA";
-$elementos = [null];
+$elementos = $_SESSION["elementos"] ?? [null];
 
 // Obtener el diseñador de la sesión activa
 $diseniador = $_SESSION["user"]["cedula"];
 
-// Obtener todos los elementos del array (si existen)
-$elementos = isset($_SESSION["elementos"]) ? $_SESSION["elementos"] : [];
 
-
-if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3|| $_SESSION["user"]["usu_rol"] == 1) {
-    // Verificamos el método que usa el formulario con un if
+if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3 || $_SESSION["user"]["usu_rol"] == 1)) {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Validamos que no se manden datos vacíos
-        if ( empty($_POST["detalle"]) || empty($_POST["cliente"]) || empty($_POST["cedula"]) ) {
+        if (empty($_POST["detalle"]) || empty($_POST["cliente"]) || empty($_POST["cedula"])) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
-
             if ($id) {
-                // Si hay un ID, estamos editando una orden existente
                 $statement = $conn->prepare("UPDATE orden_disenio SET od_detalle = :detalle, od_cliente = :cliente WHERE od_id = :id");
                 $statement->execute([
                     ":detalle" => $_POST["detalle"],
@@ -41,40 +35,32 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
                     ":id" => $id
                 ]);
 
-                // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
 
-                // Redirigir a la página od_actividades.php con el ID de la nueva orden
                 header("Location: od.php");
                 exit;
-
             } else {
-                // Si no existe, insertamos una nueva orden
                 $statement = $conn->prepare("INSERT INTO orden_disenio (od_responsable, od_comercial, od_detalle, od_cliente, od_estado) 
                 VALUES (:responsable, :comercial, :detalle, :cliente, :estado)");
 
                 $statement->execute([
                     ":responsable" => $_SESSION["user"]["cedula"],
-                    ":comercial" => $_POST["cedula"], 
+                    ":comercial" => $_POST["cedula"],
                     ":detalle" => $_POST["detalle"],
                     ":cliente" => $_POST["cliente"],
                     ":estado" => $state
                 ]);
 
-                // Registramos el movimiento en el kardex
                 registrarEnKardex($_SESSION["user"]["cedula"], "CREÓ", 'ÓRDENES DE DISEÑO', $_POST["detalle"]);
 
-                // Obtener el ID de la orden recién creada
                 $nuevaOrdenId = $conn->lastInsertId();
 
-                // Redirigir a la página od_actividades.php con el ID de la nueva orden
                 header("Location: od_actividades.php?id=$nuevaOrdenId");
                 exit;
             }
         }
     }
 
-    // Llamamos las órdenes de diseño de la base de datos
     $ordenes = $conn->prepare("SELECT od.*, 
         personas_responsable.per_nombres AS responsable_nombres, 
         personas_responsable.per_apellidos AS responsable_apellidos,
@@ -87,8 +73,6 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 2 || $_SESSI
     $ordenes->bindParam(":diseniador", $diseniador);
     $ordenes->execute();
 
-
-    // Obtenemos la información de la orden a editar
     if (!empty($id)) {
         $statement = $conn->prepare("SELECT * FROM orden_disenio WHERE od_id = :id");
         $statement->bindParam(":id", $id);

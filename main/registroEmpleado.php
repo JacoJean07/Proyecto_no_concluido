@@ -1,6 +1,7 @@
 <?php
 require "../sql/database.php";
-session_start();
+require "./partials/session_handler.php"; 
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {
@@ -21,49 +22,6 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
     $area_trabajo_query->execute([':cedula' => $empleado]);
     $area_trabajo_result = $area_trabajo_query->fetch(PDO::FETCH_ASSOC);
     $area_trabajo_empleado = $area_trabajo_result['per_areaTrabajo'];
-
-    // Verificar si ya hay un registro activo para el diseñador actual
-    // $registroQuery = $conn->prepare("SELECT * FROM registro_empleado WHERE rd_diseniador = :diseniador AND rd_hora_fin IS NULL LIMIT 1");
-    // $registroQuery->execute(array(':diseniador' => $diseniador));
-
-    $actividades_pintura = array("REVISIÓN OP", "CONFIRMAR COLORES EN LA OP", "SELECCIÓN DE PINTURA SEGÚN MATERIAL", "MASILLAR", "LIJAR", "FONDEADO", "PROTECCIÓN PARA DIVISIÓN DE COLORES", "TERMINADO", "CUARTO DE SECADO", "PINTURA ELECTROESTÁTICA", "ENTREGA JEFE DE PRODUCCIÓN", "APLICACIÓN SELLADOR EN MADERA", "REPINTAR", "APLICACIÓN WASH PREMIER", "APLICACIÓN MONTO", "APLICACIÓN TINTE (MADERA)", "LIMPIEZA");
-    $actividades_acrilicos = array("REVISIÓN OP", "REQUERIMIENTO DE MATERIALES", "REDISEÑO DE CORTES Y GRABADO", "DISEÑO DE MATRICES", "ENVÍO A MÁQUINAS (ROUTER/LASE)", "PULIDO DE MATERIAL", "TERMOFORMAR", "SOPLADO", "CORTE DE BASE DE LETRAS", "MDF PINTURA", "SILVATRIM", "SISTEMA ELÉCTRICO", "SELLADOR DE BORDES", "ANCLAJE A BASE", "ENTREGA JEFE DE PRODUCCIÓN", "LIMPIEZA PANERAS", "LIMPIEZA", "TENSADO LONA", "APLICACIÓN VINILOS", "ARMADO LETRAS", "CALADO DE LETRAS");
-    $actividades_metal = array("REVISIÓN OP", "REVISIÓN DE MATERIAL", "SOLICITUD DE MATERIAL", "ENVÍO A BAROLAR", "CORTE EN TROZADORA", "DISEÑO EN AUTOCAD DE CORTE ESPECIAL (PLASMA)", "CORTE PLASMA", "CORTE CIZALLA", "PLANTILLA DE ARMADO", "DOBLADORA", "SUELDA MIC", "SUELDA TIC", "SUELDA ALUMINIO", "SUELDA ESTANIO", "PULIDO NORMAL", "PULIDO INOX", "COLOCACIÓN ITEMS ESPECIALES", "MOLDEO", "ENVÍO A PINTURA", "CORTE MANUAL", "LIMPIEZA");
-    $actividades_carpinteria = array("RECIBEN OP", "REVISIÓN OP", "DESARROLLO DE MATRICES", "CONFIRMACIÓN DE MEDIDAS Y MATERIAL", "DESPIECE DE ELEMENTOS", "CORTE ESCUADRADORA (SOLO MELAMÍNICO)", "LAMINADORA (SOLO MELAMÍNICO)", "CIERRA DE BRAZO RADIAL", "CIERRA DE BANCO", "PREPARADO DE LOS ELEMENTOS PARA EL MUEBLE", "REMATE 1: LAMINAR MANUALMENTE", "REMATE 2: CORRECCIÓN DE FALLAS", "REMATE 3: PULIR", "LIMPIEZA", "ENTREGA JEFE DE PRODUCCIÓN", "ENTREGA PINTURA (SI LO REQUIERE EL PRODUCTO)", "ENTREGA ACRÍLICO (SI LO REQUIERE EL PRODUCTO)");
-    $actividades_acm = array("REVISIÓN OP", "REDISEÑO DE ESTRUCTURAS", "SOLICITUD DE MATERIAL", "SOLICITAR ESTRUCTURAS A METALMECÁNICA", "SOLICITAR CORTE ROUTER", "RANURA PARA DOBLEZ", "TERMINADOS");
-    $actividades_maquinas = array();
-
-    // Inicializar $actividades
-    $actividades = [];
-
-    if ($area_trabajo_empleado === "PINTURA") {
-        $actividades = $actividades_pintura;
-    } elseif ($area_trabajo_empleado === "ACRÍLICOS Y ACABADOS") {
-        $actividades = $actividades_acrilicos;
-    } elseif ($area_trabajo_empleado === "METALMECÁNICA") {
-        $actividades = $actividades_metal;
-    } elseif ($area_trabajo_empleado === "CARPINTERÍA") {
-        $actividades = $actividades_carpinteria;
-    } elseif ($area_trabajo_empleado === "ACM") {
-        $actividades = $actividades_acm;
-    } elseif ($area_trabajo_empleado === "MÁQUINAS") {
-        $actividades = $actividades_maquinas;
-    }
-
-    sort($actividades);
-
-
-    // Buscar las OP disponibles para el área de trabajo del empleado
-    $opQuery = $conn->prepare("SELECT DISTINCT op.op_id 
-                                FROM op 
-                                INNER JOIN planos p ON op.op_id = p.op_id 
-                                INNER JOIN produccion pro ON p.pla_id = pro.pla_id 
-                                INNER JOIN pro_areas pa ON pro.pro_id = pa.pro_id 
-                                WHERE pa.proAre_detalle = :area_trabajo 
-                                AND pro.pro_id IS NOT NULL 
-                                AND pa.proAre_porcentaje < 100");
-    $opQuery->execute(array(':area_trabajo' => $area_trabajo_empleado));
-    $ops = $opQuery->fetchAll(PDO::FETCH_ASSOC);
 
     // Verificar si ya hay un registro activo para el diseñador actual
     $registroQuery = $conn->prepare("SELECT *
@@ -92,13 +50,10 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
                 $reg_cedula = $empleado;
                 // Insertar los datos en la tabla de registro
                 $insertRegistroQuery = $conn->prepare("INSERT INTO registro (pro_id, reg_fecha, reg_cedula, op_id, pla_id) 
-                                                    VALUES ((SELECT pro.pro_id FROM produccion pro INNER JOIN planos p ON pro.pla_id = p.pla_id WHERE p.pla_id = :pla_id LIMIT 1), 
-                                                    CURRENT_TIMESTAMP, 
-                                                    :reg_cedula, 
-                                                    :op_id, 
-                                                    :pla_id)");
-
-
+                                                    SELECT pro.pro_id, CURRENT_TIMESTAMP, :reg_cedula, :op_id, :pla_id
+                                                    FROM produccion pro
+                                                    INNER JOIN planos p ON pro.pla_id = p.pla_id
+                                                    WHERE p.pla_id = :pla_id LIMIT 1");
                 $insertRegistroQuery->bindParam(':pla_id', $pla_id);
                 $insertRegistroQuery->bindParam(':reg_cedula', $reg_cedula);
                 $insertRegistroQuery->bindParam(':op_id', $op_id);
@@ -116,25 +71,24 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
                 $insertRegistroEmpleadoQuery->execute();
 
                 if (!empty($_POST["actividades"])) {
-                    foreach ($_POST["actividades"] as $actividad) {
-                        // Insertar cada actividad en la tabla registro_empleado_actividades
-                        $query = "INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) VALUES (:reg_id, :actividad)";
-                        $statement = $conn->prepare($query);
-                        $statement->bindParam(':reg_id', $reg_id);
-                        $statement->bindParam(':actividad', $actividad);
-                        $statement->execute();
+                    $actividades = $_POST["actividades"];
+                    $insertRegistroEmpleadoActividadesQuery = $conn->prepare("INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) 
+                                                                             VALUES (:reg_id, :actividad)");
+                    $insertRegistroEmpleadoActividadesQuery->bindParam(':reg_id', $reg_id);
+                    $insertRegistroEmpleadoActividadesQuery->bindParam(':actividad', $actividad);
+                    foreach ($actividades as $actividad) {
+                        $insertRegistroEmpleadoActividadesQuery->execute();
                     }
                 }
 
                 // Insertar otra actividad si se proporcionó
                 if (!empty($_POST["otra_actividad"])) {
                     $otra_actividad = $_POST["otra_actividad"];
-                    // Insertar la otra actividad en la tabla registro_empleado_actividades
-                    $query = "INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) VALUES (:reg_id, :otra_actividad)";
-                    $statement = $conn->prepare($query);
-                    $statement->bindParam(':reg_id', $reg_id);
-                    $statement->bindParam(':otra_actividad', $otra_actividad);
-                    $statement->execute();
+                    $insertOtraActividadQuery = $conn->prepare("INSERT INTO registro_empleado_actividades (reg_id, reg_detalle) 
+                                                                VALUES (:reg_id, :otra_actividad)");
+                    $insertOtraActividadQuery->bindParam(':reg_id', $reg_id);
+                    $insertOtraActividadQuery->bindParam(':otra_actividad', $otra_actividad);
+                    $insertOtraActividadQuery->execute();
                 }
 
                 // Redirigir o mostrar un mensaje de éxito

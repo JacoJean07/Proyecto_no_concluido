@@ -1,7 +1,7 @@
 <?php
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
-session_start();
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {

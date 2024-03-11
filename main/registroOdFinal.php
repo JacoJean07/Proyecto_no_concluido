@@ -1,6 +1,7 @@
 <?php 
 require "../sql/database.php";
-session_start();
+require "./partials/session_handler.php"; 
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {

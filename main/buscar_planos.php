@@ -1,6 +1,8 @@
 <?php
 // Conectar a la base de datos y realizar la búsqueda
 require "../sql/database.php";
+require "./partials/session_handler.php"; 
+
 
 if(isset($_POST['op'])){
     $op = $_POST['op'];

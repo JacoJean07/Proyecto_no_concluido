@@ -1,104 +1,98 @@
 <?php
 require "../sql/database.php";
 require "./partials/kardex.php";
+require "./partials/session_handler.php"; 
 
-session_start();
 
-// Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
+
+// Redirect to login page if the session does not exist
 if (!isset($_SESSION["user"])) {
     header("Location: ../login-form/login.php");
     exit();
 }
 
-// Declaramos la variable error que nos ayudará a mostrar errores, etc.
+// Initialize variables
 $error = null;
 $state = 1;
 $id = isset($_GET["id"]) ? $_GET["id"] : null;
 $personaEditar = null;
 
 if (($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1)) {
-    // Llamar los contactos de la base de datos y especificar que sean los que tengan el persona_id de la función session_start
-    $personas = $conn->query("SELECT * FROM personas WHERE per_estado = 1");
+    // Fetch personas from the database
+    $statement = $conn->prepare("SELECT * FROM personas WHERE per_estado = :estado");
+    $statement->bindValue(":estado", $state);
+    $statement->execute();
+    $personas = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-    // Verificamos el método que usa el formulario con un if
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Validamos que no se manden datos vacíos
-        if (empty($_POST["cedula"]) || empty($_POST["nombres"]) || empty($_POST["apellidos"]) || empty($_POST["nacimiento"]) || empty($_POST["areatrabajo"])) {
+        // Validate form data
+        $cedula = $_POST["cedula"];
+        $nombres = $_POST["nombres"];
+        $apellidos = $_POST["apellidos"];
+        $nacimiento = $_POST["nacimiento"];
+        $areatrabajo = $_POST["areatrabajo"];
+        $correo = $_POST["correo"];
+
+        if (empty($cedula) || empty($nombres) || empty($apellidos) || empty($nacimiento) || empty($areatrabajo)) {
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS";
-        } elseif (!preg_match('/^[0-9]{10}$/', $_POST["cedula"])) {
+        } elseif (!preg_match('/^[0-9]{10}$/', $cedula)) {
             $error = "LA CÉDULA DEBE TENER 10 DÍGIOS NUMÉRICOS.";
-        } elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $_POST["nombres"])) {
+        } elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $nombres)) {
             $error = "NOMBRES INVÁLIDOS.";
-        } elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $_POST["apellidos"])) {
+        } elseif (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', $apellidos)) {
             $error = "APELLIDOS INVÁLIDOS.";
-        } elseif (empty($_POST["nacimiento"])) {
+        } elseif (empty($nacimiento)) {
             $error = "LA FECHA DE NACIMIENTO ES OBLIGATORIA.";
-        } elseif (empty($_POST["areatrabajo"])) {
+        } elseif (empty($areatrabajo)) {
             $error = "EL ÁREA DE TRABAJO ES OBLIGATORIA.";
         } else {
-            // Verificar si la cédula ya existe (excepto para el ID que estamos editando)
-            $existingStatement = $conn->prepare("SELECT COUNT(*) FROM personas WHERE cedula = :cedula AND cedula != :id");
-            $existingStatement->execute([
-                ":cedula" => $_POST['cedula'],
-                ":id" => $id,
-            ]);
-            $count = $existingStatement->fetchColumn();
+            try {
+                // Check if the cedula already exists (except for the editing ID)
+                $existingStatement = $conn->prepare("SELECT COUNT(*) FROM personas WHERE cedula = :cedula AND cedula != :id");
+                $existingStatement->bindValue(":cedula", $cedula);
+                $existingStatement->bindValue(":id", $id);
+                $existingStatement->execute();
+                $count = $existingStatement->fetchColumn();
 
-            if ($count > 0) {
-                $error = "YA EXISTE UN TRABAJADOR CON ESTA CÉDULA.";
-            } else {
-                // Sanitizamos los datos para evitar inyecciones SQL
-                $cedula = $_POST["cedula"];
-                $nombres = strtoupper($_POST["nombres"]);
-                $apellidos = strtoupper($_POST["apellidos"]);
-                $nacimiento = $_POST["nacimiento"];
-                $estado = $state;
-                $areatrabajo = $_POST["areatrabajo"];
-                $correo = $_POST["correo"];
-
-                if ($id) {
-                    // Si hay un ID, estamos editando, por lo que actualizamos el registro existente
-                    $statement = $conn->prepare("UPDATE personas SET cedula = :cedula, per_nombres = :nombres, per_apellidos = :apellidos, per_fechaNacimiento = :nacimiento, per_areaTrabajo = :areatrabajo, per_correo = :correo WHERE cedula = :id");
-                    $statement->execute([
-                        ":id" => $id,
-                        ":cedula" => $cedula,
-                        ":nombres" => $nombres,
-                        ":apellidos" => $apellidos,
-                        ":nacimiento" => $nacimiento,
-                        ":areatrabajo" => $areatrabajo,
-                        ":correo" => $correo,
-                    ]);
-                    // Registramos el movimiento en el kardex
-                    registrarEnKardex($_SESSION["user"]["cedula"], "EDITÓ", 'personas', $cedula);
+                if ($count > 0) {
+                    $error = "YA EXISTE UN TRABAJADOR CON ESTA CÉDULA.";
                 } else {
-                    // Si no hay un ID, estamos insertando un nuevo registro
-                    $statement = $conn->prepare("INSERT INTO personas ( cedula, per_nombres, per_apellidos, per_fechaNacimiento, per_estado, per_areaTrabajo, per_correo) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo, :correo)");
+                    // Prepare the SQL statement based on whether it's an update or insert operation
+                    if ($id) {
+                        $statement = $conn->prepare("UPDATE personas SET cedula = :cedula, per_nombres = :nombres, per_apellidos = :apellidos, per_fechaNacimiento = :nacimiento, per_areaTrabajo = :areatrabajo, per_correo = :correo WHERE cedula = :id");
+                        $statement->bindValue(":id", $id);
+                    } else {
+                        $statement = $conn->prepare("INSERT INTO personas (cedula, per_nombres, per_apellidos, per_fechaNacimiento, per_estado, per_areaTrabajo, per_correo) VALUES (:cedula, :nombres, :apellidos, :nacimiento, :estado, :areatrabajo, :correo)");
+                        $statement->bindValue(":estado", $state);
+                    }
 
-                    // Ejecutamos
-                    $statement->execute([
-                        ":cedula" => $cedula,
-                        ":nombres" => $nombres,
-                        ":apellidos" => $apellidos,
-                        ":nacimiento" => $nacimiento,
-                        ":areatrabajo" => $areatrabajo,
-                        ":estado" => $estado,
-                        ":correo" => $correo,
-                    ]);
-                    // Registramos el movimiento en el kardex
-                    registrarEnKardex($_SESSION["user"]["cedula"], "CREÓ", 'personas', $_POST["cedula"]);
+                    // Bind the values and execute the statement
+                    $statement->bindValue(":cedula", $cedula);
+                    $statement->bindValue(":nombres", $nombres);
+                    $statement->bindValue(":apellidos", $apellidos);
+                    $statement->bindValue(":nacimiento", $nacimiento);
+                    $statement->bindValue(":areatrabajo", $areatrabajo);
+                    $statement->bindValue(":correo", $correo);
+                    $statement->execute();
+
+                    // Register the movement in the kardex
+                    registrarEnKardex($_SESSION["user"]["cedula"], $id ? "EDITÓ" : "CREÓ", 'personas', $cedula);
+
+                    // Redirect to personas.php
+                    header("Location: personas.php");
+                    exit();
                 }
-
-                // Redirigimos a personas.php
-                header("Location: personas.php");
-                exit();
+            } catch (PDOException $e) {
+                // Handle database errors
+                $error = "Error: " . $e->getMessage();
             }
         }
     }
 
-    // Obtenemos la información de la persona a editar
+    // Get the information of the person to edit
     if ($id) {
         $statement = $conn->prepare("SELECT * FROM personas WHERE cedula = :id");
-        $statement->bindParam(":id", $id);
+        $statement->bindValue(":id", $id);
         $statement->execute();
         $personaEditar = $statement->fetch(PDO::FETCH_ASSOC);
     }

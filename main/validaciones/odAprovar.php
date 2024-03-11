@@ -1,7 +1,7 @@
 <?php
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
-session_start();
+
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
 if (!isset($_SESSION["user"])) {
@@ -24,13 +24,17 @@ if (!isset($_GET["id"]) || empty($_GET["id"])) {
 $id = $_GET["id"];
 
 // Verificamos si la orden de diseño existe en la base de datos
-$statement = $conn->prepare("SELECT * FROM orden_disenio WHERE od_id = :id");
+$statement = $conn->prepare("SELECT oa.*
+                                FROM od_actividades oa
+                                LEFT JOIN registros_disenio rd ON oa.odAct_detalle = rd.rd_detalle
+                                WHERE rd.rd_detalle IS NULL AND oa.od_id = :id;"
+                            );
 $statement->execute([":id" => $id]);
 $orden_diseño = $statement->fetch(PDO::FETCH_ASSOC);
 
 if (!$orden_diseño) {
     // Si no se encuentra la orden de diseño, redirigimos a alguna página de error o a la página principal
-    header("Location: ../pages-error-404.html");
+    header("Location: ../od.php");
     return;
 }
 
