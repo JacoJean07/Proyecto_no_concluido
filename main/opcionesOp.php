@@ -157,7 +157,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
-                                                                                    <p>Esta usted de acuerdo en generar u reproseso en la op <?= $op["op_id"] ?> del cliente <?= $op["od_cliente"] ?></p>
+                                                                                    <p>Esta usted de acuerdo en generar un reproseso en la op <?= $op["op_id"] ?> del cliente <?= $op["od_cliente"] ?></p>
                                                                                     <section class="section">
                                                                                         <div class="row">
                                                                                             <div class="">
@@ -168,7 +168,7 @@ if ($_SESSION["user"]["usu_rol"] || $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                                                                                 <?php endif ?>
                                                                                                 <div class="card-body">
                                                                                                     <form class="row g-3" method="post" action="">
-                                                                                                        <div class="col-md-6">
+                                                                                                        <div class="col-md-12">
                                                                                                             <div class="form-floating">
                                                                                                                 <input type="text" class="form-control" id="observacion" name="obseravcion" placeholder="observacion">
                                                                                                                 <label for="obseravacion">Ingrese la obervación</label>

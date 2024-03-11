@@ -81,8 +81,11 @@ $error = null;
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="od_detalle" name="od_detalle" required>
                                     <option selected disabled value="">SELECCIONA EL PRODUCTO</option>
+                                    <?php $productCounter = 1; ?>
                                     <?php foreach ($od_productos as $od_detalle): ?>
-                                        <option value="<?= $od_detalle["od_detalle"] ?>" data-od_cliente="<?= $od_detalle["od_cliente"] ?>" data-od_id="<?= $od_detalle["od_id"] ?>"><?= $od_detalle["od_detalle"] ?></option>
+                                        <option value="<?= $od_detalle["od_detalle"] ?>" data-od_cliente="<?= $od_detalle["od_cliente"] ?>" data-od_id="<?= $od_detalle["od_id"] ?>">
+                                            <?= $productCounter++ ?>. <?= $od_detalle["od_detalle"] ?>
+                                        </option>
                                     <?php endforeach ?>
                                 </select>
                                 <label for="od_detalle">PRODUCTO</label>
@@ -99,6 +102,7 @@ $error = null;
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="od_actividades" name="od_actividades" required>
                                     <option selected disabled value="">SELECCIONA LA ACTIVIDAD</option>
+                                    <?php $activityCounter = 1; ?>
                                     <!-- Las opciones se cargarán dinámicamente mediante JavaScript -->
                                 </select>
                                 <label for="od_actividades">ACTIVIDAD</label>

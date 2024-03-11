@@ -28,9 +28,14 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["usu_rol"]) || ($_SESS
         header("Location: ../pages-error-404.html");
         return;
     }
-
     //OBTENER EL RESULTADO DE AL CONSULTA
     $row = $stament->fetch(PDO::FETCH_ASSOC);
+
+    // Obtener los planos asociados a la op
+    $opPlanosStatement = $conn->prepare("SELECT * FROM planos WHERE op_id = :idop");
+    $opPlanosStatement->bindParam(":idop", $id);
+    $opPlanosStatement->execute();
+    $opPlanos = $opPlanosStatement->fetchAll(PDO::FETCH_ASSOC);
 
     //ACTUALIZAMOS EL ESTADO DE LAS OP
     $updateStatement = $conn->prepare("UPDATE op SET op_estado = :estado, op_fechaFinalizacion = NOW() WHERE op_id = :id");
@@ -38,6 +43,12 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["usu_rol"]) || ($_SESS
         ":id" => $id,
         ":estado" => "OP ANULADA"
     ]);
+
+    //ACTUALIZAMOS EL ESTADO DE LOS PLANOS
+    $updatePlanoStatement = $conn->prepare("UPDATE planos SET pla_estado = 'ANULADO' WHERE op_id = :idop");
+    $updatePlanoStatement->bindParam(":idop", $id);
+    $updatePlanoStatement->execute();
+
     //REGISTRA EL MOVIEMIENTO EN EL KARDEX
     registrarEnKardex($_SESSION["user"]["cedula"], "SE HA ANULADO LA OP", 'OP', $id);
 

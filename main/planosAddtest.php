@@ -39,7 +39,7 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
         }
 
         // Agregar los nuevos planos
-        for ($i = 1; $i <= $cantidadPlanos; $i++) {
+        for ($i = 1; $i <= min($cantidadPlanos, 150); $i++) {
             $planoNumero = $maxPlanoNumero + $i;
 
             $stmt = $conn->prepare("INSERT INTO planos (op_id, pla_numero, pla_estado, pla_reproceso) VALUES (:idop, :pla_numero, 'ACTIVO', 0)");
@@ -101,12 +101,12 @@ if ($_SESSION["user"]["usu_rol"] && $_SESSION["user"]["usu_rol"] == 1 || $_SESSI
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-floating">
-                                                <input type="number" class="form-control" id="planos" name="planos" placeholder="" autocomplete="planos" required>
+                                                <input type="number" class="form-control" id="planos" name="planos" placeholder="" autocomplete="planos" required max="150">
                                                 <label for="planos">AÑADIR PLANOS</label>
                                             </div>
                                             <?php if ($opPlanos): ?>
                                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                    INGRESE LA CANTIDAD DE PLANOS A AÑADIR.
+                                                    INGRESE LA CANTIDAD DE PLANOS A AÑADIR. MAX:150.
                                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                 </div>
                                             <?php endif ?>
