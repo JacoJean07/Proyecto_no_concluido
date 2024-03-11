@@ -4,7 +4,7 @@ session_start();
 
 
 // Establecer el tiempo de inactividad en segundos
-$inactive = 10000;
+$inactive = 10;
 
 // Comprobar si la variable de sesión 'timeout' está establecida
 if (isset($_SESSION['timeout'])) {
@@ -19,8 +19,8 @@ if (isset($_SESSION['timeout'])) {
     }
 }
 
-// Actualizar la variable de sesión 'timeout' con la hora actual
-$_SESSION['timeout'] = time();?>
+$_SESSION['timeout'] = time();
+?>
 
 <script>
     // Obtener el tiempo de inactividad en milisegundos
@@ -34,13 +34,15 @@ $_SESSION['timeout'] = time();?>
     // Reiniciar el temporizador de inactividad cada vez que se detecte una interacción del usuario
     var timeout = setTimeout(reloadPage, inactiveTime);
 
-    document.addEventListener("mousemove", function() {
+    // Función para reiniciar el temporizador
+    function resetTimeout() {
         clearTimeout(timeout);
         timeout = setTimeout(reloadPage, inactiveTime);
-    });
+    }
 
-    document.addEventListener("keydown", function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(reloadPage, inactiveTime);
-    });
+    // Agregar controladores de eventos para varias interacciones del usuario
+    window.addEventListener('mousemove', resetTimeout);
+    window.addEventListener('mousedown', resetTimeout);
+    window.addEventListener('keypress', resetTimeout);
+    window.addEventListener('scroll', resetTimeout);
 </script>
