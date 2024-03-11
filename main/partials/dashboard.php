@@ -223,6 +223,38 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#charts-nav-design" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-bar-chart"></i><span>Produccion</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="charts-nav-design" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="planos.php">
+                <i class="bi bi-circle"></i><span>Planos</span>
+              </a>
+            </li>
+            <li>
+              <a href="produccion.php">
+                <i class="bi bi-circle"></i><span>Producción</span>
+              </a>
+            </li>
+            <li>
+              <a href="planosError.php">
+                <i class="bi bi-circle"></i><span>Planos Con errores</span>
+              </a>
+            </li>
+            <!-- <li>
+        <a href="#">
+          <i class="bi bi-circle"></i><span>Registros</span>
+        </a>
+      </li> -->
+            <!-- <li>
+        <a href="areas.php">
+          <i class="bi bi-circle"></i><span>Áreas</span>
+        </a>
+      </li> -->
+          </ul>
+        </li>
         <!-- si existe una sesion iniciada pon los siguientes hipervinculos  -->
       <?php elseif ($_SESSION["user"]["usu_rol"] == 3) : ?>
 
