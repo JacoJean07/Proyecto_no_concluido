@@ -41,7 +41,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         // Seleccionar la hoja activa y establecer su título
         $hojaActiva = $excel->getActiveSheet();
         $hojaActiva->setTitle("Reporte de la Orden de Diseño");
-        $hojaActiva->setCellValue('C3', 'FECHA DEL REPORTE');
+        $hojaActiva->setCellValue('C3', 'FECHA DE GENERACION DEL REPORTE');
         $hojaActiva->setCellValue('C2', 'REPORTE GENERADO POR');
         $hojaActiva->getStyle('C2:C3')->getFont()->setBold(true)->setSize(13);
 
@@ -80,12 +80,12 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
 
         // Consultar la base de datos para obtener la información de la orden de diseño
         $sql = "SELECT od.*, P.per_nombres, P.per_apellidos 
-                FROM orden_disenio od 
-                JOIN personas P ON od.od_responsable = P.cedula
-                WHERE od_id = :id";
+                FROM orden_disenio  AS od 
+                JOIN personas AS P ON od.od_responsable = P.cedula
+                WHERE od_id = :idorden";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id', $id_orden_disenio);
+        $stmt->bindParam(':idorden', $id_orden_disenio);
         $stmt->execute();
         $orden_disenio = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -94,15 +94,15 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         $hojaActiva->setCellValue('C7', 'DETALLE');
         $hojaActiva->setCellValue('C8', 'RESPONSABLE');
         $hojaActiva->setCellValue('C9', 'CLIENTE');
-        $hojaActiva->setCellValue('C10', 'FECHA DE ENTREGA');
-        $hojaActiva->setCellValue('C11', 'ESTADO');
+        $hojaActiva->setCellValue('C10', 'ESTADO');
+        
 
         $hojaActiva->setCellValue('D6', $orden_disenio['od_id']);
         $hojaActiva->setCellValue('D7', $orden_disenio['od_detalle']);
         $hojaActiva->setCellValue('D8', $orden_disenio['per_nombres'] . ' ' . $orden_disenio['per_apellidos']);
         $hojaActiva->setCellValue('D9', $orden_disenio['od_cliente']);
-        $hojaActiva->setCellValue('D10', $orden_disenio['od_fechaEntrega']);
-        $hojaActiva->setCellValue('D11', $orden_disenio['od_estado']);
+       
+        $hojaActiva->setCellValue('D10', $orden_disenio['od_estado']);
 
         $registro = "SELECT R.*, O.od_cliente, P.per_nombres, P.per_apellidos
                                 FROM registros_disenio R 
@@ -118,8 +118,9 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         $hojaActiva->setCellValue('B13', 'DISEÑADOR');
         $hojaActiva->setCellValue('C13', 'FECHA HORA INICIO.');
         $hojaActiva->setCellValue('D13', 'FECHA  HORA FINAL.');
-        $hojaActiva->setCellValue('E13', 'OBSERVACION');
-        $hojaActiva->setCellValue('F13', 'ESTADO');
+        $hojaActiva->setCellValue('E13', 'ACTIVIDAD');
+        $hojaActiva->setCellValue('F13', 'OBSERVACION');
+        $hojaActiva->setCellValue('G13', 'ESTADO');
         // Obtener el número de filas inicial para los datos
         $fila = 14;
         $contador = 1; // Inicializar el contador
@@ -130,10 +131,11 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
             $hojaActiva->setCellValue('B' . $fila, $rows['per_nombres'] . ' ' . $rows['per_apellidos']);
             $hojaActiva->setCellValue('C' . $fila, $rows['rd_hora_ini']);
             $hojaActiva->setCellValue('D' . $fila, $rows['rd_hora_fin']);
-            $hojaActiva->setCellValue('E' . $fila, $rows['rd_observaciones']);
-            $hojaActiva->setCellValue('F' . $fila, ($rows["rd_diseniador"] == $orden_disenio["od_responsable"]) ? 'RESPONSABLE' : 'COLABORADOR');
+            $hojaActiva->setCellValue('E' . $fila, $rows['rd_detalle']);
+            $hojaActiva->setCellValue('F' . $fila, $rows['rd_observaciones']);
+            $hojaActiva->setCellValue('G' . $fila, ($rows["rd_diseniador"] == $orden_disenio["od_responsable"]) ? 'RESPONSABLE' : 'COLABORADOR');
             // Establecer estilos de la fila 6
-            $hojaActiva->getStyle('A13:F13')->applyFromArray([
+            $hojaActiva->getStyle('A13:G13')->applyFromArray([
                 'font' => [
                     'bold' => true, // Negrita
                     'size' => 14,   // Tamaño de letra 14
@@ -157,7 +159,7 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
         }
 
         // Ajustar automáticamente el tamaño de las columnas y filas
-        foreach (range('A', 'F') as $columnID) {
+        foreach (range('A', 'G') as $columnID) {
             $hojaActiva->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -171,9 +173,9 @@ if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["ROL"]) || ($_SESSION[
             ],
         ];
 
-        $hojaActiva->getStyle('A13:F' . $fila)->applyFromArray($styleArray);
+        $hojaActiva->getStyle('A13:G' . $fila)->applyFromArray($styleArray);
         $hojaActiva->getStyle('C2:D3')->applyFromArray($styleArray);
-        $hojaActiva->getStyle('C6:D11')->applyFromArray($styleArray);
+        $hojaActiva->getStyle('C6:D10')->applyFromArray($styleArray);
         // Guardar el archivo de Excel y enviarlo como descarga
         $writer = new Xlsx($excel);
 

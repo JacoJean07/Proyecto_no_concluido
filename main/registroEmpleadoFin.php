@@ -18,28 +18,37 @@ if ($_SESSION["user"]["usu_rol"] == 3 || $_SESSION["user"]["usu_rol"] == 1) {
     FROM registro
     JOIN registro_empleado ON registro.reg_id = registro_empleado.reg_id
     JOIN registro_empleado_actividades AS Re ON registro.reg_id = Re.reg_id
+    JOIN produccion ON registro.pro_id = produccion.pro_id
+    JOIN planos ON produccion.pla_id = planos.pla_id
     WHERE registro.reg_cedula = :trabajador
      AND registro_empleado.reg_fechaFin IS NULL
     LIMIT 1");
     $registroQuery->execute(array(':trabajador' => $trabajador)); // Suponiendo que $cedula es la variable que contiene el área de trabajo del diseñador
     $registro = $registroQuery->fetch(PDO::FETCH_ASSOC);
+    $detalleQuery = $conn->prepare("SELECT reg_detalle FROM registro_empleado_actividades WHERE reg_id = :registroId");
+    $detalleQuery->execute(array(':registroId' => $registro["reg_id"]));
+    $detalles = $detalleQuery->fetchAll(PDO::FETCH_COLUMN);
     // Verificamos si se encontró el registro actual
     if (!$registro) {
         header("Location: registroEmpleado.php");
-    }else{
+    } else {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Insertamos un nuevo registro
-          $statement = $conn->prepare("UPDATE registro_empleado SET reg_fechaFin = CURRENT_TIMESTAMP WHERE reg_id = :id");
-          
-          $statement->execute([
-              ":id" => $registro["reg_id"]
-          ]);
+            $statement = $conn->prepare("UPDATE registro_empleado SET reg_fechaFin = CURRENT_TIMESTAMP WHERE reg_id = :id");
 
+            $statement->execute([
+                ":id" => $registro["reg_id"]
+            ]);
+            $statement1 = $conn->prepare("UPDATE registro SET reg_observacion = :observaciones WHERE reg_id = :id");
+            
+            $statement1->execute([
+                ":observaciones" => $_POST["observaciones"],
+                ":id" => $registro["reg_id"]
+            ]);
             // Redirigimos a la página principal o a donde desees
             header("Location: index.php");
             return;
         }
-
     }
 } else {
     // Redirigimos a la página principal o a donde desees
@@ -63,11 +72,28 @@ if ($_SESSION["user"]["usu_rol"] == 3 || $_SESSION["user"]["usu_rol"] == 1) {
                         </p>
                     <?php endif ?>
                     <form class="row g-3" method="POST" action="registroEmpleadoFin.php">
-                        
+                    <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input value="<?= $registro["op_id"] ?>" class="form-control" id="op_id" name="op_id" placeholder="op_id" require readonly></input>
+                                <label>OP</label>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input value="<?= $registro["reg_detalle"] ?>" class="form-control" id="reg_detalle" name="reg_detalle" placeholder="reg_detalle" require readonly></input>
-                                <label>Actividades</label>
+                                <input value="<?= $registro["pla_numero"] ?>" class="form-control" id="pla_numero" name="pla_numero" placeholder="pla_numero" require readonly></input>
+                                <label>PLANO</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                        <label for="reg_detalle" class="form-label">Actividades</label>
+                            <div class="form-floating mb-3">
+                            
+                                <ul>
+                                    <?php foreach ($detalles as $detalle) : ?>
+                                        <li><?= $detalle ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                
                             </div>
                         </div>
                         <div class="col-md-6">
