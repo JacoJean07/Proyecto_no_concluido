@@ -4,7 +4,7 @@ session_start();
 
 
 // Establecer el tiempo de inactividad en segundos
-$inactive = 10;
+$inactive = 10000;
 
 // Comprobar si la variable de sesión 'timeout' está establecida
 if (isset($_SESSION['timeout'])) {

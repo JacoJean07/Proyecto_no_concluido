@@ -1,5 +1,7 @@
 <?php
 require "../../sql/database.php";
+require "../partials/session_handler.php"; 
+
 // Iniciar sesión para identificar las sesiones
 
 // Verificar si la sesión no existe, redirigir al login.php y detener la ejecución del script

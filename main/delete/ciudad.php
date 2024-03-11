@@ -2,6 +2,8 @@
 
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
+require "../partials/session_handler.php"; 
+
 //llamar a la funcion sesion para identificar las sesiones
 
 //si la sesion no existe, mandar al login.php y dejar de ejecutar el resto; se puede hacer un required para ahorra codigo

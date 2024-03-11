@@ -1,6 +1,8 @@
 <?php
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
+require "../partials/session_handler.php"; 
+
 
 
 // Verificar si la sesión está iniciada correctamente y el rol es 1 o 2

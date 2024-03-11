@@ -2,6 +2,7 @@
 
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
+require "../partials/session_handler.php"; 
 
 
 

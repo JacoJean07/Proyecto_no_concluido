@@ -1,6 +1,7 @@
 <?php
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
+require "../partials/session_handler.php"; 
 
 
 // Si la sesión no existe, redirigir al login.php y dejar de ejecutar el resto
