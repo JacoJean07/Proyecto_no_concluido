@@ -253,10 +253,11 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php $contador = $registros->rowCount(); ?>
                                                 <?php foreach ($registros as $registros) : ?>
 
                                                     <tr>
-                                                        <th><?= $registros["rd_id"] ?></th>
+                                                        <td><?= $contador-- ?></td>
                                                         <th><?= $registros["od_id"] ?></th>
                                                         <th><?= $registros["per_nombres"] . " " . $registros["per_apellidos"] ?></th>
                                                         <th><?= $registros["od_detalle"] ?></th>
