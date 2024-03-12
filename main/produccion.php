@@ -61,6 +61,7 @@ $registrosIncompletosQuery = $conn->prepare("SELECT
                                             pa.pro_id,
                                             op.op_id AS op_id,
                                             p.pla_id AS plano_id,
+                                            pl.pla_numero,
                                             pa.proAre_detalle AS area,
                                             pa.proAre_porcentaje,
                                             pa.proAre_fechaIni
@@ -171,7 +172,7 @@ $error = null;
                                     <?php foreach ($registrosIncompletos as $registro): ?>
                                         <tr>
                                             <td><?= $registro["op_id"] ?></td>
-                                            <td><?= $registro["plano_id"] ?></td>
+                                            <td><?= $registro["pla_numero"] ?></td>
                                             <td><?= $registro["proAre_fechaIni"] ?></td>
                                             <td><?= $registro["area"] ?></td>
                                             <td><?= $registro["proAre_porcentaje"] ?></td>

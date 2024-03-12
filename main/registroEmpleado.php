@@ -61,7 +61,8 @@ if ($_SESSION["user"]["usu_rol"] == 6 || $_SESSION["user"]["usu_rol"] == 1) {
                                 INNER JOIN pro_areas pa ON pro.pro_id = pa.pro_id 
                                 WHERE pa.proAre_detalle = :area_trabajo 
                                 AND pro.pro_id IS NOT NULL 
-                                AND pa.proAre_porcentaje < 100");
+                                AND pa.proAre_porcentaje < 100
+                                AND op.op_estado = 'EN PRODUCCION'");
     $opQuery->execute(array(':area_trabajo' => $area_trabajo_empleado));
     $ops = $opQuery->fetchAll(PDO::FETCH_ASSOC);
 

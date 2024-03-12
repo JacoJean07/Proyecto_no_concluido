@@ -13,7 +13,8 @@ if(isset($_POST['area_trabajo'])) {
                 INNER JOIN pro_areas pa ON pro.pro_id = pa.pro_id
                 WHERE pa.proAre_detalle = :area_trabajo 
                 AND pro.pro_id IS NOT NULL 
-                AND pa.proAre_porcentaje < 100";
+                AND pa.proAre_porcentaje < 100 
+                AND p.pla_estado = 'ACTIVO'";
 
     // Preparar la consulta
     $statement = $conn->prepare($query);
@@ -23,8 +24,15 @@ if(isset($_POST['area_trabajo'])) {
     // Obtener los resultados de la consulta
     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-    // Devolver los resultados en formato JSON
-    echo json_encode($result);
+    if (empty($result)) {
+        // Si no se encontraron planos asociados al área de trabajo del empleado, devolver un error
+        $result = array('error' => 'No se encontraron planos asociados al área de trabajo del empleado');
+        return;
+    } else {
+        // Si se encontraron planos asociados al área de trabajo del empleado, devolver los resultados en formato JSON
+        echo json_encode($result);
+    }
+
 } else {
     // Si no se recibió el área de trabajo del empleado, devolver un error
     echo json_encode(array('error' => 'No se proporcionó el área de trabajo del empleado'));
