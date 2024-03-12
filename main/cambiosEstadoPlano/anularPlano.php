@@ -2,7 +2,6 @@
 require "../../sql/database.php";
 require "../partials/kardex_delete.php";
 require "../partials/session_handler.php";
-
 // Verificar si la sesión está iniciada correctamente y el rol es 1, 2 o 3
 if (isset($_SESSION["user"]) && isset($_SESSION["user"]["usu_rol"]) && ($_SESSION["user"]["usu_rol"] == 1 || $_SESSION["user"]["usu_rol"] == 2 || $_SESSION["user"]["usu_rol"] == 3)) {
     // Obtener el ID del plano desde la URL
@@ -30,42 +29,50 @@ if (isset($_SESSION["user"]) && isset($_SESSION["user"]["usu_rol"]) && ($_SESSIO
     } else {
         // Obtener el resultado de la consulta
         $row = $stament->fetch(PDO::FETCH_ASSOC);
-        $copyQuery = $conn->prepare("INSERT INTO planos (op_id, pla_numero, pla_estado, pla_reproceso, pla_porcentaje)
-        SELECT op_id, pla_numero, pla_estado, pla_reproceso, pla_porcentaje FROM planos WHERE pla_id = :id");
-        $copyQuery->execute([":id" => $id]);
-        // Obtener el ID del último registro insertado
-        $newPlaId = $conn->lastInsertId();
+
         // Actualizar el estado del plano
-        $conn->prepare("UPDATE planos SET pla_reproceso = :reproceso, pla_estado = :estadore WHERE pla_id = :id")->execute([
+        $conn->prepare("UPDATE planos SET pla_estado = :estado WHERE pla_id = :id")->execute([
             ":id" => $id,
-            ":reproceso" => "1",
-            ":estadore" => "ANULADO"
+            ":estado" => "ANULADO"
         ]);
-
-        
-
-        // Obtener el estado del plano
-        $estado = 'REPROCESO';
         // Registrar la observación en la tabla pla_observaciones
         $conn->prepare("INSERT INTO pla_observaciones (pla_id, plaOb_estado, plaOb_obsevacion, plaOb_fecha) VALUES (:id, :estado, :observacion, CURRENT_TIMESTAMP)")->execute([
             ":id" => $id,
-            ":estado" => $estado,
+            ":estado" => "ANULADO",
             ":observacion" => $observacion
         ]);
-        $conn->prepare("INSERT INTO pla_observaciones (pla_id, plaOb_estado, plaOb_obsevacion, plaOb_fecha) VALUES (:id, :estado, :observacion, CURRENT_TIMESTAMP)")->execute([
-            ":id" => $newPlaId,
-            ":estado" => $estado,
-            ":observacion" => $observacion
-        ]);
+        // Aquí comienza la adición
+        $registroQuery = $conn->prepare("SELECT *
+        FROM registro
+        JOIN registro_empleado ON registro.reg_id = registro_empleado.reg_id
+        JOIN produccion ON registro.pro_id = produccion.pro_id
+        WHERE produccion.pla_id = :id
+         AND registro_empleado.reg_fechaFin IS NULL ");
 
-        // Registrar el movimiento en el kardex
-        registrarEnKardex($_SESSION["user"]["cedula"], "REPROCESO EN UN PLANO", 'PLANO', $id, $observacion);
+        $registroQuery->execute(array(':id' => $id));
+        $registros = $registroQuery->fetchAll(PDO::FETCH_ASSOC);
 
-        // Redirigir a planos.php
+        foreach ($registros as $registro) {
+            $statement = $conn->prepare("UPDATE registro_empleado SET reg_fechaFin = CURRENT_TIMESTAMP WHERE reg_id = :id");
+            $statement->execute([":id" => $registro["reg_id"]]);
+
+            $statement1 = $conn->prepare("UPDATE registro SET reg_observacion = :observaciones WHERE reg_id = :id");
+            $statement1->execute([
+                ":observaciones" => "SE ANULO EL PLANO",
+                ":id" => $registro["reg_id"]
+            ]);
+        }
         header("Location: ../planos.php");
-        // Finalizar el código aquí porque ya nos redirige a planos.php
         return;
     }
+
+    // Registrar el movimiento en el kardex
+    registrarEnKardex($_SESSION["user"]["cedula"], "ANULAR  EL PLANO", 'PLANO', $id, $observacion);
+
+    // Redirigir a planos.php
+    header("Location: ../planos.php");
+    // Finalizar el código aquí porque ya nos redirige a planos.php
+    return;
 } else {
     // Redirigir a index.php si la sesión no es válida o el rol no es correcto
     header("Location: ../index.php");
