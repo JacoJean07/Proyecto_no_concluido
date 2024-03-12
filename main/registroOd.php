@@ -150,7 +150,14 @@ $error = null;
                 actividades.forEach(function(actividad) {
                     var option = document.createElement('option');
                     option.value = actividad.odAct_detalle;
-                    option.text = actividad.odAct_detalle;
+                    var counter = 1;
+                    actividades.forEach(function(actividad) {
+                        var option = document.createElement('option');
+                        option.value = actividad.odAct_detalle;
+                        option.text = counter + '. ' + actividad.odAct_detalle + ' ' + actividad.odAct_fechaEntrega;
+                        selectActividades.appendChild(option);
+                        counter++;
+                    });
                     selectActividades.appendChild(option);
                 });
             } else {

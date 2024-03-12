@@ -70,6 +70,7 @@ CREATE TABLE od_actividades (
     od_id INT UNSIGNED NOT NULL,
     odAct_detalle VARCHAR(255) NOT NULL,
     odAct_estado BOOLEAN DEFAULT 0,
+    odAct_fechaEntrega DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     Foreign Key (od_id) REFERENCES orden_disenio(od_id)
         ON UPDATE RESTRICT
         ON DELETE RESTRICT

@@ -3,9 +3,6 @@ require "../sql/database.php";
 require "./partials/kardex.php";
 require "./partials/session_handler.php"; 
 
-
-
-
 // Verificar si la sesión no existe, redirigir al login.php y detener la ejecución del script
 if (!isset($_SESSION["user"])) {
     header("Location: ../login-form/login.php");
@@ -26,10 +23,11 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
             $error = "POR FAVOR RELLENA TODOS LOS CAMPOS.";
         } else {
             // Insertar una nueva actividad relacionada con la orden de diseño
-            $statement = $conn->prepare("INSERT INTO od_actividades (od_id, odAct_detalle) VALUES (:od_id, :detalle)");
+            $statement = $conn->prepare("INSERT INTO od_actividades (od_id, odAct_detalle, odAct_fechaEntrega) VALUES (:od_id, :detalle, :fechaEntrega)");
             $statement->execute([
                 ":od_id" => $id,
-                ":detalle" => $_POST["detalle"]
+                ":detalle" => $_POST["detalle"],
+                ":fechaEntrega" => $_POST["fechaEntrega"]
             ]);
         }
     }
@@ -75,6 +73,10 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
                                 <label for="detalle" class="form-label">Detalle de la Actividad</label>
                                 <input type="text" class="form-control" id="detalle" name="detalle" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="fechaEntrega" class="form-label">Fecha de Entrega</label>
+                                <input type="datetime-local" class="form-control" id="fechaEntrega" name="fechaEntrega" required>
+                            </div>
                             <button type="submit" class="btn btn-primary">Agregar Actividad</button>
                         </form>
 
@@ -85,6 +87,7 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
                             <?php foreach ($actividades as $actividad): ?>
                                 <li class="list-group-item list-group-item d-flex justify-content-between align-items-center">
                                     <?php echo $actividad['odAct_detalle']; ?>
+                                    <span class="badge bg-primary rounded-pill"><?php echo $actividad['odAct_fechaEntrega']; ?></span>
                                     <a class="text-rigth" href="./validaciones/deleteActividad.php?id=<?= $actividad["id"]?>&od_id=<?= $actividad["od_id"] ?>">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="red" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
                                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>

@@ -70,13 +70,13 @@ if (isset($_GET['cedula'])) {
 
     // Devolver los resultados como JSON
     echo json_encode($result);
-}elseif (isset($_POST["od_id"])) {
+} elseif (isset($_POST["od_id"])) {
     $od_id = $_POST["od_id"];
 
     // Consulta SQL para obtener las actividades basadas en el od_id seleccionado
-    $query = "SELECT odAct_detalle FROM od_actividades WHERE od_id = :od_id AND odAct_estado = 0";
+    $query = "SELECT id, odAct_detalle, odAct_fechaEntrega FROM od_actividades WHERE od_id = :od_id AND odAct_estado = 0";
     $statement = $conn->prepare($query);
-    $statement->bindParam(':od_id', $od_id);
+    $statement->bindParam(':od_id', $od_id); 
     $statement->execute();
     $actividades = $statement->fetchAll(PDO::FETCH_ASSOC);
 
