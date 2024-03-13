@@ -45,7 +45,7 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
     }
 
     // Obtener todas las actividades relacionadas con la orden de diseño
-    $actividades = $conn->prepare("SELECT * FROM od_actividades WHERE od_id = :od_id AND odAct_estado = 0");
+    $actividades = $conn->prepare("SELECT * FROM od_actividades WHERE od_id = :od_id AND odAct_estado = 0 ORDER BY id DESC");
     $actividades->bindParam(":od_id", $id);
     $actividades->execute();
 } else {
@@ -84,8 +84,10 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
 
                         <h3>Listado de Actividades</h3>
                         <ul class="list-group">
+                            <?php $contador = $actividades->rowCount(); ?>
                             <?php foreach ($actividades as $actividad): ?>
                                 <li class="list-group-item list-group-item d-flex justify-content-between align-items-center">
+                                    <p><?= $contador-- ?></p>
                                     <?php echo $actividad['odAct_detalle']; ?>
                                     <span class="badge bg-primary rounded-pill"><?php echo $actividad['odAct_fechaEntrega']; ?></span>
                                     <a class="text-rigth" href="./validaciones/deleteActividad.php?id=<?= $actividad["id"]?>&od_id=<?= $actividad["od_id"] ?>">

@@ -29,7 +29,8 @@ $query = "SELECT od.*,
                   persona_comercial.per_apellidos AS comercial_apellidos
           FROM orden_disenio od
           LEFT JOIN personas persona_responsable ON od.od_responsable = persona_responsable.cedula
-          LEFT JOIN personas persona_comercial ON od.od_comercial = persona_comercial.cedula";
+          LEFT JOIN personas persona_comercial ON od.od_comercial = persona_comercial.cedula
+          ORDER BY od.od_id DESC";
 
 
 // Si hay un od_estado filtrado, agregarlo a la consulta
@@ -77,7 +78,7 @@ $ordenes_disenio->execute();
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
+                                                <th># OD</th>
                                                 <th>RESPONSABLE</th>
                                                 <th>DETALLE</th>
                                                 <th>CLIENTE</th>

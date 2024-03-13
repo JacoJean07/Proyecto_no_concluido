@@ -137,7 +137,7 @@ if ($_SESSION["user"]["usu_rol"] == 2||$_SESSION["user"]["usu_rol"] == 1) {
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>NUMERO DE OD</th>
+                                                    <th># OD</th>
                                                     <th>DETALLE</th>
                                                     <th>CLIENTE</th>
                                                     <th>ACTIVIDAD</th>

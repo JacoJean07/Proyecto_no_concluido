@@ -219,7 +219,7 @@ if ($_SESSION["user"]["usu_rol"] && ($_SESSION["user"]["usu_rol"] == 2 || $_SESS
                                     <table class="table datatable">
                                         <thead>
                                             <tr>
-                                                <th># OD</th>
+                                                <th>#OD</th>
                                                 <th>RESPONSABLE</th>
                                                 <th>DETALLE</th>
                                                 <th>CLIENTE</th>
